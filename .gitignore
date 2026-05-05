@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/tmp_services_utf8.html
+/tmp_about.html
+/tmp_about_utf8.html
+/tmp_home.html
+/tmp_home_utf8.html
+/tmp_services.html
