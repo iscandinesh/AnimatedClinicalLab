@@ -1,0 +1,120 @@
+@inherits LayoutComponentBase
+
+<div class="app-layout">
+    <header class="glass-header" id="site-header">
+        <NavMenu />
+    </header>
+
+    <main class="main-content">
+        @Body
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <!-- Footer Top -->
+            <div class="row g-5 py-5">
+                <!-- Brand Column -->
+                <div class="col-lg-4">
+                <div class="mb-4">
+                    <img src="images/logo-full.png" alt="Alpha Diagnostics Centre" style="height: 60px; width: auto; object-fit: contain;" />
+                </div>
+                    <p class="text-muted mb-4" style="line-height: 1.7;">
+                        Alpha Diagnostics Centre is a trusted lab in Erode offering a wide range of diagnostic tests and health check-ups with accurate results and caring service. We aim to make quality diagnostics simple, fast, and affordable for everyone.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-social-icon" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="footer-social-icon" style="background: #e1306c;" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://wa.me/918110899999" target="_blank" class="footer-social-icon" style="background: #16a34a;" aria-label="WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-6 col-lg-2">
+                    <h5 class="footer-heading">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="/"><i class="bi bi-chevron-right"></i> Home</a></li>
+                        <li><a href="about"><i class="bi bi-chevron-right"></i> About Us</a></li>
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> Services</a></li>
+                        <li><a href="locations"><i class="bi bi-chevron-right"></i> Locations</a></li>
+                        <li><a href="contact"><i class="bi bi-chevron-right"></i> Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Services Links -->
+                <div class="col-6 col-lg-3">
+                    <h5 class="footer-heading">Our Services</h5>
+                    <ul class="footer-links">
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> Biochemistry</a></li>
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> Hematology</a></li>
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> Immunology</a></li>
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> Microbiology</a></li>
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> PCR / Molecular</a></li>
+                        <li><a href="services"><i class="bi bi-chevron-right"></i> Histopathology</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Column -->
+                <div class="col-lg-3">
+                    <h5 class="footer-heading">Contact Us</h5>
+                    <ul class="footer-contact-list">
+                        <li>
+                            <i class="bi bi-geo-alt-fill text-secondary"></i>
+                            <span>31, Patel Street, Erode – 638 001.</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone-fill text-secondary"></i>
+                            <div>
+                                <a href="tel:+918110899999">81108 99999</a><br />
+                                <a href="tel:+917094490917">70944 90917</a>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope-fill text-secondary"></i>
+                            <a href="mailto:info@alphalab.co.in">info@alphalab.co.in</a>
+                        </li>
+                        <li>
+                            <i class="bi bi-globe text-secondary"></i>
+                            <a href="http://www.alphalab.com" target="_blank">www.alphalab.com</a>
+                        </li>
+                    </ul>
+                    <div class="mt-4">
+                        <div class="footer-accreditation">
+                            <i class="bi bi-patch-check-fill text-secondary me-2"></i>
+                            <span class="small text-muted">NABL Accredited &amp; ICMR Approved</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom border-top py-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0 text-muted small">
+                            &copy; @DateTime.Now.Year Alpha Diagnostics Centre. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                        <p class="mb-0 text-muted small">
+                            <i class="bi bi-shield-check text-secondary me-1"></i> NABL Accredited &nbsp;|&nbsp;
+                            <i class="bi bi-award text-secondary me-1"></i> ICMR Approved &nbsp;|&nbsp;
+                            <i class="bi bi-heart-fill text-danger me-1"></i> Made with care in Erode
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
