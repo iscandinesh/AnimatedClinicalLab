@@ -1,0 +1,482 @@
+@page "/"
+@inject IJSRuntime JS
+
+<PageTitle>Home - Alpha Diagnostics Centre</PageTitle>
+
+<!-- 1. HERO SECTION (EXACT ALIGNMENT WITH REACT REFERENCE) -->
+<section class="position-relative d-flex align-items-center overflow-hidden" style="padding-top: 10rem; padding-bottom: 4rem; min-height: 85vh;">
+    <!-- Reference Animations Background -->
+    <div class="dna-bg" aria-hidden="true">
+        <div class="floating-blob b1"></div>
+        <div class="floating-blob b2"></div>
+        <div class="floating-blob b3"></div>
+        <div class="hero-grid-bg"></div>
+    </div>
+
+    <!-- Particle Simulation -->
+    <div class="position-absolute inset-0 pointer-events-none overflow-hidden" style="z-index: 1;">
+        @for (int i = 0; i < 20; i++)
+        {
+            var left = Random.Shared.Next(0, 100);
+            var delay = Random.Shared.NextDouble() * 8;
+            var duration = 8 + Random.Shared.NextDouble() * 10;
+            var size = 4 + Random.Shared.NextDouble() * 6;
+            <span class="particle" style="left: @(left)%; animation-delay: @(delay)s; animation-duration: @(duration)s; width: @(size)px; height: @(size)px;"></span>
+        }
+    </div>
+
+    <div class="container-fluid position-relative mx-auto px-4" style="max-width: 1280px; z-index: 10;">
+        <div class="row align-items-center gx-lg-5 gy-5">
+            <!-- Left Column: Content -->
+            <div class="col-lg-6 col-12 m-0">
+                <div class="reveal-up">
+                    <span class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill theme-badge-hero fw-semibold tracking-wide mb-4" style="font-size: 0.75rem;">
+                        <i class="bi bi-stars"></i> Rooted in care, growing in health
+                    </span>
+                    <h1 class="hero-title mt-4">
+                        <span style="white-space: nowrap;">Advanced D<span class="dot-i">i<span class="dot-accent"></span></span>agnostics</span><br />
+                        <span class="text-primary">You Can Trust.</span>
+                    </h1>
+                    <p class="hero-tagline-custom">
+                        Barcoded, automated testing with <strong class="text-primary">NABL-accredited</strong> quality and caring service.
+                    </p>
+                    <p class="hero-body-custom">
+                        Alpha Diagnostics Centre is a fully automated, barcoded, and interfaced diagnostic laboratory started by quality-focused doctors — delivering fast, accurate reports across Erode and nearby areas.
+                    </p>
+                    
+                    <div class="mt-8 d-flex flex-wrap gap-4">
+                        <a href="contact" class="btn-helium btn-helium-primary px-7 py-3 rounded-pill shadow-lg shadow-blue-200 d-flex align-items-center gap-2" style="background: #2563eb; color: #fff;">
+                            Book a Test <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="services" class="btn btn-hero-outline px-7 py-3 rounded-pill d-flex align-items-center justify-content-center fw-700">
+                            View Packages
+                        </a>
+                    </div>
+
+                    <!-- Stats Card -->
+                    <div class="feature-card-premium lift d-inline-flex flex-wrap gap-4 gap-md-5 py-4 px-5 mt-5 reveal-up" style="transition-delay: 0.3s; height: auto; border-radius: 24px;">
+                        <div class="hstat-item">
+                            <div class="hstat-value">10+</div>
+                            <div class="hstat-label">Years Service</div>
+                        </div>
+                        <div class="hstat-item">
+                            <div class="hstat-value">4 Hrs</div>
+                            <div class="hstat-label">Report Time</div>
+                        </div>
+                        <div class="hstat-item">
+                            <div class="hstat-value">15+</div>
+                            <div class="hstat-label">Centres</div>
+                        </div>
+                        <div class="hstat-item">
+                            <div class="hstat-value">500+</div>
+                            <div class="hstat-label">Tests</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Image & Floating Cards -->
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="position-relative reveal-up" style="transition-delay: 0.2s;">
+                    <!-- DNA Graphic Overlay -->
+                    <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(20%, -20%); z-index: 0;">
+                        <i class="bi bi-dna text-primary" style="font-size: 140px;"></i>
+                    </div>
+
+                    <!-- Main Image with Tilt effect -->
+                    <div class="hero-image-wrapper tilt rounded-5 overflow-hidden shadow-2xl border-white border-8 position-relative" style="border-radius: 40px !important;">
+                        <img src="images/hero-lab.png" alt="Alpha Diagnostics Lab" class="w-100" style="height: 520px; object-fit: cover;" />
+                        <div class="position-absolute inset-0" style="background: linear-gradient(to top right, rgba(30, 64, 175, 0.2), transparent);"></div>
+                    </div>
+
+                    <!-- Floating Card 1: NABL -->
+                    <div class="floating-badge badge-card-white position-absolute" style="top: 10%; left: -6%; z-index: 20; animation: bounce-slow 4s infinite ease-in-out;">
+                        <div class="icon-sm rounded-3 bg-blue-100 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-patch-check-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="badge-subtitle">NABL Accredited</div>
+                            <div class="badge-title">International Standards</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Card 2: Turnaround -->
+                    <div class="floating-badge badge-card-white position-absolute" style="bottom: 12%; right: -6%; z-index: 20;">
+                        <div class="icon-sm rounded-3 bg-primary text-white p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-clock-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="badge-subtitle">Fast Turnaround</div>
+                            <div class="badge-title">Reports in 4 hours</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. WHY CHOOSE ALPHA (PREMIUM DESIGN) -->
+<section class="position-relative overflow-hidden py-5">
+    <!-- Reference Animations Background -->
+    <div class="dna-bg" aria-hidden="true">
+        <div class="floating-blob b1" style="top: 20%; left: -5%;"></div>
+        <div class="floating-blob b2" style="bottom: 10%; right: -5%;"></div>
+        <div class="grid-pattern opacity-25"></div>
+    </div>
+
+    <div class="container py-5 position-relative" style="z-index: 1;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-excellence mb-3 d-inline-block">Excellence in Diagnostics</div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2.5rem, 5vw, 4rem);">Why Choose Alpha</h2>
+            <p class="text-secondary mx-auto mb-5" style="max-width: 700px; font-size: 1.1rem; line-height: 1.6;">
+                Combining cutting-edge technology with compassionate care to deliver clinical excellence for Erode and beyond.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- NABL & ICMR Approved -->
+            <div class="col-lg-4 col-md-6 reveal-up">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-blue">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">NABL & ICMR Approved</h4>
+                    <p class="text-secondary mb-0">
+                        Adhering to stringent international protocols to ensure the highest standards of quality and accuracy.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Barcoded & Automated -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-blue">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Barcoded & Automated</h4>
+                    <p class="text-secondary mb-0">
+                        Fully computerized, bidirectionally interfaced systems that eliminate manual error for precision results.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 10+ Years of Service -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-purple">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">10+ Years of Service</h4>
+                    <p class="text-secondary mb-0">
+                        A decade of trusted partnerships with leading healthcare providers and thousands of families.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Rapid Turnaround -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.3s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-cyan">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Rapid Turnaround</h4>
+                    <p class="text-secondary mb-0">
+                        Industry-leading speed with routine test results delivered within 4 hours for faster diagnosis.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Digital Reports -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.4s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-red">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Digital Reports</h4>
+                    <p class="text-secondary mb-0">
+                        Seamless access to your medical records via secure online portal, email, or instant WhatsApp messaging.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Home Collection -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.5s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-cyan">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Home Collection</h4>
+                    <p class="text-secondary mb-0">
+                        Professional sample collection services at your doorstep or hospital for maximum convenience.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3. HOW IT WORKS (VERTICAL PREMIUM DESIGN) -->
+<section id="how-it-works" class="py-5 position-relative overflow-hidden">
+    <div class="container py-4 position-relative" style="z-index: 1;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-excellence mb-3 d-inline-block">The Alpha Process</div>
+            <h2 class="section-title fw-800 mb-3">How It Works</h2>
+            <p class="text-secondary mx-auto mb-5" style="max-width: 800px; font-size: 1.1rem;">
+                Getting your tests done with Alpha is a streamlined experience from start to finish. <br class="d-none d-md-block" />
+                Our medical laboratory facilitates accurate clinical excellence from Erode and beyond.
+            </p>
+        </div>
+
+        <div class="position-relative">
+            <!-- Single Continuous Line (Now wrapped around steps only) -->
+            <div class="timeline-continuous-line d-none d-lg-block"></div>
+
+            <!-- Step 1: Book -->
+            <div class="row timeline-step g-0 reveal-up">
+                <div class="col-lg-5">
+                    <div class="feature-card-premium lift ms-lg-auto" style="max-width: 450px; padding: 2rem; border-radius: 24px;">
+                        <span class="step-badge">01</span>
+                        <h3 class="fw-700 mb-2" style="font-size: 1.25rem;">Book</h3>
+                        <p class="text-secondary small mb-0">
+                            Book your test directly from our site or WhatsApp within seconds.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-2 text-center d-none d-lg-block position-relative">
+                    <div class="anchor-dot-simple"></div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="timeline-img-container me-lg-auto">
+                        <img src="images/booking-step.png" alt="Booking" class="timeline-img" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Visit / Home -->
+            <div class="row timeline-step g-0 reveal-up flex-lg-row-reverse" style="transition-delay: 0.1s;">
+                <div class="col-lg-5">
+                    <div class="feature-card-premium lift me-lg-auto" style="max-width: 450px; padding: 2rem; border-radius: 24px;">
+                        <span class="step-badge">02</span>
+                        <h3 class="fw-700 mb-2" style="font-size: 1.25rem;">Visit / Home</h3>
+                        <p class="text-secondary small mb-0">
+                            Opt for a home visit or visit any of our modern branch collection centres.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-2 text-center d-none d-lg-block position-relative">
+                    <div class="anchor-dot-simple"></div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="timeline-img-container ms-lg-auto">
+                        <img src="images/home-visit.png" alt="Visit" class="timeline-img" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Process -->
+            <div class="row timeline-step g-0 reveal-up" style="transition-delay: 0.2s;">
+                <div class="col-lg-5">
+                    <div class="feature-card-premium lift ms-lg-auto" style="max-width: 450px; padding: 2rem; border-radius: 24px;">
+                        <span class="step-badge">03</span>
+                        <h3 class="fw-700 mb-2" style="font-size: 1.25rem;">Process</h3>
+                        <p class="text-secondary small mb-0">
+                            Sample collection utilizing our fully automated diagnostic laboratory.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-2 text-center d-none d-lg-block position-relative">
+                    <div class="anchor-dot-simple"></div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="timeline-img-container me-lg-auto">
+                        <img src="images/lab-process.png?v=2" alt="Process" class="timeline-img" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Report -->
+            <div class="row timeline-step g-0 reveal-up flex-lg-row-reverse" style="transition-delay: 0.3s;">
+                <div class="col-lg-5">
+                    <div class="feature-card-premium lift me-lg-auto" style="max-width: 450px; padding: 2rem; border-radius: 24px;">
+                        <span class="step-badge">04</span>
+                        <h3 class="fw-700 mb-2" style="font-size: 1.25rem;">Report</h3>
+                        <p class="text-secondary small mb-0">
+                            Download medical reports from your smartphone anywhere any time.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-2 text-center d-none d-lg-block position-relative">
+                    <div class="anchor-dot-simple"></div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="timeline-img-container ms-lg-auto">
+                        <img src="images/digital-report.png?v=2" alt="Report" class="timeline-img" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="text-center mt-5 reveal-up" style="transition-delay: 0.4s;">
+            <a href="contact" class="btn-helium btn-helium-primary px-5 py-3 rounded-pill shadow-lg">
+                Book My Diagnostic Centre
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 4. ALPHA ADVANTAGE COMPARISON -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title">The Alpha Advantage</h2>
+            <p class="text-secondary">Why leading hospitals and patients choose us over traditional laboratories.</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <!-- Pros -->
+            <div class="col-lg-5 reveal-up">
+                <div class="glass-card-comparison h-100">
+                    <div class="mb-4">
+                        <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 small mb-2">Alpha Excellence</span>
+                        <h4 class="fw-bold mb-0">Alpha Diagnostics</h4>
+                    </div>
+                    <ul class="comparison-list">
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>NABL-accredited international quality</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>Fully automated & barcoded processes</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>Advanced digital dashboard & reports</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>AI-driven accuracy & data analytics</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>Latest automated clinical solutions</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cons -->
+            <div class="col-lg-5 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card-comparison h-100">
+                    <div class="mb-4">
+                        <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary px-3 py-2 small mb-2">Market Standard</span>
+                        <h4 class="opacity-50 fw-bold mb-0">Traditional Labs</h4>
+                    </div>
+                    <ul class="comparison-list">
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Limited quality standard compliance</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Rigid and manual testing processes</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Basic or paper-based reporting</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Lack of advanced analytics</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Outdated and complex turnaround</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5. FREQUENTLY ASKED QUESTIONS -->
+<section id="faq" class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-excellence mb-3 d-inline-block">Common Inquiries</div>
+            <h2 class="section-title fw-800 mb-3">Frequently Asked Questions</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">
+                Find answers to common questions about our diagnostic services, reports, and procedures.
+            </p>
+        </div>
+
+        <div class="faq-accordion reveal-up">
+            @foreach (var faq in faqs)
+            {
+                var index = faqs.IndexOf(faq);
+                <div class="faq-item @(activeIndex == index ? "active" : "")">
+                    <button class="faq-trigger" @onclick="() => ToggleFaq(index)">
+                        <span>@faq.Question</span>
+                        <i class="bi bi-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-content">
+                        <p>@faq.Answer</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private int activeIndex = 0;
+
+    private class FaqItem
+    {
+        public string Question { get; set; } = "";
+        public string Answer { get; set; } = "";
+    }
+
+    private List<FaqItem> faqs = new()
+    {
+        new FaqItem { 
+            Question = "Do I need a doctor's prescription for tests?", 
+            Answer = "In most cases, we advise you to bring a doctor's prescription, especially for specialized tests. For basic health packages, you can book directly, but we still recommend sharing your reports with a doctor for proper advice." 
+        },
+        new FaqItem { 
+            Question = "How will I get my reports?", 
+            Answer = "You can download your reports directly from our secure online portal, receive them via email, or have them sent to your WhatsApp number for instant access." 
+        },
+        new FaqItem { 
+            Question = "How long will it take to get my results?", 
+            Answer = "Routine test results are typically delivered within 4 hours. Specialized tests may take longer, and our team will inform you of the expected timeline during sample collection." 
+        },
+        new FaqItem { 
+            Question = "Are your tests affordable?", 
+            Answer = "Yes, we offer competitive pricing and various health packages designed to provide high-quality diagnostic services at accessible rates." 
+        },
+        new FaqItem { 
+            Question = "Is my data kept confidential?", 
+            Answer = "Absolutely. We prioritize patient privacy and use secure, encrypted systems to ensure that your medical data is handled with the highest level of confidentiality." 
+        }
+    };
+
+    private void ToggleFaq(int index)
+    {
+        if (activeIndex == index)
+            activeIndex = -1;
+        else
+            activeIndex = index;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}

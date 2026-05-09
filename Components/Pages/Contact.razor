@@ -1,0 +1,169 @@
+@page "/contact"
+@inject IJSRuntime JS
+
+<PageTitle>Contact Us - Alpha Diagnostics Centre</PageTitle>
+
+<section class="page-header py-5 text-center position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important; overflow: hidden; min-height: 600px; display: flex; align-items: center;">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.4;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.4;"></div>
+    
+    <div class="container position-relative z-2 reveal-up">
+        <div class="glass-card-premium p-5 mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block">
+                <i class="bi bi-chat-dots me-2"></i> Get in Touch
+            </div>
+            <h1 class="hero-title mb-4">
+                Contact <span class="text-primary">Us</span>
+            </h1>
+            <p class="lead mb-0" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
+                Book a test, request a home visit, or reach out with any questions. We are here to help.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-5">
+            <!-- Contact Info -->
+            <div class="col-lg-5 reveal-up">
+                <h2 class="h3 fw-bold mb-4">Contact Information</h2>
+                <p class="text-secondary mb-5">Reach us through any of the channels below. We will respond promptly.</p>
+
+                <div class="d-flex flex-column gap-4">
+                    <div class="glass-card p-4 d-flex align-items-start gap-4">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-geo-alt fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Main Laboratory</h5>
+                            <p class="text-secondary small mb-0">31, Patel Street, Erode – 638 001.</p>
+                            <a href="https://maps.google.com" target="_blank" class="text-primary small text-decoration-none mt-2 d-inline-block">View on Map →</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 d-flex align-items-start gap-4">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-telephone fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Sample Collection</h5>
+                            <p class="text-secondary small mb-1">70944 90917</p>
+                            <p class="text-secondary small mb-0">81108 99999</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 d-flex align-items-start gap-4">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-whatsapp fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">WhatsApp Support</h5>
+                            <p class="text-secondary small mb-0">81108 99999</p>
+                            <a href="https://wa.me/918110899999" target="_blank" class="text-primary small text-decoration-none mt-2 d-inline-block">Chat with us →</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 d-flex align-items-start gap-4">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-envelope fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Email Support</h5>
+                            <p class="text-secondary small mb-0">info@alphalab.co.in</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 d-flex align-items-start gap-4">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-exclamation-triangle fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Complaints & Feedback</h5>
+                            <p class="text-secondary small mb-1">70944 90913 | 70944 90907</p>
+                            <p class="text-secondary small mb-0">We take every feedback seriously to improve our services.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-7 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card p-5 h-100">
+                    <h3 class="fw-bold mb-4">Send Us a Message</h3>
+                    <p class="text-secondary mb-5">Fill out the form below to book a home sample collection or inquire about a test.</p>
+
+                    @if (isSubmitted)
+                    {
+                        <div class="text-center py-5 animate-fade-in">
+                            <div class="bg-success bg-opacity-10 text-success p-4 rounded-circle d-inline-block mb-4">
+                                <i class="bi bi-check-lg fs-1"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Message Sent!</h4>
+                            <p class="text-secondary">Thank you for reaching out. Our team will contact you shortly.</p>
+                            <button class="btn-helium btn-helium-secondary mt-4" @onclick="() => isSubmitted = false">Send Another Message</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <form @onsubmit="HandleSubmit" class="d-flex flex-column gap-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="text-secondary small mb-2">Full Name</label>
+                                    <input type="text" class="form-control glass-input" placeholder="John Doe" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-secondary small mb-2">Phone Number</label>
+                                    <input type="tel" class="form-control glass-input" placeholder="+91 00000 00000" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-secondary small mb-2">Email Address</label>
+                                <input type="email" class="form-control glass-input" placeholder="john@example.com" required>
+                            </div>
+                            <div>
+                                <label class="text-secondary small mb-2">Subject / Test Type</label>
+                                <select class="form-select glass-input">
+                                    <option selected>Home Sample Collection</option>
+                                    <option>Health Package Inquiry</option>
+                                    <option>General Question</option>
+                                    <option>Feedback</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-secondary small mb-2">Your Message</label>
+                                <textarea class="form-control glass-input" rows="5" placeholder="How can we help you?"></textarea>
+                            </div>
+                            <button type="submit" class="btn-helium btn-helium-primary w-100 py-3 mt-2">
+                                <i class="bi bi-send-fill me-2"></i> Send Message
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private bool isSubmitted = false;
+
+    private async Task HandleSubmit()
+    {
+        await Task.Delay(600);
+        isSubmitted = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}

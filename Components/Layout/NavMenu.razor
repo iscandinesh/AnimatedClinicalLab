@@ -1,0 +1,75 @@
+@inject IJSRuntime JS
+@inject ThemeService ThemeState
+
+<nav class="helium-nav">
+    <div class="nav-container">
+        <!-- Brand -->
+        <a class="nav-brand" href="">
+            <img src="images/logo-full.png" alt="Alpha Labs" class="app-logo" style="height: 40px; width: auto;" />
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="nav-links d-none d-lg-flex">
+            <a class="nav-link" href="">Home</a>
+            <a class="nav-link" href="services">Services</a>
+            <a class="nav-link" href="about">About</a>
+            <a class="nav-link" href="locations">Locations</a>
+            <a class="nav-link" href="contact">Contact</a>
+        </div>
+
+        <!-- CTA & Theme Toggle -->
+        <div class="nav-cta d-flex align-items-center gap-3">
+            <button class="theme-toggle-btn" @onclick="ThemeState.ToggleTheme" title="Toggle Light/Dark Mode">
+                <i class="bi @(ThemeState.IsDarkMode ? "bi-sun-fill" : "bi-moon-stars-fill")"></i>
+            </button>
+            <a href="contact" class="btn-helium btn-helium-primary d-none d-sm-inline-flex">Book a Test</a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="d-lg-none bg-transparent border-0 text-white" @onclick="ToggleNavMenu">
+            <i class="bi @(collapseNavMenu ? "bi-list" : "bi-x") fs-2"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Nav -->
+    @if (!collapseNavMenu)
+    {
+        <div class="mobile-menu d-lg-none animate-fade-in" style="position: fixed; top: 80px; left: 0; width: 100%; height: 100vh; background: var(--bg-dark); z-index: 999; padding: 2rem;">
+            <div class="d-flex flex-column gap-4 align-items-center">
+                <a class="nav-link fs-4" href="services" @onclick="ToggleNavMenu">Services</a>
+                <a class="nav-link fs-4" href="about" @onclick="ToggleNavMenu">About Us</a>
+                <a class="nav-link fs-4" href="locations" @onclick="ToggleNavMenu">Locations</a>
+                <a class="nav-link fs-4" href="contact" @onclick="ToggleNavMenu">Contact</a>
+                <a href="contact" class="btn-helium btn-helium-primary w-100 text-center" @onclick="ToggleNavMenu">Book a Test</a>
+                
+                <!-- Mobile Theme Toggle -->
+                <button class="btn-helium btn-helium-secondary w-100 text-center mt-3" @onclick="ThemeState.ToggleTheme">
+                    <i class="bi @(ThemeState.IsDarkMode ? "bi-sun-fill" : "bi-moon-stars-fill") me-2"></i>
+                    @(ThemeState.IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
+                </button>
+            </div>
+        </div>
+    }
+</nav>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        ThemeState.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}

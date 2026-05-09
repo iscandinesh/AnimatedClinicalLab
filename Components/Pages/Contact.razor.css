@@ -1,0 +1,87 @@
+.page-header {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+}
+
+.bg-shape {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
+
+.icon-circle {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.hover-lift:hover .icon-circle {
+    transform: scale(1.1) rotate(10deg);
+}
+
+.social-icon {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Custom form inputs with floating labels */
+.form-group-animated {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 1.2rem 1rem 0.8rem;
+    background: var(--bg-main);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(10, 88, 202, 0.1);
+    background: white;
+}
+
+.form-label-custom {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    color: var(--text-secondary);
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+    transform-origin: 0 0;
+}
+
+/* Float the label on focus or if input is not empty (requires placeholder=" " in html) */
+.form-control-custom:focus + .form-label-custom,
+.form-control-custom:not(:placeholder-shown) + .form-label-custom {
+    transform: translateY(-0.8rem) scale(0.8);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.form-select-custom {
+    background-color: var(--bg-main);
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.form-select-custom:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(10, 88, 202, 0.1);
+    background: white;
+}
