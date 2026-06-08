@@ -1,0 +1,91 @@
+@inject IJSRuntime JS
+@inject ThemeService ThemeState
+
+<nav class="helium-nav">
+    <div class="nav-container">
+        <!-- Brand -->
+        <a class="nav-brand" href="">
+            <img src="images/logo-full.png"
+                 alt="Alpha Diagnostics Centre"
+                 class="app-logo nav-logo-img"
+                 style="height: 62px; width: auto;"
+                 width="836" height="312" />
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="nav-links d-none d-lg-flex">
+            <a class="nav-link" href="">Home</a>
+            <div class="nav-dropdown">
+                <a class="nav-link nav-dropdown-trigger" href="services">
+                    Services <i class="bi bi-chevron-down nav-arrow"></i>
+                </a>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-dropdown-item" href="services#health-packages">Health Check Packages</a>
+                </div>
+            </div>
+            <a class="nav-link" href="about">About</a>
+            <a class="nav-link" href="locations">Locations</a>
+            <a class="nav-link" href="insights">Insights</a>
+            <a class="nav-link" href="contact">Contact</a>
+        </div>
+
+        <!-- CTA & Theme Toggle -->
+        <div class="nav-cta d-flex align-items-center gap-3">
+            <button class="theme-toggle-btn" @onclick="ThemeState.ToggleTheme" title="Toggle Light/Dark Mode">
+                <i class="bi @(ThemeState.IsDarkMode ? "bi-sun-fill" : "bi-moon-stars-fill")"></i>
+            </button>
+            <a href="contact" class="btn-helium btn-helium-primary d-none d-sm-inline-flex">Book a Test</a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="d-lg-none bg-transparent border-0 text-white" @onclick="ToggleNavMenu">
+            <i class="bi @(collapseNavMenu ? "bi-list" : "bi-x") fs-2"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Nav -->
+    @if (!collapseNavMenu)
+    {
+        <div class="mobile-menu d-lg-none animate-fade-in" style="position: fixed; top: 80px; left: 0; width: 100%; height: 100vh; background: var(--bg-dark); z-index: 999; padding: 2rem;">
+            <div class="d-flex flex-column gap-4 align-items-center">
+                <div class="d-flex flex-column align-items-center w-100">
+                    <a class="nav-link fs-4" href="services" @onclick="ToggleNavMenu">Services</a>
+                    <a class="nav-link fs-5 text-secondary mt-2" href="services#health-packages" @onclick="ToggleNavMenu" style="font-size: 1.1rem; border-left: 2px solid var(--border-subtle); padding-left: 10px;">Health Check Packages</a>
+                </div>
+                <a class="nav-link fs-4" href="about" @onclick="ToggleNavMenu">About Us</a>
+                <a class="nav-link fs-4" href="locations" @onclick="ToggleNavMenu">Locations</a>
+                <a class="nav-link fs-4" href="insights" @onclick="ToggleNavMenu">Insights</a>
+                <a class="nav-link fs-4" href="contact" @onclick="ToggleNavMenu">Contact</a>
+                <a href="contact" class="btn-helium btn-helium-primary w-100 text-center" @onclick="ToggleNavMenu">Book a Test</a>
+                
+                <!-- Mobile Theme Toggle -->
+                <button class="btn-helium btn-helium-secondary w-100 text-center mt-3" @onclick="ThemeState.ToggleTheme">
+                    <i class="bi @(ThemeState.IsDarkMode ? "bi-sun-fill" : "bi-moon-stars-fill") me-2"></i>
+                    @(ThemeState.IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
+                </button>
+            </div>
+        </div>
+    }
+</nav>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        ThemeState.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}

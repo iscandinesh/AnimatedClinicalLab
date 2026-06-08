@@ -1,0 +1,175 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject ThemeService ThemeState
+@inject IJSRuntime JS
+
+<div class="app-shell">
+    <!-- Background Bubbles -->
+    <div class="bubble-container">
+        <div class="bubble" style="left: 5%; width: 20px; height: 20px; animation-delay: 0s; animation-duration: 12s;"></div>
+        <div class="bubble" style="left: 15%; width: 35px; height: 35px; animation-delay: 2s; animation-duration: 15s;"></div>
+        <div class="bubble" style="left: 25%; width: 15px; height: 15px; animation-delay: 4s; animation-duration: 10s;"></div>
+        <div class="bubble" style="left: 35%; width: 45px; height: 45px; animation-delay: 1s; animation-duration: 18s;"></div>
+        <div class="bubble" style="left: 45%; width: 25px; height: 25px; animation-delay: 6s; animation-duration: 14s;"></div>
+        <div class="bubble" style="left: 55%; width: 40px; height: 40px; animation-delay: 3s; animation-duration: 16s;"></div>
+        <div class="bubble" style="left: 65%; width: 20px; height: 20px; animation-delay: 8s; animation-duration: 11s;"></div>
+        <div class="bubble" style="left: 75%; width: 50px; height: 50px; animation-delay: 5s; animation-duration: 20s;"></div>
+        <div class="bubble" style="left: 85%; width: 30px; height: 30px; animation-delay: 7s; animation-duration: 13s;"></div>
+        <div class="bubble" style="left: 95%; width: 20px; height: 20px; animation-delay: 9s; animation-duration: 17s;"></div>
+        <div class="bubble" style="left: 10%; width: 40px; height: 40px; animation-delay: 11s; animation-duration: 19s;"></div>
+        <div class="bubble" style="left: 90%; width: 15px; height: 15px; animation-delay: 12s; animation-duration: 9s;"></div>
+    </div>
+
+    <div class="app-layout">
+        <header>
+            <NavMenu />
+        </header>
+
+        <main class="main-content">
+            @Body
+        </main>
+
+    </div>
+
+    <footer class="app-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Column 1: Brand -->
+                <div class="footer-brand-col">
+                    <div class="mb-4 d-flex align-items-center gap-4">
+                        <img src="images/logo-full.png"
+                             alt="Alpha Diagnostics Centre"
+                             class="app-logo"
+                             style="height: 80px; width: auto;"
+                             width="836" height="312" />
+                        <img src="images/anniversary-logo.png" alt="10 Years Quality" style="height: 68px; width: auto; object-fit: contain;" />
+                    </div>
+                    <p class="footer-brand-desc">
+                        Alpha Diagnostics Centre is a trusted diagnostic lab offering a wide range of tests and health check-ups with accurate results and caring service. We aim to make quality diagnostics simple, fast, and affordable for everyone.
+                    </p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="social-icon fb"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon ig"><i class="bi bi-instagram"></i></a>
+                        <a href="https://wa.me/918110899999" class="social-icon wa"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#" class="social-icon ln" target="_blank"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon yt" target="_blank"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Column 2: Quick Links -->
+                <div class="footer-links-col">
+                    <h6 class="footer-col-heading">Quick Links</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <a href="" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Home</a>
+                        <a href="about" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> About Us</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Services</a>
+                        <a href="locations" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Locations</a>
+                        <a href="insights" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Insights</a>
+                        <a href="contact" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Contact</a>
+                    </div>
+                </div>
+
+                <!-- Column 3: Services -->
+                <div class="footer-links-col">
+                    <h6 class="footer-col-heading">Our Services</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Biochemistry</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Hematology</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Immunology</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Microbiology</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> PCR / Molecular</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Histopathology</a>
+                    </div>
+                </div>
+
+                <!-- Column 4: Health Packages -->
+                <div class="footer-links-col">
+                    <h6 class="footer-col-heading">Health Packages</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Basic Health Check-Up</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Master Health Checkup</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Executive Health Checkup</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Well Women Health Checkup</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Cardiac Package</a>
+                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Diabetic Package</a>
+                    </div>
+                </div>
+
+                <!-- Column 5: Contact -->
+                <div class="footer-contact-col">
+                    <h6 class="footer-col-heading">Contact Us</h6>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-geo-alt footer-icon-accent mt-1"></i>
+                            <span class="footer-contact-text">31, Patel Street, Erode – 638 001.</span>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-telephone footer-icon-accent mt-1"></i>
+                            <div>
+                                <div class="footer-contact-text">81108 99999</div>
+                                <div class="footer-contact-text">70944 90917</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-envelope footer-icon-accent"></i>
+                            <span class="footer-contact-text">info@alphadiagnosticscentre.com</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-globe footer-icon-accent"></i>
+                            <span class="footer-contact-text">www.alphadiagnosticscentre.com</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <i class="bi bi-patch-check-fill footer-badge-icon"></i>
+                            <span class="footer-contact-text fw-bold footer-badge-text">NABL Accredited &amp; ICMR Approved</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom-bar pt-4 mt-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <p class="footer-bottom-text">
+                    © 2026 Alpha Diagnostics Centre. All rights reserved.
+                </p>
+                <div class="d-flex align-items-center gap-3 x-small footer-bottom-links">
+                    <span><i class="bi bi-shield-check me-1 footer-badge-icon"></i> NABL Accredited</span>
+                    <span class="opacity-50">|</span>
+                    <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> ICMR Approved</span>
+                    <span class="opacity-50">|</span>
+                    <span>Made with <i class="bi bi-heart-fill mx-1" style="color: #f472b6;"></i> care in Erode</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeState.OnChange += OnThemeChange;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("themeInterop.setTheme", ThemeState.IsDarkMode);
+        }
+    }
+
+    private async void OnThemeChange()
+    {
+        await JS.InvokeVoidAsync("themeInterop.setTheme", ThemeState.IsDarkMode);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeState.OnChange -= OnThemeChange;
+    }
+}

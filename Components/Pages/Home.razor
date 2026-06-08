@@ -1,0 +1,1196 @@
+@page "/"
+@implements IDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Home - Alpha Diagnostics Centre</PageTitle>
+
+<!-- 1. HERO SECTION (EXACT ALIGNMENT WITH REACT REFERENCE) -->
+<section class="position-relative d-flex align-items-center overflow-hidden" style="padding-top: 7rem; padding-bottom: 1rem; min-height: 65vh;">
+    <!-- Reference Animations Background -->
+    <div class="dna-bg" aria-hidden="true">
+        <div class="floating-blob b1"></div>
+        <div class="floating-blob b2"></div>
+        <div class="floating-blob b3"></div>
+        <div class="hero-grid-bg"></div>
+    </div>
+
+    <!-- Particle Simulation -->
+    <div class="position-absolute inset-0 pointer-events-none overflow-hidden" style="z-index: 1;">
+        @for (int i = 0; i < 20; i++)
+        {
+            var left = Random.Shared.Next(0, 100);
+            var delay = Random.Shared.NextDouble() * 8;
+            var duration = 8 + Random.Shared.NextDouble() * 10;
+            var size = 4 + Random.Shared.NextDouble() * 6;
+            <span class="particle" style="left: @(left)%; animation-delay: @(delay)s; animation-duration: @(duration)s; width: @(size)px; height: @(size)px;"></span>
+        }
+    </div>
+
+    <div class="container-fluid position-relative mx-auto px-4" style="max-width: 1280px; z-index: 10;">
+        <!-- Hero Carousel Container -->
+        <div class="hero-carousel-container">
+            @for (int i = 0; i < slides.Count; i++)
+            {
+                var slide = slides[i];
+                var index = i;
+                <div class="hero-slide @(currentSlideIndex == index ? "active" : "")">
+                    <div class="row align-items-center gx-lg-5 gy-5 w-100 m-0">
+                        <!-- Left Column: Content -->
+                        <div class="col-lg-6 col-12 m-0 p-0">
+                            <div class="reveal-badge">
+                                @if (slide.Tagline.Contains("NABL"))
+                                {
+                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-nabl-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                        <i class="bi bi-patch-check-fill text-emerald-icon"></i> @slide.Tagline
+                                    </span>
+                                }
+                                else if (slide.Tagline.Contains("Offer"))
+                                {
+                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-offer-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                        <i class="bi bi-gift-fill text-gold-icon"></i> @slide.Tagline
+                                    </span>
+                                }
+                                else if (slide.Tagline.Contains("Convenient"))
+                                {
+                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-convenient-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                        <i class="bi bi-shield-fill-check text-cyan-icon"></i> @slide.Tagline
+                                    </span>
+                                }
+                                else if (slide.Tagline.Contains("Screening"))
+                                {
+                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-screening-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                        <i class="bi bi-heart-pulse-fill text-purple-icon"></i> @slide.Tagline
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill theme-badge-hero fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                        <i class="bi bi-stars"></i> @slide.Tagline
+                                    </span>
+                                }
+                            </div>
+                            <h1 class="hero-title mt-4 reveal-title" style="min-height: 120px;">
+                                @slide.Title
+                            </h1>
+                            <p class="hero-body-custom reveal-body">
+                                @slide.Body
+                            </p>
+                            
+                            <div class="mt-8 d-flex flex-wrap gap-4 reveal-buttons">
+                                @if (!string.IsNullOrEmpty(slide.Cta1Text))
+                                {
+                                    <a href="@slide.Cta1Link" class="btn-helium btn-helium-primary px-7 py-3 rounded-pill shadow-lg shadow-blue-200 d-flex align-items-center gap-2" style="background: #2563eb; color: #fff;">
+                                        @slide.Cta1Text
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(slide.Cta2Text))
+                                {
+                                    <a href="@slide.Cta2Link" class="btn btn-hero-outline px-7 py-3 rounded-pill d-flex align-items-center justify-content-center fw-700">
+                                        @slide.Cta2Text
+                                    </a>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Image -->
+                        <div class="col-lg-6 d-none d-lg-block">
+                            <div class="position-relative reveal-image">
+                                <!-- DNA Graphic Overlay -->
+                                <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(20%, -20%); z-index: 0;">
+                                    <i class="bi bi-dna text-primary" style="font-size: 140px;"></i>
+                                </div>
+
+                                <!-- Main Image with Tilt effect -->
+                                <div class="slide-image-wrapper tilt rounded-5 overflow-hidden shadow-2xl border-white border-8 position-relative" style="border-radius: 40px !important;">
+                                    <img src="@slide.ImagePath" alt="@slide.Title" class="w-100" style="height: 400px; object-fit: cover;" />
+                                    <div class="position-absolute inset-0" style="background: linear-gradient(to top right, rgba(30, 64, 175, 0.2), transparent);"></div>
+
+                                    <!-- TOP-LEFT floating glass badge -->
+                                    <div class="hero-float-badge-left">
+                                        <div class="hero-badge-icon-left">
+                                            <i class="bi bi-patch-check-fill"></i>
+                                        </div>
+                                        <div class="hero-badge-text-left">
+                                            <span class="hero-badge-sub-left">Certified Lab</span>
+                                            <span class="hero-badge-main-left">NABL Accredited</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Navigation Arrows -->
+            <button class="carousel-nav-btn prev" @onclick="PrevSlide" aria-label="Previous slide">
+                <i class="bi bi-chevron-left fs-5"></i>
+            </button>
+            <button class="carousel-nav-btn next" @onclick="NextSlide" aria-label="Next slide">
+                <i class="bi bi-chevron-right fs-5"></i>
+            </button>
+
+            <!-- Indicators Dots -->
+            <div class="carousel-dots-container">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var index = i;
+                    <button class="carousel-dot @(currentSlideIndex == index ? "active" : "")" @onclick="() => SetSlide(index)" aria-label="Go to slide @(index + 1)"></button>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS CARD SECTION -->
+<section class="position-relative py-3" style="z-index: 15; margin-top: 0.5rem;">
+    <!-- Location Marquee Banner -->
+    <div class="w-100 marquee-banner mb-4 position-relative" style="z-index: 12; margin-top: 0;">
+        <div class="seamless-marquee-container">
+            <div class="seamless-marquee-track">
+                <div class="seamless-marquee-item">
+                    <span>Erode</span> <span class="mx-3 separator">•</span>
+                    <span>Perundurai</span> <span class="mx-3 separator">•</span>
+                    <span>Gobichettipalayam</span> <span class="mx-3 separator">•</span>
+                    <span>Sulur</span> <span class="mx-3 separator">•</span>
+                    <span>Coimbatore</span> <span class="mx-3 separator">•</span>
+                    <span>Karur</span> <span class="mx-3 separator">•</span>
+                    <span>Bhavani</span> <span class="mx-3 separator">•</span>
+                    <span>Anthiyur</span> <span class="mx-3 separator">•</span>
+                    <span>Tiruppur</span> <span class="mx-3 separator">•</span>
+
+                    <span>Erode</span> <span class="mx-3 separator">•</span>
+                    <span>Perundurai</span> <span class="mx-3 separator">•</span>
+                    <span>Gobichettipalayam</span> <span class="mx-3 separator">•</span>
+                    <span>Sulur</span> <span class="mx-3 separator">•</span>
+                    <span>Coimbatore</span> <span class="mx-3 separator">•</span>
+                    <span>Karur</span> <span class="mx-3 separator">•</span>
+                    <span>Bhavani</span> <span class="mx-3 separator">•</span>
+                    <span>Anthiyur</span> <span class="mx-3 separator">•</span>
+                    <span>Tiruppur</span> <span class="mx-3 separator">•</span>
+
+                    <span>Erode</span> <span class="mx-3 separator">•</span>
+                    <span>Perundurai</span> <span class="mx-3 separator">•</span>
+                    <span>Gobichettipalayam</span> <span class="mx-3 separator">•</span>
+                    <span>Sulur</span> <span class="mx-3 separator">•</span>
+                    <span>Coimbatore</span> <span class="mx-3 separator">•</span>
+                    <span>Karur</span> <span class="mx-3 separator">•</span>
+                    <span>Bhavani</span> <span class="mx-3 separator">•</span>
+                    <span>Anthiyur</span> <span class="mx-3 separator">•</span>
+                    <span>Tiruppur</span> <span class="mx-3 separator">•</span>
+                </div>
+                <div class="seamless-marquee-item">
+                    <span>Erode</span> <span class="mx-3 separator">•</span>
+                    <span>Perundurai</span> <span class="mx-3 separator">•</span>
+                    <span>Gobichettipalayam</span> <span class="mx-3 separator">•</span>
+                    <span>Sulur</span> <span class="mx-3 separator">•</span>
+                    <span>Coimbatore</span> <span class="mx-3 separator">•</span>
+                    <span>Karur</span> <span class="mx-3 separator">•</span>
+                    <span>Bhavani</span> <span class="mx-3 separator">•</span>
+                    <span>Anthiyur</span> <span class="mx-3 separator">•</span>
+                    <span>Tiruppur</span> <span class="mx-3 separator">•</span>
+
+                    <span>Erode</span> <span class="mx-3 separator">•</span>
+                    <span>Perundurai</span> <span class="mx-3 separator">•</span>
+                    <span>Gobichettipalayam</span> <span class="mx-3 separator">•</span>
+                    <span>Sulur</span> <span class="mx-3 separator">•</span>
+                    <span>Coimbatore</span> <span class="mx-3 separator">•</span>
+                    <span>Karur</span> <span class="mx-3 separator">•</span>
+                    <span>Bhavani</span> <span class="mx-3 separator">•</span>
+                    <span>Anthiyur</span> <span class="mx-3 separator">•</span>
+                    <span>Tiruppur</span> <span class="mx-3 separator">•</span>
+
+                    <span>Erode</span> <span class="mx-3 separator">•</span>
+                    <span>Perundurai</span> <span class="mx-3 separator">•</span>
+                    <span>Gobichettipalayam</span> <span class="mx-3 separator">•</span>
+                    <span>Sulur</span> <span class="mx-3 separator">•</span>
+                    <span>Coimbatore</span> <span class="mx-3 separator">•</span>
+                    <span>Karur</span> <span class="mx-3 separator">•</span>
+                    <span>Bhavani</span> <span class="mx-3 separator">•</span>
+                    <span>Anthiyur</span> <span class="mx-3 separator">•</span>
+                    <span>Tiruppur</span> <span class="mx-3 separator">•</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4" style="max-width: 1280px;">
+        <div class="feature-card-premium stats-premium-strip lift d-flex justify-content-between align-items-center flex-wrap gap-4 py-3 px-4 reveal-up" style="transition-delay: 0.3s; height: auto; border-radius: 20px;">
+            <div class="hstat-item">
+                <div class="hstat-value">10+</div>
+                <div class="hstat-label">Years Service</div>
+            </div>
+            <div class="hstat-item">
+                <div class="hstat-value">50K+</div>
+                <div class="hstat-label">Happy Patients & Counting</div>
+            </div>
+            <div class="hstat-item">
+                <div class="hstat-value">24/7</div>
+                <div class="hstat-label">Services</div>
+            </div>
+            <div class="hstat-item">
+                <div class="hstat-value">4 Hrs</div>
+                <div class="hstat-label">Report Time</div>
+            </div>
+            <div class="hstat-item">
+                <div class="hstat-value">15+</div>
+                <div class="hstat-label">Centres</div>
+            </div>
+            <div class="hstat-item">
+                <div class="hstat-value">500+</div>
+                <div class="hstat-label">Tests</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOME COLLECTION CTA STRIP -->
+<section class="home-collection-strip-section py-2 reveal-up" style="transition-delay: 0.4s;">
+    <div class="container mx-auto px-4" style="max-width: 1280px;">
+        <div class="home-collection-strip-card d-flex align-items-center justify-content-between flex-wrap gap-4 py-3 px-5">
+            <div class="d-flex align-items-center gap-4 flex-wrap text-start">
+                <!-- Icon box -->
+                <div class="collection-icon-box d-none d-md-flex">
+                    <i class="bi bi-house-heart-fill"></i>
+                </div>
+                <div>
+                    <h2 class="collection-title mb-1">Book Your Blood Test at Home Today</h2>
+                    <p class="collection-body mb-0">Open 24 Hours & Sunday Available— call us or book online in minutes.</p>
+                </div>
+            </div>
+            <div class="ms-auto ms-md-0">
+                <a href="tel:8110899999" class="btn-helium btn-helium-primary collection-cta-btn px-6 py-3 rounded-pill d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-telephone-fill"></i> Call Us Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DIAGNOSTIC SERVICES SECTION -->
+<section class="diagnostic-services-section py-5 position-relative overflow-hidden">
+    <div class="container mx-auto px-4 position-relative" style="max-width: 1280px; z-index: 2;">
+        <!-- Section Title -->
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2.5rem, 5vw, 4rem);">Our Services</h2>
+            <div class="badge-excellence mb-3 d-inline-block">Diagnostic Services</div>
+        </div>
+
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end mb-5 gap-3 reveal-up">
+            <div>
+                <h2 class="services-main-title fw-800 m-0">
+                    Everything You Need — 500+ Tests <span class="italic-serif text-emerald">under one roof</span>
+                </h2>
+            </div>
+            <div class="flex-shrink-0">
+                <a href="services" class="view-all-services-link fw-bold d-inline-flex align-items-center gap-2">
+                    View all services <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="row g-4 justify-content-center">
+            <!-- 1. Blood Tests -->
+            <div class="col-lg-4 col-md-6 reveal-up">
+                <div class="service-premium-card card-red-gradient h-100 d-flex flex-column justify-content-between p-4">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="service-icon-box-small theme-red">
+                                <i class="bi bi-droplet-half"></i>
+                            </div>
+                            <span class="badge-premium-pill theme-red">300+ TESTS</span>
+                        </div>
+                        <div class="card-accent-label theme-red mb-2">
+                            <span class="accent-line"></span> PATHOLOGY TESTS
+                        </div>
+                        <h3 class="service-card-title mb-3">Blood Tests</h3>
+                        <p class="service-card-body mb-4">
+                            Comprehensive blood testing for sugar (glucose/HbA1c), cholesterol, thyroid function (TSH/T3/T4), vitamins (B12/D3), liver function (LFT), kidney function (KFT), complete blood count (CBC), and more — processed with automated NABL-accredited accuracy.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="service-tags-container d-flex flex-wrap gap-2 mb-4">
+                            <span class="tag-pill">Glucose/HbA1c</span>
+                            <span class="tag-pill">Cholesterol</span>
+                            <span class="tag-pill">Thyroid TSH</span>
+                            <span class="tag-pill">Vitamins B12/D3</span>
+                            <span class="tag-pill">LFT/KFT</span>
+                        </div>
+                        <a href="services" class="service-explore-link d-inline-flex align-items-center gap-2 fw-bold">
+                            Explore <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Full Body Check-Up Packages -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                <div class="service-premium-card card-teal-gradient h-100 d-flex flex-column justify-content-between p-4">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="service-icon-box-small theme-teal">
+                                <i class="bi bi-shield-plus"></i>
+                            </div>
+                            <span class="badge-premium-pill theme-teal">50+ TESTS</span>
+                        </div>
+                        <div class="card-accent-label theme-teal mb-2">
+                            <span class="accent-line"></span> PREVENTIVE CARE
+                        </div>
+                        <h3 class="service-card-title mb-3">Full Body Check-Up Packages</h3>
+                        <p class="service-card-body mb-4">
+                            One affordable package, 50+ tests — covering your blood, organs, hormones, and vital markers. Know your complete health status in a single visit, with your report ready in 4 hours.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="service-tags-container d-flex flex-wrap gap-2 mb-4">
+                            <span class="tag-pill">Master Checkup</span>
+                            <span class="tag-pill">Executive Profile</span>
+                            <span class="tag-pill">Complete Screening</span>
+                        </div>
+                        <a href="services" class="service-explore-link d-inline-flex align-items-center gap-2 fw-bold">
+                            Explore <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Home Sample Collection -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                <div class="service-premium-card card-blue-gradient h-100 d-flex flex-column justify-content-between p-4">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="service-icon-box-small theme-blue">
+                                <i class="bi bi-house-heart-fill"></i>
+                            </div>
+                            <span class="badge-premium-pill theme-blue">HOME COLLECTION</span>
+                        </div>
+                        <div class="card-accent-label theme-blue mb-2">
+                            <span class="accent-line"></span> CONVENIENT CARE
+                        </div>
+                        <h3 class="service-card-title mb-3">Home Sample Collection</h3>
+                        <p class="service-card-body mb-4">
+                            Our certified phlebotomists come to your home or office. Book online or by phone — we arrive at your preferred time, collect your sample using sterile equipment, and send your report to your WhatsApp.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="service-tags-container d-flex flex-wrap gap-2 mb-4">
+                            <span class="tag-pill">Doorstep Visit</span>
+                            <span class="tag-pill">WhatsApp Reports</span>
+                            <span class="tag-pill">Sterile Equipment</span>
+                        </div>
+                        <a href="services" class="service-explore-link d-inline-flex align-items-center gap-2 fw-bold">
+                            Explore <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. WHY CHOOSE ALPHA (PREMIUM DESIGN) -->
+<section class="position-relative overflow-hidden py-5">
+    <!-- Reference Animations Background -->
+    <div class="dna-bg" aria-hidden="true">
+        <div class="floating-blob b1" style="top: 20%; left: -5%;"></div>
+        <div class="floating-blob b2" style="bottom: 10%; right: -5%;"></div>
+        <div class="grid-pattern opacity-25"></div>
+    </div>
+
+    <div class="container py-5 position-relative" style="z-index: 1;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-excellence mb-3 d-inline-block">Excellence in Diagnostics</div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2.5rem, 5vw, 4rem);">Why Choose Alpha</h2>
+            <p class="text-secondary mx-auto mb-5" style="max-width: 700px; font-size: 1.1rem; line-height: 1.6;">
+                Combining cutting-edge technology with compassionate care to deliver clinical excellence for Erode and beyond.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- NABL & ICMR Approved -->
+            <div class="col-lg-4 col-md-6 reveal-up">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-blue">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">NABL & ICMR Approved</h4>
+                    <p class="text-secondary mb-0">
+                        Adhering to stringent international protocols to ensure the highest standards of quality and accuracy.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Barcoded & Automated -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-blue">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Barcoded & Automated</h4>
+                    <p class="text-secondary mb-0">
+                        Fully computerized, bidirectionally interfaced systems that eliminate manual error for precision results.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 10+ Years of Service -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-purple">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">10+ Years of Service</h4>
+                    <p class="text-secondary mb-0">
+                        A decade of trusted partnerships with leading healthcare providers and thousands of families.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Rapid Turnaround -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.3s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-cyan">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Rapid Turnaround</h4>
+                    <p class="text-secondary mb-0">
+                        Industry-leading speed with routine test results delivered within 4 hours for faster diagnosis.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Digital Reports -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.4s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-red">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Digital Reports</h4>
+                    <p class="text-secondary mb-0">
+                        Seamless access to your medical records via secure online portal, email, or instant WhatsApp messaging.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Home Collection -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.5s;">
+                <div class="feature-card-premium lift">
+                    <div class="icon-box-premium orb-cyan">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+                    <h4 class="fw-700 mb-3">Home Collection</h4>
+                    <p class="text-secondary mb-0">
+                        Professional sample collection services at your doorstep or hospital for maximum convenience.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3. HOW IT WORKS (HORIZONTAL PREMIUM PROCESS DESIGN) -->
+<section id="how-it-works" class="py-5 position-relative overflow-hidden">
+    <div class="container py-4 position-relative" style="z-index: 1;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-excellence mb-3 d-inline-block">The Alpha Process</div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4.5vw, 3rem);">How It Works</h2>
+            <h3 class="fw-700 mb-3" style="font-size: clamp(1.3rem, 2.5vw, 1.7rem); color: var(--text-primary); opacity: 0.9;">
+                Get Your Lab Tests Done in <span class="text-highlight-timeline">Simple 4 Steps</span>
+            </h3>
+            <p class="text-secondary mx-auto mb-5" style="max-width: 800px; font-size: 1.1rem; line-height: 1.6;">
+                From booking to receiving your report, we have made the entire diagnostic process simple, transparent, and stress-free.
+            </p>
+        </div>
+
+        <div class="process-timeline-container">
+            <!-- Continuous horizontal line for large devices -->
+            <div class="process-connecting-line d-none d-lg-block"></div>
+
+            <!-- Visual breakpoint nodes on the connecting line -->
+            <div class="process-breakpoint-node node-step-1 d-none d-lg-flex" style="left: 25%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+            <div class="process-breakpoint-node node-step-2 d-none d-lg-flex" style="left: 50%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+            <div class="process-breakpoint-node node-step-3 d-none d-lg-flex" style="left: 75%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+
+            <div class="row g-4 position-relative" style="z-index: 1;">
+                <!-- Step 1 -->
+                <div class="col-lg-3 col-md-6 text-center process-step reveal-up">
+                    <div class="process-icon-wrapper bg-blue mx-auto mb-4">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 01</div>
+                    <h4 class="process-step-title mb-3">Choose Your Test</h4>
+                    <p class="process-step-desc text-secondary">
+                        Browse our comprehensive catalog and select the test or health package that fits your needs.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="col-lg-3 col-md-6 text-center process-step reveal-up" style="transition-delay: 0.1s;">
+                    <div class="process-icon-wrapper bg-emerald mx-auto mb-4">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 02</div>
+                    <h4 class="process-step-title mb-3">Book Online</h4>
+                    <p class="process-step-desc text-secondary">
+                        Schedule via WhatsApp, our portal, or the helpline — pick a slot within minutes at your convenience.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="col-lg-3 col-md-6 text-center process-step reveal-up" style="transition-delay: 0.2s;">
+                    <div class="process-icon-wrapper bg-logo-purple mx-auto mb-4">
+                        <i class="bi bi-house-door-fill"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 03</div>
+                    <h4 class="process-step-title mb-3">Sample Collection</h4>
+                    <p class="process-step-desc text-secondary">
+                        A certified phlebotomist arrives at your door with sterile equipment for painless, safe collection.
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="col-lg-3 col-md-6 text-center process-step reveal-up" style="transition-delay: 0.3s;">
+                    <div class="process-icon-wrapper bg-dark mx-auto mb-4">
+                        <i class="bi bi-file-text-fill"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 04</div>
+                    <h4 class="process-step-title mb-3">Get Results</h4>
+                    <p class="process-step-desc text-secondary">
+                        Receive clinically validated digital reports on WhatsApp and email within 24 hours.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="text-center mt-5 reveal-up" style="transition-delay: 0.4s;">
+            <a href="contact" class="btn-helium btn-helium-primary px-5 py-3 rounded-pill shadow-lg">
+                Book Our Alpha Diagnostics Centre
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 4. ALPHA ADVANTAGE COMPARISON -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title">The Alpha Advantage</h2>
+            <p class="text-secondary">Why leading hospitals and patients choose us over traditional laboratories.</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <!-- Pros -->
+            <div class="col-lg-5 reveal-up">
+                <div class="glass-card-comparison h-100">
+                    <div class="mb-4">
+                        <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 small mb-2">Alpha Excellence</span>
+                        <h4 class="fw-bold mb-0">Alpha Diagnostics</h4>
+                    </div>
+                    <ul class="comparison-list">
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>NABL-accredited international quality</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>Fully automated & barcoded processes</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>Advanced digital dashboard & reports</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>AI-driven accuracy & data analytics</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-check-lg icon-green"></i>
+                            <span>Latest automated clinical solutions</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cons -->
+            <div class="col-lg-5 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card-comparison h-100">
+                    <div class="mb-4">
+                        <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary px-3 py-2 small mb-2">Market Standard</span>
+                        <h4 class="opacity-50 fw-bold mb-0">Traditional Labs</h4>
+                    </div>
+                    <ul class="comparison-list">
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Limited quality standard compliance</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Rigid and manual testing processes</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Basic or paper-based reporting</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Lack of advanced analytics</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="bi bi-x-lg icon-red opacity-50"></i>
+                            <span>Outdated and complex turnaround</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="py-5 position-relative overflow-hidden">
+    <div class="container py-4 position-relative" style="z-index: 1;">
+        <!-- Centered Header matching How It Works -->
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4.5vw, 3rem);">Patient ShoutOuts</h2>
+            <h3 class="fw-700 mb-3" style="font-size: clamp(1.3rem, 2.5vw, 1.7rem); color: var(--text-primary); opacity: 0.9;">
+                Trusted by <span class="italic-serif text-highlight-timeline">thousands</span> of families
+            </h3>
+            <p class="text-secondary mx-auto mb-4" style="max-width: 700px; font-size: 1rem; line-height: 1.6;">
+                We’d be grateful if you could share your experience with Alpha Diagnostics Centre on Google — your feedback helps us improve.
+            </p>
+            
+            <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mt-4">
+                <!-- Google Rating Badge -->
+                <div class="google-badge d-flex align-items-center px-3 py-2 rounded-pill">
+                    <i class="bi bi-star-fill text-warning me-2"></i>
+                    <span class="small fw-700">4.3 / 5 on Google</span>
+                </div>
+                <!-- Google Write Review Button -->
+                <a href="https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83VSrk" target="_blank" class="btn-google-review d-flex align-items-center px-4 py-2 rounded-pill transition">
+                    <i class="bi bi-google me-2 text-danger"></i>
+                    <span class="small fw-700">Give review on Google</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Horizontal Scrolling Testimonials with Controls -->
+        <div class="position-relative mt-2 reveal-up">
+            <!-- Left Navigation Button -->
+            <button class="btn btn-emerald text-white rounded-circle position-absolute top-50 start-0 translate-middle-y z-3 shadow-lg d-none d-md-flex align-items-center justify-content-center" style="width: 45px; height: 45px; margin-left: -15px; border: 2px solid white;" onclick="window.testimonialScroller && window.testimonialScroller.scroll(-1)" aria-label="Scroll left">
+                <i class="bi bi-chevron-left fs-5"></i>
+            </button>
+
+            <div id="testimonials-scroll-container" class="d-flex flex-nowrap overflow-x-auto gap-4 pb-4 px-2 hide-scrollbar" style="-webkit-overflow-scrolling: touch;">
+                
+                @for (int loop = 0; loop < 2; loop++)
+                {
+                    <!-- Review 1 (Standard Card) -->
+                    <div class="flex-shrink-0" style="width: 320px;">
+                        <div class="testimonial-item-card h-100 p-4 rounded-4 d-flex flex-column justify-content-between position-relative overflow-hidden">
+                            <div class="quote-mark-overlay"><i class="bi bi-quote"></i></div>
+                            
+                            <div class="position-relative" style="z-index: 1;">
+                                <div class="d-flex gap-1 text-warning mb-3" style="font-size: 0.85rem;">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <p class="text-secondary-theme mb-4" style="font-size: 0.9rem;">
+                                    "Hats off to mr. Tamilselvan for his dedicated work. No pain calm and quiet. Stay blessed"
+                                </p>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3 position-relative" style="z-index: 1;">
+                                <div class="testimonial-avatar bg-emerald-light text-emerald fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                    B
+                                </div>
+                                <div>
+                                    <h6 class="fw-700 mb-0" style="font-size: 0.9rem;">Bhuvaneshwari K.</h6>
+                                    <span class="small text-secondary" style="font-size: 0.75rem;">Patient · Erode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 2 (Standard Card) -->
+                    <div class="flex-shrink-0" style="width: 320px;">
+                        <div class="testimonial-item-card h-100 p-4 rounded-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex gap-1 text-warning" style="font-size: 0.85rem;">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <i class="bi bi-quote fs-4 text-muted opacity-25"></i>
+                                </div>
+                                <p class="text-secondary-theme mb-4" style="font-size: 0.9rem;">
+                                    "A very good laboratory offering doorstep sample collection and they deliver reports via email too. Very good quality maintained."
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="testimonial-avatar bg-emerald-light text-emerald fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                    R
+                                </div>
+                                <div>
+                                    <h6 class="fw-700 mb-0" style="font-size: 0.9rem;">Rajeev Nandagopal</h6>
+                                    <span class="small text-secondary" style="font-size: 0.75rem;">Local Guide · Erode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3 (Standard Card) -->
+                    <div class="flex-shrink-0" style="width: 320px;">
+                        <div class="testimonial-item-card h-100 p-4 rounded-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex gap-1 text-warning" style="font-size: 0.85rem;">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <i class="bi bi-quote fs-4 text-muted opacity-25"></i>
+                                </div>
+                                <p class="text-secondary-theme mb-4" style="font-size: 0.9rem;">
+                                    "You can avail door step service. Once the tests are over they will send the report directly to you without any hassle. One of the trusted and reputed diagnostic center.<br/><br/>Pros-<br/>- Easy to reach<br/>- location<br/>- facilities"
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="testimonial-avatar bg-emerald-light text-emerald fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                    A
+                                </div>
+                                <div>
+                                    <h6 class="fw-700 mb-0" style="font-size: 0.9rem;">Aswin Sivaprakash</h6>
+                                    <span class="small text-secondary" style="font-size: 0.75rem;">Local Guide · Erode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 4 (Standard Card) -->
+                    <div class="flex-shrink-0" style="width: 320px;">
+                        <div class="testimonial-item-card h-100 p-4 rounded-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex gap-1 text-warning" style="font-size: 0.85rem;">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <i class="bi bi-quote fs-4 text-muted opacity-25"></i>
+                                </div>
+                                <p class="text-secondary-theme mb-4" style="font-size: 0.9rem;">
+                                    "Easy to reach flexible and great staff. Never looked back since my first test here."
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="testimonial-avatar bg-emerald-light text-emerald fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                    P
+                                </div>
+                                <div>
+                                    <h6 class="fw-700 mb-0" style="font-size: 0.9rem;">Prakash K</h6>
+                                    <span class="small text-secondary" style="font-size: 0.75rem;">Local Guide · Erode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 5 (Standard Card) -->
+                    <div class="flex-shrink-0" style="width: 320px;">
+                        <div class="testimonial-item-card h-100 p-4 rounded-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex gap-1 text-warning" style="font-size: 0.85rem;">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <i class="bi bi-quote fs-4 text-muted opacity-25"></i>
+                                </div>
+                                <p class="text-secondary-theme mb-4" style="font-size: 0.9rem;">
+                                    "Best diagnostic center in erode. Fast, reliable, and very professional."
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="testimonial-avatar bg-emerald-light text-emerald fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                    A
+                                </div>
+                                <div>
+                                    <h6 class="fw-700 mb-0" style="font-size: 0.9rem;">Alexander D A</h6>
+                                    <span class="small text-secondary" style="font-size: 0.75rem;">Local Guide · Erode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 6 (Standard Card) -->
+                    <div class="flex-shrink-0" style="width: 320px;">
+                        <div class="testimonial-item-card h-100 p-4 rounded-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex gap-1 text-warning" style="font-size: 0.85rem;">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <i class="bi bi-quote fs-4 text-muted opacity-25"></i>
+                                </div>
+                                <p class="text-secondary-theme mb-4" style="font-size: 0.9rem;">
+                                    "Alpha Diagnostics Centre is an initiative by a team of quality-oriented doctors. Having a laboratory of international standards serving Erode saves valuable time.<br/><br/>It is the most advanced Barcoded, Interfaced, Automated, State-of-the-art Laboratory in Erode, designed to eliminate human error."
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="testimonial-avatar bg-emerald-light text-emerald fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px; font-size: 0.9rem;">
+                                    F
+                                </div>
+                                <div>
+                                    <h6 class="fw-700 mb-0" style="font-size: 0.9rem;">Freshdews India</h6>
+                                    <span class="small text-secondary" style="font-size: 0.75rem;">Local Guide · Erode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <!-- Right Navigation Button -->
+            <button class="btn btn-emerald text-white rounded-circle position-absolute top-50 end-0 translate-middle-y z-3 shadow-lg d-none d-md-flex align-items-center justify-content-center" style="width: 45px; height: 45px; margin-right: -15px; border: 2px solid white;" onclick="window.testimonialScroller && window.testimonialScroller.scroll(1)" aria-label="Scroll right">
+                <i class="bi bi-chevron-right fs-5"></i>
+            </button>
+        </div>
+
+        <!-- Review CTA -->
+        <div class="text-center mt-5 reveal-up mx-auto" style="max-width: 600px; border: 2px dashed rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.02); padding: 2rem; border-radius: 1.5rem;">
+            <i class="bi bi-chat-right-heart fs-1 text-emerald mb-3 d-block opacity-75"></i>
+            <h5 class="fw-700 text-primary-theme mb-2">We value your story!</h5>
+            <p class="text-secondary-theme mb-4 mx-auto" style="font-size: 0.95rem; line-height: 1.6;">
+                Had a great diagnostics experience with Alpha Diagnostics Centre? Share it on Google to help others.
+            </p>
+            <a href="https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83VSrk" target="_blank" class="btn-google-review d-inline-flex align-items-center justify-content-center px-4 py-2 rounded-pill transition" style="text-decoration: none;">
+                <i class="bi bi-google me-2 text-danger"></i> Write a Google Review
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 4.5. PREMIUM CTA SECTION (Reference card) -->
+<section class="py-5 position-relative overflow-hidden">
+    <div class="container position-relative" style="z-index: 10;">
+        <div class="reveal-up cta-card p-4 p-md-5 rounded-5 overflow-hidden position-relative">
+            <!-- Background mesh grid for the card -->
+            <div class="cta-card-bg"></div>
+
+            <div class="row align-items-center gy-5 position-relative" style="z-index: 2;">
+                <!-- Left Content -->
+                <div class="col-lg-7 text-white">
+                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-cta mb-4">
+                        <span class="live-dot-green"></span> Open 24/7 & Sunday Available
+                    </span>
+                    <h2 class="fw-800 text-white mb-4 cta-heading" style="font-size: clamp(1.8rem, 3.8vw, 2.8rem); line-height: 1.25;">
+                        Committed to accurate diagnostics, <span class="text-highlight-green">empowering healthier lives.</span>
+                    </h2>
+                    <p class="text-white opacity-85 mb-4" style="font-size: clamp(0.95rem, 1.2vw, 1.1rem); line-height: 1.7; max-width: 580px;">
+                        Accurate results, compassionate care, and home collection — empowering families to take control of their health every day.
+                    </p>
+                    
+                    <!-- Checklist Grid -->
+                    <div class="row g-3 mt-4 pt-2">
+                        <div class="col-sm-6 d-flex align-items-center gap-2 text-white">
+                            <i class="bi bi-house-heart-fill text-emerald-icon fs-5"></i>
+                            <span class="small fw-600">Home sample collection</span>
+                        </div>
+                        <div class="col-sm-6 d-flex align-items-center gap-2 text-white">
+                            <i class="bi bi-patch-check-fill text-emerald-icon fs-5"></i>
+                            <span class="small fw-600">NABL certified labs</span>
+                        </div>
+                        <div class="col-sm-6 d-flex align-items-center gap-2 text-white">
+                            <i class="bi bi-clock-history text-emerald-icon fs-5"></i>
+                            <span class="small fw-600">Results in 4 hours</span>
+                        </div>
+                        <div class="col-sm-6 d-flex align-items-center gap-2 text-white">
+                            <i class="bi bi-person-heart text-emerald-icon fs-5"></i>
+                            <span class="small fw-600">Expert doctor review included</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Action Glass Box -->
+                <div class="col-lg-5">
+                    <div class="cta-glass-box p-4 p-md-5 rounded-4 text-white">
+                        <h4 class="fw-700 text-white mb-2" style="font-size: 1.3rem;">Ready to get started?</h4>
+                        <p class="text-white opacity-75 small mb-4">Schedule a home collection in under 2 minutes.</p>
+                        
+                        <div class="d-flex flex-column gap-3 mb-4">
+                            <a href="contact" class="btn btn-green-cta py-3 px-4 rounded-pill d-flex align-items-center justify-content-center gap-2 fw-700">
+                                <i class="bi bi-calendar-event-fill"></i> Book Home Service
+                            </a>
+                            <a href="services" class="btn btn-outline-white-cta py-3 px-4 rounded-pill d-flex align-items-center justify-content-center fw-700">
+                                View All Tests & Packages
+                            </a>
+                        </div>
+                        
+                        <p class="text-center text-white opacity-60 m-0" style="font-size: 0.78rem;">
+                            No prepayment required · Cancel anytime
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5. FREQUENTLY ASKED QUESTIONS -->
+<section id="faq" class="py-5 position-relative overflow-hidden">
+    <div class="container py-5 position-relative" style="z-index: 2;">
+        <div class="row gy-5 gx-lg-5">
+            <!-- Left Column: Contact info and help cards -->
+            <div class="col-lg-5 reveal-up">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span style="width: 28px; height: 2px; background-color: #9ac6a5; display: inline-block;"></span>
+                    <span class="text-logo-green fw-800 text-uppercase tracking-wider" style="letter-spacing: 2px; font-size: 0.85rem;">FAQ</span>
+                </div>
+                
+                <h2 class="fw-800 mb-4 text-primary-theme" style="font-size: clamp(2.2rem, 3.5vw, 2.8rem); line-height: 1.15;">
+                    Common <span style="color: #9ac6a5; font-style: italic; font-family: 'Playfair Display', Georgia, serif;">questions</span> answered
+                </h2>
+                
+                <p class="text-secondary-theme mb-5" style="max-width: 440px; font-size: 1.05rem; line-height: 1.7;">
+                    Can't find what you're looking for? Our customer support and diagnostics help team is available 24/7.
+                </p>
+                
+                <!-- Contact Cards -->
+                <div class="d-flex flex-column gap-4">
+                    <!-- WhatsApp Card -->
+                    <a href="https://wa.me/918110899999" target="_blank" class="faq-contact-card p-3 rounded-4 d-flex align-items-center gap-4 text-decoration-none">
+                        <div class="faq-contact-icon-wrapper d-flex align-items-center justify-content-center rounded-circle" style="width: 54px; height: 54px; background: rgba(37, 211, 102, 0.1); color: #25D366; font-size: 1.5rem;">
+                            <i class="bi bi-whatsapp"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-700 text-primary-theme mb-1" style="font-size: 1.1rem; letter-spacing: -0.2px;">WhatsApp Us</h5>
+                            <span class="text-secondary-theme small">+91 81108 99999</span>
+                        </div>
+                    </a>
+                    
+                    <!-- Helpline Card -->
+                    <a href="tel:8110899999" class="faq-contact-card call-card p-3 rounded-4 d-flex align-items-center gap-4 text-decoration-none">
+                        <div class="faq-contact-icon-wrapper d-flex align-items-center justify-content-center rounded-circle" style="width: 54px; height: 54px; background: rgba(124, 58, 237, 0.1); color: #9b95c3; font-size: 1.5rem;">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-700 text-primary-theme mb-1" style="font-size: 1.1rem; letter-spacing: -0.2px;">Toll-Free Helpline</h5>
+                            <span class="text-secondary-theme small">81108 99999 / 70944 90917 · 24/7</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Right Column: Accordion -->
+            <div class="col-lg-7 reveal-up">
+                <div class="faq-accordion">
+                    @foreach (var faq in faqs)
+                    {
+                        var index = faqs.IndexOf(faq);
+                        <div class="faq-item @(activeIndex == index ? "active" : "")">
+                            <button class="faq-trigger" @onclick="() => ToggleFaq(index)">
+                                <span>@faq.Question</span>
+                                <i class="bi bi-chevron-down faq-icon"></i>
+                            </button>
+                            <div class="faq-content">
+                                <p style="margin-bottom: 0;">@faq.Answer</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private int activeIndex = 0;
+    private int currentSlideIndex = 0;
+    private System.Threading.CancellationTokenSource? _cts;
+
+    private class FaqItem
+    {
+        public string Question { get; set; } = "";
+        public string Answer { get; set; } = "";
+    }
+
+    private class SlideItem
+    {
+        public string Tagline { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string Body { get; set; } = "";
+        public string ImagePath { get; set; } = "";
+        public string Cta1Text { get; set; } = "";
+        public string Cta1Link { get; set; } = "";
+        public string Cta2Text { get; set; } = "";
+        public string Cta2Link { get; set; } = "";
+    }
+
+    private List<SlideItem> slides = new()
+    {
+        new SlideItem
+        {
+            Tagline = "NABL Accredited",
+            Title = "Trusted Diagnostic Centre Since 2015",
+            Body = "Know what is happening inside your body — before it becomes a problem. A quick blood test today can prevent serious health complications tomorrow. NABL-accredited quality, honest pricing, and results you can trust.",
+            ImagePath = "images/hero-lab.png",
+            Cta1Text = "Book a Test Now ↗",
+            Cta1Link = "contact",
+            Cta2Text = "View Health Packages",
+            Cta2Link = "services"
+        },
+        new SlideItem
+        {
+            Tagline = "Limited Time Offer",
+            Title = "Alpha Diagnostics Centre Special Offers for this Month — June 2026",
+            Body = "Prioritize your wellness this June with exclusive, limited-time discounts on Alpha Diagnostics Centre full-body checkups—safe home collection included!",
+            ImagePath = "images/lab-process.png",
+            Cta1Text = "Book Your Tests Now ↗",
+            Cta1Link = "contact",
+            Cta2Text = "View Packages",
+            Cta2Link = "services"
+        },
+        new SlideItem
+        {
+            Tagline = "Convenient & Safe",
+            Title = "Home Blood Sample Collection — We Come to You",
+            Body = "No travel. No queues. Our trained phlebotomists visit your home at a time that suits you, collect your blood sample safely, and deliver your report directly to your WhatsApp — fast, hygienic, and hassle-free.",
+            ImagePath = "images/home-visit.png",
+            Cta1Text = "Book Home Collection ↗",
+            Cta1Link = "contact",
+            Cta2Text = "View Packages",
+            Cta2Link = "services"
+        },
+        new SlideItem
+        {
+            Tagline = "Complete Screening",
+            Title = "Affordable Full Body Health Packages for the Whole Family",
+            Body = "Our all-in-one health packages screen your blood sugar, liver function, kidney health, heart health, thyroid levels, and more — all in a single visit. Get your complete health report within 4 hours.",
+            ImagePath = "images/booking-step.png",
+            Cta1Text = "View Health Packages ↗",
+            Cta1Link = "services",
+            Cta2Text = "",
+            Cta2Link = ""
+        },
+        new SlideItem
+        {
+            Tagline = "NABL Accredited Precision",
+            Title = "Advanced AI Diagnostics Centre You Can Rely On",
+            Body = "Barcoded, automated testing with NABL-accredited precision. Every sample is handled by qualified professionals and processed with strict quality controls — because your health results must be accurate.",
+            ImagePath = "images/digital-report.png",
+            Cta1Text = "View Packages ↗",
+            Cta1Link = "services",
+            Cta2Text = "Call Us Now",
+            Cta2Link = "contact"
+        }
+    };
+
+    private List<FaqItem> faqs = new()
+    {
+        new FaqItem { 
+            Question = "Do I need a doctor's prescription for tests?", 
+            Answer = "In most cases, we advise you to bring a doctor's prescription, especially for specialized tests. For basic health packages, you can book directly, but we still recommend sharing your reports with a doctor for proper advice." 
+        },
+        new FaqItem { 
+            Question = "How will I get my reports?", 
+            Answer = "You can download your reports directly from our secure online portal, receive them via email, or have them sent to your WhatsApp number for instant access." 
+        },
+        new FaqItem { 
+            Question = "How long will it take to get my results?", 
+            Answer = "Routine test results are typically delivered within 4 hours. Specialized tests may take longer, and our team will inform you of the expected timeline during sample collection." 
+        },
+        new FaqItem { 
+            Question = "Are your tests affordable?", 
+            Answer = "Yes, we offer competitive pricing and various health packages designed to provide high-quality diagnostic services at accessible rates." 
+        },
+        new FaqItem { 
+            Question = "Is my data kept confidential?", 
+            Answer = "Absolutely. We prioritize patient privacy and use secure, encrypted systems to ensure that your medical data is handled with the highest level of confidentiality." 
+        }
+    };
+
+    private void ToggleFaq(int index)
+    {
+        if (activeIndex == index)
+            activeIndex = -1;
+        else
+            activeIndex = index;
+    }
+
+    private void StartAutoplay()
+    {
+        _cts?.Cancel();
+        _cts = new System.Threading.CancellationTokenSource();
+        var token = _cts.Token;
+        _ = Task.Run(async () =>
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(6000, token);
+                if (token.IsCancellationRequested) break;
+                
+                await InvokeAsync(() =>
+                {
+                    NextSlide();
+                    StateHasChanged();
+                });
+            }
+        }, token);
+    }
+
+    private void NextSlide()
+    {
+        currentSlideIndex = (currentSlideIndex + 1) % slides.Count;
+    }
+
+    private void PrevSlide()
+    {
+        currentSlideIndex = (currentSlideIndex - 1 + slides.Count) % slides.Count;
+    }
+
+    private void SetSlide(int index)
+    {
+        currentSlideIndex = index;
+        StartAutoplay();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+            await JS.InvokeVoidAsync("testimonialScroller.init");
+            StartAutoplay();
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+}

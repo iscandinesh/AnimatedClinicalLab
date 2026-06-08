@@ -1,0 +1,125 @@
+.hero-section {
+    min-height: 90vh;
+    padding: 80px 0;
+    background: radial-gradient(circle at 80% 20%, rgba(13, 202, 240, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(10, 88, 202, 0.05) 0%, transparent 40%);
+}
+
+.gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge-pill {
+    background: var(--bg-white);
+    border: 1px solid var(--primary-light);
+    border-radius: 50px;
+    font-size: 0.9rem;
+}
+
+.hero-visual {
+    perspective: 1000px;
+    min-height: 500px;
+}
+
+.medical-shape-1 {
+    position: absolute;
+    top: 10%;
+    right: 15%;
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, rgba(10, 88, 202, 0.1), rgba(13, 202, 240, 0.2));
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    box-shadow: inset 10px 10px 50px rgba(255,255,255,0.5);
+    z-index: 1;
+}
+
+.medical-shape-2 {
+    position: absolute;
+    bottom: 20%;
+    right: 30%;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 87, 34, 0.05));
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    z-index: 1;
+}
+
+.medical-shape-3 {
+    position: absolute;
+    top: 40%;
+    right: 5%;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, rgba(10, 88, 202, 0.2), transparent);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.floating-card {
+    position: absolute;
+    padding: 15px 25px;
+}
+
+.card-1 {
+    top: 25%;
+    right: 40%;
+    animation: float 5s ease-in-out infinite;
+}
+
+.card-2 {
+    bottom: 35%;
+    right: 5%;
+    animation: float 7s ease-in-out infinite reverse;
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+}
+
+.feature-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 10px 20px rgba(10, 88, 202, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-wrapper {
+    transform: translateY(-10px) rotate(10deg);
+}
+
+.feature-icon {
+    font-size: 2rem;
+}
+
+.bg-teal {
+    background: linear-gradient(135deg, #20c997, #0DCAF0);
+    box-shadow: 0 10px 20px rgba(32, 201, 151, 0.2);
+}
+
+.bg-purple {
+    background: linear-gradient(135deg, #6f42c1, #d63384);
+    box-shadow: 0 10px 20px rgba(111, 66, 193, 0.2);
+}
+
+.action-section {
+    border-radius: var(--radius-lg);
+    margin-left: 15px;
+    margin-right: 15px;
+    overflow: hidden;
+}

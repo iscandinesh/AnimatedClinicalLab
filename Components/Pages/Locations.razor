@@ -1,0 +1,447 @@
+@page "/locations"
+@inject IJSRuntime JS
+
+<PageTitle>Our Locations - Alpha Diagnostics Centre</PageTitle>
+
+<section class="page-header locations-hero py-5 text-center position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important; overflow: hidden; min-height: 600px; display: flex; align-items: center;">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.4;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.4;"></div>
+    
+    <div class="container position-relative z-2 reveal-up">
+        <div class="glass-card-premium p-5 mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block">
+                <i class="bi bi-geo-alt me-2"></i> Serving Multiple Districts & Surrounding Regions
+            </div>
+            <h1 class="hero-title mb-4">
+                Our <span class="text-primary">Locations</span>
+            </h1>
+            <p class="lead mb-0" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
+                Accessible across districts so you never have to travel far for quality diagnostics.
+            </p>
+        </div>
+    </div>
+</section>
+
+ <!-- Horizontal Marquee Banner -->
+ <div class="marquee-banner my-4">
+    <div class="seamless-marquee-container">
+        <div class="seamless-marquee-track" style="animation: seamless-scroll-marquee 45s linear infinite;">
+            <div class="seamless-marquee-item">
+                <span class="text-nowrap" style="letter-spacing: 0.5px; font-size: 0.85rem;"><i class="bi bi-megaphone-fill me-2" style="color: var(--primary-blue);"></i> Now in Tiruppur — and soon to more cities!</span>
+                <span class="mx-4 text-secondary opacity-50">•</span>
+                <span class="text-nowrap" style="letter-spacing: 0.5px; font-size: 0.85rem;"><i class="bi bi-megaphone-fill me-2" style="color: var(--primary-blue);"></i> Now in Tiruppur — and soon to more cities!</span>
+                <span class="mx-4 text-secondary opacity-50">•</span>
+                <span class="text-nowrap" style="letter-spacing: 0.5px; font-size: 0.85rem;"><i class="bi bi-megaphone-fill me-2" style="color: var(--primary-blue);"></i> Now in Tiruppur — and soon to more cities!</span>
+                <span class="mx-4 text-secondary opacity-50">•</span>
+            </div>
+            <div class="seamless-marquee-item">
+                <span class="text-nowrap" style="letter-spacing: 0.5px; font-size: 0.85rem;"><i class="bi bi-megaphone-fill me-2" style="color: var(--primary-blue);"></i> Now in Tiruppur — and soon to more cities!</span>
+                <span class="mx-4 text-secondary opacity-50">•</span>
+                <span class="text-nowrap" style="letter-spacing: 0.5px; font-size: 0.85rem;"><i class="bi bi-megaphone-fill me-2" style="color: var(--primary-blue);"></i> Now in Tiruppur — and soon to more cities!</span>
+                <span class="mx-4 text-secondary opacity-50">•</span>
+                <span class="text-nowrap" style="letter-spacing: 0.5px; font-size: 0.85rem;"><i class="bi bi-megaphone-fill me-2" style="color: var(--primary-blue);"></i> Now in Tiruppur — and soon to more cities!</span>
+                <span class="mx-4 text-secondary opacity-50">•</span>
+            </div>
+        </div>
+    </div>
+ </div>
+
+<!-- Main Lab - Vertical Split Layout -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Main Laboratory</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Our central hub for processing samples from all branches and collection centres.</p>
+        </div>
+
+        <div class="location-split-container reveal-up">
+            <div class="row g-0">
+                <!-- Map View Side -->
+                <div class="col-lg-7 d-none d-lg-block">
+                    <div class="map-container-split h-100">
+                        <iframe 
+                            class="google-map-iframe"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.0215!2d77.7166!3d11.3362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba96f3e4a00df11%3A0x6b777c420833834!2sAlpha%20Diagnostics%20Centre%20(Main%20Lab%20Branch%20-%20Erode)!5e0!3m2!1sen!2sin!4v1715070000000!5m2!1sen!2sin" 
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <!-- Details Side -->
+                <div class="col-lg-5">
+                    <div class="location-details-card">
+                        <!-- Card Header -->
+                        <div class="location-details-header">
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="bg-white bg-opacity-20 p-4 rounded-4 shadow-sm">
+                                    <i class="bi bi-hospital fs-1"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-2" style="letter-spacing: -1px;">Alpha Diagnostics Centre</h3>
+                                    <span class="badge bg-white bg-opacity-20 border border-white border-opacity-30 px-3 py-2 rounded-pill small fw-bold">Main Laboratory</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="location-details-body">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Address</div>
+                                            <div class="text-secondary small">31, Patel Street, Erode – 638 001.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-telephone-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Phone</div>
+                                            <div class="text-secondary small">81108 99999 • 70944 90917</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-envelope-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Email</div>
+                                            <div class="text-secondary small">info@alphadiagnosticscentre.com</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item mb-0">
+                                        <div class="location-grid-icon"><i class="bi bi-globe"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Website</div>
+                                            <div class="text-secondary small">www.alphadiagnosticscentre.com</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Branch Network -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Our Branch Labs</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Accessible across the district so you never have to travel far for quality diagnostics.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- MNP Branch -->
+            <div class="col-lg-4 col-md-6 reveal-up">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">MNP Branch</h5>
+                            <small class="text-primary opacity-75">Branch Lab</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> 646, Kunnathur Road, Perundurai – 52.</p>
+                    <a href="tel:+917094490915" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                        <i class="bi bi-telephone me-2"></i> 70944 90915
+                    </a>
+                </div>
+            </div>
+
+            <!-- Perundurai Branch -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.05s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Perundurai Branch</h5>
+                            <small class="text-primary opacity-75">Nathan Medicals Branch (C)</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> 374, Bhavani Main Road, Perundurai – 52.</p>
+                    <a href="tel:+917094490930" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                        <i class="bi bi-telephone me-2"></i> 70944 90930
+                    </a>
+                </div>
+            </div>
+
+            <!-- Gobi Branch -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Gobi Branch</h5>
+                            <small class="text-primary opacity-75">Branch Lab</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> Aries Transport Compound, 276, Sathy Main Road, Gobichettipalayam – 638 452.</p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="tel:+917094490902" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                            <i class="bi bi-telephone me-2"></i> 70944 90902
+                        </a>
+                        <a href="tel:+914285290902" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                            <i class="bi bi-telephone me-2"></i> 04285 290902
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bhavani Branch -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.15s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Bhavani Branch</h5>
+                            <small class="text-primary opacity-75">Branch Lab</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> 427 A6, MKS Mayura Complex, New Bus Stand (Opp.), Bhavani – 638 301.</p>
+                    <a href="tel:+917094490666" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                        <i class="bi bi-telephone me-2"></i> 70944 90666
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sulur Branch -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Sulur Branch</h5>
+                            <small class="text-primary opacity-75">Dr. Dhivya Medical Center</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> 3/3, SLS Nagar, Sulur, Coimbatore – 641 402.</p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="tel:+919840425742" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                            <i class="bi bi-telephone me-2"></i> 98404 25742
+                        </a>
+                        <a href="tel:+918825998925" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                            <i class="bi bi-telephone me-2"></i> 88259 98925
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anthiyur Branch -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.25s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Anthiyur Branch</h5>
+                            <small class="text-primary opacity-75">Branch Lab</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> 316/9, Sathy Main Road, Thavuttupalayam, (Near Sivasakthi Hospital), Anthiyur – 638 501.</p>
+                    <a href="tel:+917094490916" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                        <i class="bi bi-telephone me-2"></i> 70944 90916
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tiruppur Branch - NOW OPEN -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100 p-4 position-relative" style="border: 2px solid rgba(var(--primary-purple-rgb, 124, 58, 237), 0.4); background: rgba(var(--primary-purple-rgb, 124, 58, 237), 0.03);">
+                    <span class="position-absolute top-0 end-0 mt-3 me-3 badge rounded-pill px-3 py-2 fw-bold" style="background: linear-gradient(135deg, var(--primary-purple, #7c3aed), var(--primary-green, #059669)); font-size: 0.65rem; letter-spacing: 0.5px;">NOW OPEN</span>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="text-white p-3 rounded-circle" style="background: linear-gradient(135deg, var(--primary-purple, #7c3aed), var(--primary-green, #059669));"><i class="bi bi-geo-alt fs-4"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Tiruppur Branch</h5>
+                            <small class="fw-semibold text-primary">Branch Lab · New</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3 small"><i class="bi bi-map me-1 opacity-50"></i> Stanes Road, 2nd Street, Odakkadu,<br /><span class="text-nowrap">Tiruppur&nbsp;–&nbsp;641&nbsp;602.</span></p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="tel:+918110966766" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                            <i class="bi bi-telephone me-2"></i> 81109 66766
+                        </a>
+                        <a href="tel:+918110966166" class="btn-helium btn-helium-secondary w-100 text-center py-2">
+                            <i class="bi bi-telephone me-2"></i> 81109 66166
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Authorised Collection Centres -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Authorised Collection Centres</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Partner hospitals and clinics where you can submit samples for Alpha processing.</p>
+        </div>
+
+        <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
+            <!-- Aadhitya Multicare Hospital -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Aadhitya Multicare Hospital</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>5, Kumarasamy Street, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;001.</span></p>
+                    <a href="tel:+919282210001" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">92822&nbsp;10001</span></a>
+                </div>
+            </div>
+            <!-- CRR Nursing Home -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">CRR Nursing Home</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>Ganapathi Palayam, Nall Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;153.</span></p>
+                    <a href="tel:+917397006444" class="text-primary text-decoration-none d-block" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">73970&nbsp;06444</span></a>
+                    <a href="tel:+914242351051" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">0424&nbsp;2351051</span></a>
+                </div>
+            </div>
+            <!-- Manian Medical Centre -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Manian Medical Centre</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>Power House Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;001.</span></p>
+                    <a href="tel:+917094490905" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90905</span></a>
+                </div>
+            </div>
+            <!-- Padmanaban's Heart Clinic -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-heart-pulse text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Padmanaban's Heart Clinic</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>72, Periyanna Street, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;001.</span></p>
+                    <a href="tel:+917094490903" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90903</span></a>
+                </div>
+            </div>
+            <!-- Spinal Endoscopy & Ortho Clinic -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Spinal Endoscopy &amp; Ortho Clinic</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>325-A, E.V.N. Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;009.</span></p>
+                    <a href="tel:+917094490918" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90918</span></a>
+                </div>
+            </div>
+            <!-- C.K. Hospital -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">C.K. Hospital</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>41, Balasubarayalu Street, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;001.</span></p>
+                    <a href="tel:+919840325742" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">98403&nbsp;25742</span></a>
+                </div>
+            </div>
+            <!-- Arul Siddha Clinic -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Arul Siddha Clinic</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>Near RTO Office, Karur Main Road, <span class="text-nowrap">Karur&nbsp;–&nbsp;638&nbsp;063.</span></p>
+                    <a href="tel:+919150035203" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">91500&nbsp;35203</span></a>
+                </div>
+            </div>
+            <!-- Thangam Hospital -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Thangam Hospital</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>H-123, Periyar Nagar, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;001.</span></p>
+                    <a href="tel:+917094490400" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90400</span></a>
+                </div>
+            </div>
+            <!-- Sholai Medical Centre -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Sholai Medical Centre</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>20, Perundurai Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;011.</span></p>
+                    <a href="tel:+917094490920" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90920</span></a>
+                </div>
+            </div>
+            <!-- Sri Athi Sathya Hospital -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Sri Athi Sathya Hospital</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>405, Perundurai Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;011.</span></p>
+                    <a href="tel:+917094490904" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90904</span></a>
+                </div>
+            </div>
+            <!-- SSS Healthcare -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">SSS Healthcare India Pvt. Ltd.</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>167/2-CI, Perundurai Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;009.</span></p>
+                    <a href="tel:+917094490906" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90906</span></a>
+                </div>
+            </div>
+            <!-- Acchutha Eye Care -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-eye text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Acchutha Eye Care</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>210, Pavalthampalayam, Perundurai Main Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;107.</span></p>
+                    <a href="tel:+918110866366" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">81108&nbsp;66366</span></a>
+                </div>
+            </div>
+            <!-- Kavin Medical Center -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Kavin Medical Center</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>68, Gandhi Nagar, Perundurai Road, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;001.</span></p>
+                    <a href="tel:+917094490007" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">70944&nbsp;90007</span></a>
+                </div>
+            </div>
+            <!-- Nishanth Hospital -->
+            <div class="col reveal-up">
+                <div class="glass-card p-3 h-100 hover-glow">
+                    <i class="bi bi-hospital text-primary fs-3 mb-2 d-block text-center"></i>
+                    <h6 class="fw-bold mb-1 text-center" style="font-size:0.78rem;">Nishanth Hospital</h6>
+                    <p class="text-muted mb-2 text-center" style="font-size:0.68rem;">Authorised Collection Centre</p>
+                    <p class="text-secondary mb-1" style="font-size:0.7rem; hyphens:none; word-break:normal;"><i class="bi bi-geo-alt me-1"></i>Therukupallam Road, Thindal, <span class="text-nowrap">Erode&nbsp;–&nbsp;638&nbsp;012.</span></p>
+                    <a href="tel:+918110966166" class="text-primary text-decoration-none" style="font-size:0.7rem;"><i class="bi bi-telephone me-1"></i><span class="text-nowrap">81109&nbsp;66166</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}

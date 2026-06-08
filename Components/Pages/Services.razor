@@ -1,0 +1,727 @@
+@page "/services"
+@inject IJSRuntime JS
+
+<PageTitle>Services - Alpha Diagnostics Centre</PageTitle>
+
+<section class="page-header services-hero py-5 text-center position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important; overflow: hidden; min-height: 600px; display: flex; align-items: center;">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.4;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.4;"></div>
+    
+    <div class="container position-relative z-2 reveal-up">
+        <div class="glass-card-premium p-5 mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block">
+                <i class="bi bi-microscope me-2"></i> Comprehensive automated testing
+            </div>
+            <h1 class="hero-title mb-4">
+                Diagnostic <span class="text-primary">Services</span>
+            </h1>
+            <p class="lead mb-0" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
+                Every sample goes through automated and quality-checked processes to ensure dependable results across all major pathology departments.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Health Packages Section -->
+<section id="health-packages" class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-5">
+        @if (SelectedPackage == null)
+        {
+            <div class="text-center mb-5 reveal-up">
+                <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2.5rem, 5vw, 4rem);">Health Check Packages</h2>
+                <p class="text-secondary">Choose a comprehensive package tailored to your health needs.</p>
+                
+                <!-- Filter Tabs -->
+                <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+                    <button class="btn-helium @(ActiveCategory == "All" ? "btn-helium-primary" : "btn-helium-secondary") px-4" @onclick='() => SetCategory("All")'>All Packages</button>
+                    <button class="btn-helium @(ActiveCategory == "Health Checkups" ? "btn-helium-primary" : "btn-helium-secondary") px-4" @onclick='() => SetCategory("Health Checkups")'>Health Checkups</button>
+                    <button class="btn-helium @(ActiveCategory == "Specialty Packages" ? "btn-helium-primary" : "btn-helium-secondary") px-4" @onclick='() => SetCategory("Specialty Packages")'>Specialty Packages</button>
+                </div>
+            </div>
+
+            <!-- Packages Grid -->
+            <div class="package-grid">
+                @foreach (var pkg in FilteredPackages())
+                {
+                    <div class="package-card reveal-up">
+                        @if (pkg.IsBestseller)
+                        {
+                            <div class="bestseller-badge">Most Popular</div>
+                        }
+                        <div class="package-image-container">
+                            <img src="@pkg.ImageUrl" alt="@pkg.Name" />
+                            <div class="package-image-overlay"></div>
+                            <div class="package-overlay-badges">
+                                <span class="badge-test-count"><i class="bi bi-activity me-1"></i>@pkg.TestCount tests</span>
+                                <span class="badge-subcategory">@pkg.Subcategory</span>
+                            </div>
+                        </div>
+                        <div class="package-content">
+                            <h3 class="package-title">@pkg.Name</h3>
+                            <p class="package-desc">@pkg.Description</p>
+                            
+                            <hr class="package-divider" />
+                            
+                            <div class="price-container">
+                                <span class="price-actual">₹@pkg.Price.ToString("N0")</span>
+                                <span class="price-original">₹@pkg.OriginalPrice.ToString("N0")</span>
+                                <span class="price-discount-badge">@pkg.Discount</span>
+                            </div>
+                            
+                            <div class="package-action-row mt-auto">
+                                <button class="btn-book-now" @onclick="() => BookPackage(pkg)"><i class="bi bi-cart-fill"></i>Add to Book</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Dynamic Detail Page View -->
+            <div class="reveal-up">
+                <!-- Breadcrumb Back button -->
+                <button class="btn-back-to-packages" @onclick="CloseDetails">
+                    <i class="bi bi-arrow-left"></i> Back to all packages
+                </button>
+                
+                <!-- Details Header split grid -->
+                <div class="details-split-grid">
+                    <!-- Left column: Visual image -->
+                    <div class="details-image-card">
+                        @if (SelectedPackage.IsBestseller)
+                        {
+                            <div class="bestseller-badge">Most Popular</div>
+                        }
+                        <img src="@SelectedPackage.ImageUrl" alt="@SelectedPackage.Name" />
+                    </div>
+                    
+                    <!-- Right column: package details -->
+                    <div class="details-info-panel">
+                        <div class="details-badge-row">
+                            <span class="badge bg-success text-white px-3 py-1 rounded-pill small">@SelectedPackage.Category</span>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill small">@SelectedPackage.Subcategory</span>
+                            <span class="badge bg-dark-subtle text-dark-emphasis px-3 py-1 rounded-pill small">@SelectedPackage.TestCount tests</span>
+                        </div>
+                        
+                        <h1 class="details-title">@SelectedPackage.Name</h1>
+                        <p class="details-desc">@SelectedPackage.Description</p>
+                        
+                        <div class="details-price-row">
+                            <span class="details-price-actual">₹@SelectedPackage.Price.ToString("N0")</span>
+                            <span class="details-price-original">₹@SelectedPackage.OriginalPrice.ToString("N0")</span>
+                            <span class="price-discount-badge fs-6">@SelectedPackage.Discount</span>
+                        </div>
+                        
+                        <button class="details-btn-book" @onclick="() => BookPackage(SelectedPackage)">
+                            <i class="bi bi-cart-fill"></i> Add to Book Package
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- What's Included Section -->
+                <div class="mt-5 pt-4 border-top border-subtle border-opacity-10">
+                    <h3 class="included-section-header">What's Included</h3>
+                    
+                    <div class="notice-box">
+                        <i class="bi bi-info-circle-fill notice-box-icon"></i>
+                        <p class="notice-box-text">
+                            <strong>@SelectedPackage.TestCount tests included</strong> in this @SelectedPackage.Subcategory.ToLower() diagnostic panel. 
+                            All tests are conducted by NABL-accredited labs. Reports are delivered digitally within 24 hours of sample collection. 
+                            Home sample pickup is available across all our branch locations.
+                        </p>
+                    </div>
+                    
+                    <!-- Checklist Grid -->
+                    <div class="tests-checklist-grid">
+                        @foreach (var test in SelectedPackage.Tests)
+                        {
+                            <div class="test-check-item">
+                                <div class="test-check-icon-wrap">
+                                    <i class="bi bi-check"></i>
+                                </div>
+                                <span class="test-check-name">@test</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Departments Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2.5rem, 5vw, 4rem);">Our Departments</h2>
+            <p class="text-secondary">Specialized testing across the full spectrum of pathology.</p>
+        </div>
+        <div class="row g-4">
+            <!-- Biochemistry -->
+            <div class="col-lg-4 col-md-6 reveal-up">
+                <div class="glass-card h-100 p-5">
+                    <div class="service-icon-box orb-blue">
+                        <i class="bi bi-droplet-half fs-3"></i>
+                    </div>
+                    <h3 class="h4 fw-bold mb-3">Biochemistry</h3>
+                    <p class="text-secondary small mb-4">Tests for blood sugar, cholesterol, liver and kidney functions, electrolytes, enzymes, and more.</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Blood Sugar (FBS/PPBS/RBS)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Liver Function Test (LFT)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Renal Function Test (RFT)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Lipid Profile</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hematology -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card h-100 p-5">
+                    <div class="service-icon-box orb-cyan">
+                        <i class="bi bi-water fs-3"></i>
+                    </div>
+                    <h3 class="h4 fw-bold mb-3">Hematology</h3>
+                    <p class="text-secondary small mb-4">Complete blood counts, differential counts, clotting studies, and fluid analysis with 6-part analyzers.</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Complete Blood Count (CBC)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> 6-Part Differential Count</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Coagulation Studies</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Body Fluid Analysis</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Immunology -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card h-100 p-5">
+                    <div class="service-icon-box orb-red">
+                        <i class="bi bi-shield-check fs-3"></i>
+                    </div>
+                    <h3 class="h4 fw-bold mb-3">Immunology</h3>
+                    <p class="text-secondary small mb-4">Hormone panels, thyroid tests, infection markers, and other immune-related assays using chemiluminescence.</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Thyroid Panel (FT3, FT4, TSH)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Hormone Tests (LH, FSH)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Cardiac Markers (Troponin)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Vitamin D & B12</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Microbiology -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100 p-5">
+                    <div class="service-icon-box orb-purple">
+                        <i class="bi bi-virus fs-3"></i>
+                    </div>
+                    <h3 class="h4 fw-bold mb-3">Microbiology</h3>
+                    <p class="text-secondary small mb-4">Culture and sensitivity for blood and body fluids with automated BACTEC and VITEK systems.</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Blood Culture (BD BACTEC)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Antibiotic Sensitivity (VITEK 2)</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Gram Stain & Microscopy</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Positive Culture in ~4 Hours</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PCR / Molecular -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.4s;">
+                <div class="glass-card h-100 p-5">
+                    <div class="service-icon-box orb-blue">
+                        <i class="bi bi-fingerprint fs-3"></i>
+                    </div>
+                    <h3 class="h4 fw-bold mb-3">PCR / Molecular</h3>
+                    <p class="text-secondary small mb-4">PCR-based tests using advanced Bio-Rad CFX96 platform for precise molecular detection.</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> COVID-19 PCR Testing</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> TB Molecular Detection</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Viral Load Testing</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Genetic Screening</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Histopathology -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.5s;">
+                <div class="glass-card h-100 p-5">
+                    <div class="service-icon-box orb-cyan">
+                        <i class="bi bi-layers-half fs-3"></i>
+                    </div>
+                    <h3 class="h4 fw-bold mb-3">Histopathology</h3>
+                    <p class="text-secondary small mb-4">Tissue and biopsy examination by experienced pathologists to support diagnosis.</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Tissue Biopsy Examination</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Cytology & Papsmear</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> FNAC Reports</li>
+                        <li class="text-secondary small d-flex align-items-center gap-2"><i class="bi bi-check2 text-primary"></i> Expert Pathologist Review</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hospital & Referral Services -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- Large Info Card -->
+            <div class="col-lg-5 reveal-up">
+                <div class="glass-card h-100 p-5 border-primary border-opacity-50">
+                    <div class="service-icon-box orb-blue mb-4">
+                        <i class="bi bi-hospital fs-3"></i>
+                    </div>
+                    <h2 class="h3 fw-bold mb-4">Hospital & Referral Services</h2>
+                    <p class="text-secondary mb-4">We act as a referral lab for hospitals, nursing homes, clinics, and diagnostic centres across Erode and nearby regions.</p>
+                    <p class="text-secondary mb-0">Our barcoded and interfaced systems make it easy for partner centres to send samples and receive reports quickly and securely.</p>
+                </div>
+            </div>
+
+            <!-- Small Grid Cards -->
+            <div class="col-lg-7">
+                <div class="row g-4">
+                    <div class="col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                        <div class="glass-card p-4 text-center h-100">
+                            <div class="orb-blue mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px;">
+                                <i class="bi bi-building-check fs-4"></i>
+                            </div>
+                            <h4 class="h6 fw-bold mb-2">Partner Hospitals</h4>
+                            <p class="text-secondary x-small mb-0">Trusted by 50+ healthcare facilities across the district.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                        <div class="glass-card p-4 text-center h-100">
+                            <div class="orb-cyan mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px;">
+                                <i class="bi bi-node-plus fs-4"></i>
+                            </div>
+                            <h4 class="h6 fw-bold mb-2">Interfaced Systems</h4>
+                            <p class="text-secondary x-small mb-0">Direct HL7/API integration for seamless data transfer.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 reveal-up" style="transition-delay: 0.3s;">
+                        <div class="glass-card p-4 text-center h-100">
+                            <div class="orb-purple mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px;">
+                                <i class="bi bi-geo-alt fs-4"></i>
+                            </div>
+                            <h4 class="h6 fw-bold mb-2">15+ Locations</h4>
+                            <p class="text-secondary x-small mb-0">Extensive network covering Erode, Perundurai, and beyond.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 reveal-up" style="transition-delay: 0.4s;">
+                        <div class="glass-card p-4 text-center h-100">
+                            <div class="orb-red mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px;">
+                                <i class="bi bi-award fs-4"></i>
+                            </div>
+                            <h4 class="h6 fw-bold mb-2">NABL & ICMR</h4>
+                            <p class="text-secondary x-small mb-0">Accredited reporting you can rely on for critical cases.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Turnaround Section -->
+<section class="py-5 bg-midnight-soft">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <!-- Left Info -->
+            <div class="col-lg-5 reveal-up">
+                <h2 class="h1 fw-bold mb-4">Turnaround Time & Reporting</h2>
+                <p class="text-secondary fs-5 mb-4">Many routine tests are reported within 4 hours in Erode district, while specialized tests follow clear timelines shared at the time of booking.</p>
+                <p class="text-secondary fs-5">Reports are available through online portals, email, and WhatsApp, as well as printed copies at our centres.</p>
+            </div>
+
+            <!-- Right Cards -->
+            <div class="col-lg-7">
+                <div class="row g-4 mb-4">
+                    <div class="col-sm-6 reveal-up" style="transition-delay: 0.1s;">
+                        <div class="glass-card p-4 text-center">
+                            <div class="display-4 fw-bold text-primary mb-1">4 Hrs</div>
+                            <div class="text-secondary small">Routine Tests in Erode</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 reveal-up" style="transition-delay: 0.2s;">
+                        <div class="glass-card p-4 text-center">
+                            <div class="display-4 fw-bold text-info mb-1">24-72</div>
+                            <div class="text-secondary small">Hours for Specialized Tests</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal-up" style="transition-delay: 0.3s;">
+                    <div class="glass-card p-4 d-flex align-items-center gap-4">
+                        <div class="orb-red" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; flex-shrink: 0;">
+                            <i class="bi bi-whatsapp fs-2"></i>
+                        </div>
+                        <div>
+                            <h4 class="h5 fw-bold mb-1">Digital Report Delivery</h4>
+                            <p class="text-secondary small mb-0">WhatsApp • Email • Online Portal • Printed at Centre</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bottom CTA Banner Section -->
+<section class="py-5 services-cta-section reveal-up">
+    <div class="container">
+        <div class="services-cta-card p-5 text-center position-relative overflow-hidden">
+            <!-- Glowing Orbs inside the card to mimic the premium visual styling -->
+            <div class="cta-glow-orb cta-glow-left" aria-hidden="true"></div>
+            <div class="cta-glow-orb cta-glow-right" aria-hidden="true"></div>
+            
+            <div class="position-relative z-2">
+                <h2 class="display-5 fw-bold text-white mb-3">
+                    Ready to book your package? Get started in one message.
+                </h2>
+                <p class="text-white-50 fs-5 mb-5 mx-auto" style="max-width: 750px;">
+                    Connect with Alpha Diagnostics Centre on WhatsApp for quick bookings, home sample collection, and NABL-accredited diagnostic reports delivered directly to your phone.
+                </p>
+                <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3">
+                    <a href="https://wa.me/918110899999" target="_blank" class="btn-cta-whatsapp">
+                        <i class="bi bi-whatsapp"></i> WhatsApp us
+                    </a>
+                    <a href="contact" class="btn-cta-secondary">
+                        <i class="bi bi-geo-alt"></i> Find a branch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private string ActiveCategory = "All";
+    private MedicalPackage SelectedPackage = null;
+
+    private void SetCategory(string category)
+    {
+        ActiveCategory = category;
+    }
+
+    private async Task OpenDetails(MedicalPackage pkg)
+    {
+        SelectedPackage = pkg;
+        await JS.InvokeVoidAsync("window.scrollTo", 0, 300); // Scroll smoothly down to the packages header
+    }
+
+    private async Task CloseDetails()
+    {
+        SelectedPackage = null;
+        await JS.InvokeVoidAsync("window.scrollTo", 0, 300);
+    }
+
+    private async Task BookPackage(MedicalPackage pkg)
+    {
+        await JS.InvokeVoidAsync("alert", $"Booking Request Received:\n\n{pkg.Name} (₹{pkg.Price:N0}) has been selected. Our collection team will contact you shortly to schedule your home sample collection!");
+    }
+
+    private IEnumerable<MedicalPackage> FilteredPackages()
+    {
+        if (ActiveCategory == "All")
+            return Packages;
+        return Packages.Where(p => p.Category == ActiveCategory);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+
+    public class MedicalPackage
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public string Subcategory { get; set; }
+        public double Price { get; set; }
+        public double OriginalPrice { get; set; }
+        public string Discount { get; set; }
+        public int TestCount { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public bool IsBestseller { get; set; }
+        public List<string> Tests { get; set; }
+    }
+
+    private List<MedicalPackage> Packages = new()
+    {
+        new MedicalPackage
+        {
+            Id = "basic-health",
+            Name = "Basic Health Check-Up",
+            Category = "Health Checkups",
+            Subcategory = "Basic Body",
+            Price = 699,
+            OriginalPrice = 1399,
+            Discount = "50% off",
+            TestCount = 8,
+            Description = "Essential diagnostic screening covering blood sugar, lipid panel, and kidney indicators for fundamental health tracking.",
+            ImageUrl = "images/indian-lab-assistant.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Fasting / Post Prandial Blood Sugar",
+                "Urea / Creatinine / Uric Acid",
+                "Lipid Profile",
+                "Sr. Bilirubin / SGPT",
+                "TSH (Thyroid-Stimulating Hormone)",
+                "Urine Complete Analysis",
+                "Stool for Occult Blood"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "master-health",
+            Name = "Master Health Checkup",
+            Category = "Health Checkups",
+            Subcategory = "Full body",
+            Price = 1599,
+            OriginalPrice = 3199,
+            Discount = "50% off",
+            TestCount = 13,
+            Description = "Comprehensive overview of primary body systems, including liver function, diabetes markers, and cardiovascular risks.",
+            ImageUrl = "images/indian-doctor-patient.png",
+            IsBestseller = true,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Fasting / Postprandial Blood Sugar",
+                "Urea / Creatinine / Uric Acid",
+                "Lipid Profile",
+                "Liver Function Test",
+                "T3 / T4 / TSH",
+                "Sr. Calcium",
+                "HbA1c",
+                "Total psa(Male)",
+                "Ca - 125 (Female)",
+                "Urine Complete Analysis",
+                "Stool for Occult Blood",
+                "ECG"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "executive-health",
+            Name = "Executive Health Checkup",
+            Category = "Health Checkups",
+            Subcategory = "Full body",
+            Price = 2299,
+            OriginalPrice = 4599,
+            Discount = "50% off",
+            TestCount = 15,
+            Description = "Full-spectrum health assessment including key vitamins, thyroid hormones, and tumor indicators for complete diagnostic clarity.",
+            ImageUrl = "images/indian-doctor-patient.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Fasting / Postprandial Blood Sugar",
+                "Urea / Creatinine / Uric Acid",
+                "Lipid Profile",
+                "Liver Function Test",
+                "HbA1c",
+                "Sr. Calcium",
+                "T3 / T4 / TSH",
+                "Vitamin D / Vitamin B 12",
+                "Total PSA (Male)",
+                "Ca125 (Female)",
+                "ESR",
+                "Urine Complete Analysis",
+                "Stool for Occult Blood",
+                "ECG"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "well-women",
+            Name = "Well Women Health Checkup",
+            Category = "Health Checkups",
+            Subcategory = "Women's Health",
+            Price = 2299,
+            OriginalPrice = 4599,
+            Discount = "50% off",
+            TestCount = 14,
+            Description = "Tailored diagnostic panel focusing on female wellness, including endocrine metrics, bone markers, and cytological screenings.",
+            ImageUrl = "images/indian-home-visit.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Fasting / Post Prandial Blood Sugar",
+                "Urea / Creatinine / Uric Acid",
+                "Lipid Profile",
+                "ESR",
+                "Liver Function Test",
+                "T3 / T4 / TSH",
+                "HbA1c",
+                "Sr. Calcium",
+                "CA125",
+                "Vitamin D",
+                "Pap Smear",
+                "Urine Complete Analysis",
+                "Stool for Occult Blood"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "cardiac-pkg",
+            Name = "Cardiac Package",
+            Category = "Specialty Packages",
+            Subcategory = "Cardiac",
+            Price = 1199,
+            OriginalPrice = 2399,
+            Discount = "50% off",
+            TestCount = 8,
+            Description = "Specialized cardiac profiling testing lipid ratios, metabolic indices, inflammation markers, and electrical heart activity.",
+            ImageUrl = "images/indian-cardiac-checkup.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Fasting / Postprandial Blood Sugar",
+                "Urea / Creatinine / Uric Acid",
+                "Lipid Profile",
+                "Sr. Calcium",
+                "HbA1c",
+                "HS CRP",
+                "ECG"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "anaemia-pkg",
+            Name = "Anaemia Package",
+            Category = "Specialty Packages",
+            Subcategory = "Anaemia",
+            Price = 1699,
+            OriginalPrice = 3399,
+            Discount = "50% off",
+            TestCount = 11,
+            Description = "Detailed blood profile evaluating iron levels, storage proteins, blood cell morphology, and essential hematopoiesis factors.",
+            ImageUrl = "images/indian-lab-assistant.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Urea / Creatinine / Uric Acid",
+                "Peripheral Smear",
+                "ESR",
+                "Sr. Iron",
+                "Total Iron Binding Capacity",
+                "Transferrin",
+                "Sr. Folic Acid",
+                "Sr. Ferritin",
+                "Vitamin B12",
+                "Stool For Occult Blood"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "diabetic-pkg",
+            Name = "Diabetic Package",
+            Category = "Specialty Packages",
+            Subcategory = "Diabetic",
+            Price = 1199,
+            OriginalPrice = 2399,
+            Discount = "50% off",
+            TestCount = 9,
+            Description = "Rigorous glycemic review assessing long-term control parameters, microalbuminuria risk indices, and renal clearance metrics.",
+            ImageUrl = "images/indian-cardiac-checkup.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count",
+                "Fasting / Post Prandial Blood Sugar",
+                "Urea / Creatinine / Uric Acid",
+                "Lipid Profile",
+                "Sr. Calcium",
+                "HbA1c",
+                "Albumin Creatinine Ratio",
+                "Urine Complete Analysis",
+                "ECG"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "cancer-male-pkg",
+            Name = "Cancer Package (Male)",
+            Category = "Specialty Packages",
+            Subcategory = "Oncology (Male)",
+            Price = 1999,
+            OriginalPrice = 3999,
+            Discount = "50% off",
+            TestCount = 17,
+            Description = "A comprehensive multi-marker screen combining tumor antigens, endocrine values, and physiological panels for male oncology checkups.",
+            ImageUrl = "images/indian-doctor-patient.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count (CBC)",
+                "Glucose (R)",
+                "Urea & Creatinine",
+                "ESR",
+                "LDH",
+                "Calcium",
+                "Liver Function Test (LFT)",
+                "Prostate Specific Antigen - Total (PSA)",
+                "Carcino Embryonic Antigen (CEA)",
+                "CA 15 -3",
+                "CA 19.9",
+                "Alpha Feto Protein (AFP)",
+                "Peripheral Smear Study",
+                "Beta HCG",
+                "TFT (T3, T4, TSH)",
+                "Urine Complete Analysis",
+                "Stool for Occult Blood"
+            }
+        },
+        new MedicalPackage
+        {
+            Id = "cancer-female-pkg",
+            Name = "Cancer Package (Female)",
+            Category = "Specialty Packages",
+            Subcategory = "Oncology (Female)",
+            Price = 1999,
+            OriginalPrice = 3999,
+            Discount = "50% off",
+            TestCount = 16,
+            Description = "Advanced multi-marker panel combining tumor antigens, endocrine metrics, and cytological smears specifically for female cancer checkups.",
+            ImageUrl = "images/indian-home-visit.png",
+            IsBestseller = false,
+            Tests = new()
+            {
+                "Complete Blood Count (CBC)",
+                "Glucose (R)",
+                "Urea & Creatinine",
+                "ESR",
+                "Liver Function Test (LFT)",
+                "Calcium",
+                "LDH",
+                "CA 125 | CA 15 -3 | CA 19.9",
+                "Carcino Embryonic Antigen (CEA)",
+                "Alpha Feto Protein (AFP)",
+                "Beta HCG",
+                "Peripheral Smear Study",
+                "TFT (T3, T4, TSH)",
+                "Pap Smear",
+                "Urine Complete Analysis",
+                "Stool for Occult Blood"
+            }
+        }
+    };
+}

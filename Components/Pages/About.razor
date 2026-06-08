@@ -1,0 +1,292 @@
+@page "/about"
+@inject IJSRuntime JS
+
+<PageTitle>About Us - Alpha Diagnostics Centre</PageTitle>
+
+<section class="page-header about-hero py-5 text-center position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important; overflow: hidden; min-height: 600px; display: flex; align-items: center;">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.4;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.4;"></div>
+    
+    <div class="container position-relative z-2 reveal-up">
+        <div class="glass-card-premium p-5 mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block">
+                <i class="bi bi-info-circle me-2"></i> Bringing international-level lab standards to your doorstep
+            </div>
+            <h1 class="hero-title mb-4">
+                About <span class="text-primary">Us</span>
+            </h1>
+            <p class="lead mb-0" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
+                Alpha Diagnostics Centre is a modern diagnostic laboratory built and led by experienced doctors who are deeply focused on quality and accuracy.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Who We Are -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <!-- Left: Who We Are -->
+            <div class="col-lg-6 reveal-up">
+                <div class="glass-card h-100 p-5 position-relative" style="border-radius: 40px; box-shadow: -15px 15px 0 rgba(59, 130, 246, 0.1);">
+                    <div class="position-absolute top-0 end-0 p-4 opacity-10">
+                        <i class="bi bi-quote display-1 text-primary"></i>
+                    </div>
+                    <h2 class="h3 fw-bold mb-4">Who We Are</h2>
+                    <p class="text-secondary mb-4" style="line-height: 1.8;">
+                        Alpha Diagnostics Centre was founded on one simple belief — every person, regardless of income or background, deserves fast, accurate, and affordable diagnostic testing close to home.
+                    </p>
+                    <p class="text-secondary mb-4" style="line-height: 1.8;">
+                        We are a team of qualified pathologists, biochemists, microbiologists, and trained lab technicians who have been serving families in this community for over 10 years — from routine blood sugar tests to comprehensive full body check-ups.
+                    </p>
+                    <p class="text-secondary mb-0" style="line-height: 1.8;">
+                        Our centre is NABL-accredited, which means every test we run meets the highest national standards for laboratory quality and accuracy. When you choose Alpha Diagnostics, you are choosing a team that treats you as a person — not a patient number.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Commitment Stats / Trust Signals -->
+            <div class="col-lg-6 reveal-up" style="transition-delay: 0.15s;">
+                <div class="d-flex flex-column gap-4">
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-blue flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-people-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">10+ Years Serving Families</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">From routine blood sugar checks to comprehensive full body health evaluations, we have been trusted by thousands of families across the region.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-cyan flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-patch-check-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">NABL-Accredited Quality</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Every test we perform meets the highest national standards for laboratory quality and accuracy, giving you results you can trust.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-purple flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-heart-pulse-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Expert Team, Human Touch</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Qualified pathologists, biochemists, microbiologists, and trained technicians — a team that treats you as a person, not a patient number.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-blue flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-currency-rupee fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Affordable for Every Family</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Accurate diagnostic testing should never be a luxury. We are committed to keeping our services accessible regardless of income or background.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Commitment: Mission, Vision & Promise -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-stars me-2"></i> Our Commitment
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Making Accurate Diagnostics<br>Accessible to Every Family</h2>
+        </div>
+        <div class="row g-4">
+            <!-- Mission -->
+            <div class="col-lg-4 reveal-up">
+                <div class="glass-card h-100 p-4 p-lg-5 text-center" style="border-radius: 28px;">
+                    <div class="orb-blue mb-4 mx-auto" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 18px;">
+                        <i class="bi bi-bullseye fs-3"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3 text-primary">Our Mission</h3>
+                    <p class="text-secondary small mb-0" style="line-height: 1.8;">
+                        To provide every person — regardless of income or education — with fast, accurate, and affordable diagnostic tests, delivered close to home.
+                    </p>
+                </div>
+            </div>
+            <!-- Vision -->
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.15s;">
+                <div class="glass-card h-100 p-4 p-lg-5 text-center" style="border-radius: 28px;">
+                    <div class="orb-cyan mb-4 mx-auto" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 18px;">
+                        <i class="bi bi-eye fs-3"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3" style="color: var(--primary-cyan, #06b6d4);">Our Vision</h3>
+                    <p class="text-secondary small mb-0" style="line-height: 1.8;">
+                        To become the most trusted diagnostic name in South India — a centre where science and compassion work together to protect the health of every family we serve.
+                    </p>
+                </div>
+            </div>
+            <!-- Promise -->
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100 p-4 p-lg-5 text-center" style="border-radius: 28px;">
+                    <div class="orb-purple mb-4 mx-auto" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 18px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                            <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/>
+                            <path d="M18 15l2-2"/>
+                            <path d="M15 18l2-2"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3" style="color: var(--primary-purple, #7c3aed);">Our Promise</h3>
+                    <p class="text-secondary small mb-0" style="line-height: 1.8;">
+                        We promise to always put your health first — with honest reporting, transparent pricing, no unnecessary tests, and a team you can always reach when you need answers.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- What Makes Us Different -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title">What Makes Us Different</h2>
+            <p class="text-secondary">Excellence driven by technology, speed, and strict quality control.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 reveal-up">
+                <div class="glass-card h-100">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-gear-wide-connected fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Automated Setup</h5>
+                    <p class="text-secondary small">Computerized, barcoded, interfaced, and fully automated laboratory setup ensuring zero human error.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card h-100">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-hospital fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Biggest Referral Lab</h5>
+                    <p class="text-secondary small">One of the best and biggest referral labs in the region, serving multiple hospitals, nursing homes, and clinics.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card h-100">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-lightning-charge fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">4-Hour Delivery</h5>
+                    <p class="text-secondary small">Ability to deliver reports within 4 hours across the district for many investigations.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-virus fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Advanced Microbiology</h5>
+                    <p class="text-secondary small">Fully automated microbiology department with advanced culture and sensitivity systems.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.4s;">
+                <div class="glass-card h-100">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-patch-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Strict Quality Control</h5>
+                    <p class="text-secondary small">Recognized external quality assurance programs including Bio-Rad, CMC, and AIIMS panels.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.5s;">
+                <div class="glass-card h-100">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-award fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Expert Leadership</h5>
+                    <p class="text-secondary small">Guided by a strong panel of experienced doctors ensuring clear clinical focus in every test.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title">High-End Technology</h2>
+            <p class="text-secondary">Faster clinical decisions with interfaced workflows and global leader platforms.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 reveal-up">
+                <div class="glass-card h-100">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-droplet-half fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">VITROS 5600 & ECIQ</h5>
+                    <p class="text-secondary small">Integrated chemistry and immunoassay systems using advanced microslide, microtip, and enhanced chemiluminescence technology for improved turnaround and precision.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card h-100">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-water fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Sysmex XN-350</h5>
+                    <p class="text-secondary small">Fully automated 6-part differential hematology analyser and FDA-approved body fluid analyser for precise blood counts.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card h-100">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-fingerprint fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Bio-Rad CFX96</h5>
+                    <p class="text-secondary small">Advanced PCR platform for precise and reliable molecular test detection.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Abbott Architect CI 4100</h5>
+                    <p class="text-secondary small">Modular immunochemistry analysers with robotic sample handling and high capacity testing.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.4s;">
+                <div class="glass-card h-100">
+                    <div class="orb-red mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-virus fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Fast Microbiology Setup</h5>
+                    <p class="text-secondary small">Using BD BACTEC Fx40 and VITEK Compact 2 for automated blood culture and bacterial identification.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 reveal-up" style="transition-delay: 0.5s;">
+                <div class="glass-card h-100 d-flex align-items-center justify-content-center border-dashed">
+                    <div class="text-center p-4">
+                        <i class="bi bi-patch-check text-primary fs-1 mb-3 d-block"></i>
+                        <p class="fw-bold mb-0">NABL Accredited & ICMR Approved</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}

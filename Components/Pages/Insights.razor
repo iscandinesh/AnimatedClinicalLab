@@ -1,0 +1,374 @@
+@page "/insights"
+@inject IJSRuntime JS
+
+<PageTitle>Insights - Alpha Diagnostics Centre</PageTitle>
+
+<!-- Hero Banner -->
+<section class="page-header insights-hero py-5 text-center position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important; overflow: hidden; min-height: 600px; display: flex; align-items: center;">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.4;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.4;"></div>
+
+    <div class="container position-relative z-2 reveal-up">
+        <div class="glass-card-premium p-5 mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block">
+                <i class="bi bi-journal-richtext me-2"></i> Health Knowledge Hub
+            </div>
+            <h1 class="hero-title mb-4">
+                Insights &amp; <span class="text-primary">Health Tips</span>
+            </h1>
+            <p class="lead mb-0" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
+                Expert-backed articles, health tips, and diagnostic guidance to help you stay informed and take control of your wellness journey.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Post -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-4">
+        <div class="text-center mb-5 reveal-up">
+            <span class="badge-pill-premium mb-3 d-inline-block"><i class="bi bi-star-fill me-2" style="color: #f59e0b;"></i> Featured Article</span>
+            <h2 class="section-title fw-800 mb-3">This Month's Top Read</h2>
+        </div>
+        <div class="glass-card-premium p-0 overflow-hidden reveal-up" style="border-radius: 24px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 30px 60px rgba(0,0,0,0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow=''">
+            <div class="row g-0">
+                <div class="col-lg-6" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f2240 100%); min-height: 380px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; background: radial-gradient(circle at 30% 50%, rgba(96,165,250,0.2) 0%, transparent 60%);"></div>
+                    <div style="text-align: center; z-index: 1; padding: 2rem;">
+                        <i class="bi bi-heart-pulse" style="font-size: 5rem; color: #60a5fa; opacity: 0.9;"></i>
+                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 1rem; letter-spacing: 2px; text-transform: uppercase;">Cardiology</div>
+                    </div>
+                </div>
+                <div class="col-lg-6 p-5 d-flex flex-column justify-content-center">
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <span class="insight-tag">Heart Health</span>
+                        <span class="insight-tag">Prevention</span>
+                    </div>
+                    <h2 class="fw-800 mb-3" style="font-size: clamp(1.4rem, 2.5vw, 1.9rem); line-height: 1.3;">Understanding Your Cardiac Risk: Why Early Testing Matters</h2>
+                    <p class="text-secondary mb-4" style="line-height: 1.8;">Heart disease remains one of the leading causes of premature death, yet most risk factors are identifiable years in advance through simple blood tests. Learn what markers you should be testing and how often.</p>
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: white; font-weight: 700;">DR</div>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Dr. Rajan Kumar</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Cardiologist</div>
+                            </div>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;"><i class="bi bi-calendar3 me-1"></i> June 1, 2026</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;"><i class="bi bi-clock me-1"></i> 7 min read</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Category Filter -->
+<section class="py-2">
+    <div class="container">
+        <div class="d-flex justify-content-center gap-2 flex-wrap mb-2 reveal-up">
+            <button class="btn-helium btn-helium-primary px-4 insight-filter-btn active" onclick="filterInsights(this, 'all')">All Topics</button>
+            <button class="btn-helium btn-helium-secondary px-4 insight-filter-btn" onclick="filterInsights(this, 'diabetes')">Diabetes</button>
+            <button class="btn-helium btn-helium-secondary px-4 insight-filter-btn" onclick="filterInsights(this, 'heart')">Heart Health</button>
+            <button class="btn-helium btn-helium-secondary px-4 insight-filter-btn" onclick="filterInsights(this, 'thyroid')">Thyroid</button>
+            <button class="btn-helium btn-helium-secondary px-4 insight-filter-btn" onclick="filterInsights(this, 'women')">Women's Health</button>
+            <button class="btn-helium btn-helium-secondary px-4 insight-filter-btn" onclick="filterInsights(this, 'nutrition')">Nutrition</button>
+            <button class="btn-helium btn-helium-secondary px-4 insight-filter-btn" onclick="filterInsights(this, 'preventive')">Preventive Care</button>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Grid -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-4">
+        <div class="row g-4" id="blog-grid">
+
+            <!-- Blog Card 1 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="diabetes">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #1a3a2a 0%, #0f2a1a 100%);">
+                        <i class="bi bi-droplet-half" style="font-size: 3rem; color: #34d399;"></i>
+                        <div class="insight-card-category-badge">Diabetes</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Blood Sugar</span>
+                            <span class="insight-tag">HbA1c</span>
+                        </div>
+                        <h3 class="insight-card-title">What Your HbA1c Score Really Means for Your Long-Term Health</h3>
+                        <p class="insight-card-desc">HbA1c isn't just a number — it's a three-month window into your blood sugar patterns. Here's how to interpret it and what action to take.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #10b981, #059669);">SP</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Sunita Priya</div>
+                                    <div class="insight-author-date">May 25, 2026 · 5 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 2 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="thyroid">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #2a1a3a 0%, #1a0f2a 100%);">
+                        <i class="bi bi-activity" style="font-size: 3rem; color: #a78bfa;"></i>
+                        <div class="insight-card-category-badge">Thyroid</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">TSH</span>
+                            <span class="insight-tag">Hormones</span>
+                        </div>
+                        <h3 class="insight-card-title">Thyroid Disorders: Silent Symptoms You Should Never Ignore</h3>
+                        <p class="insight-card-desc">Fatigue, weight changes, or mood swings? Your thyroid might be the cause. Discover the early signs and the tests that can reveal the truth.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">AM</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Anitha Meena</div>
+                                    <div class="insight-author-date">May 18, 2026 · 6 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 3 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="women">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #3a1a2a 0%, #2a0f1a 100%);">
+                        <i class="bi bi-gender-female" style="font-size: 3rem; color: #f472b6;"></i>
+                        <div class="insight-card-category-badge">Women's Health</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Hormones</span>
+                            <span class="insight-tag">PCOS</span>
+                        </div>
+                        <h3 class="insight-card-title">PCOS &amp; Fertility: The Key Lab Tests Every Woman Should Know</h3>
+                        <p class="insight-card-desc">Polycystic ovary syndrome affects 1 in 10 women. Understanding your hormone panel can be the first step toward better management and family planning.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #ec4899, #be185d);">RV</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Revathi Velu</div>
+                                    <div class="insight-author-date">May 10, 2026 · 8 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 4 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="nutrition">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #1a2a1a 0%, #0f1f0f 100%);">
+                        <i class="bi bi-apple" style="font-size: 3rem; color: #4ade80;"></i>
+                        <div class="insight-card-category-badge">Nutrition</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Diet</span>
+                            <span class="insight-tag">Vitamins</span>
+                        </div>
+                        <h3 class="insight-card-title">Vitamin D Deficiency: Why Most Indians Are at Risk &amp; What to Do</h3>
+                        <p class="insight-card-desc">Despite abundant sunshine, vitamin D deficiency is epidemic in India. Understand why this happens, how to get tested, and how supplementation helps.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #22c55e, #15803d);">KN</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Kavitha Natarajan</div>
+                                    <div class="insight-author-date">April 30, 2026 · 5 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 5 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="heart">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #1a1a3a 0%, #0f0f2a 100%);">
+                        <i class="bi bi-clipboard2-pulse" style="font-size: 3rem; color: #60a5fa;"></i>
+                        <div class="insight-card-category-badge">Heart Health</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Cholesterol</span>
+                            <span class="insight-tag">Lipid Panel</span>
+                        </div>
+                        <h3 class="insight-card-title">Good vs. Bad Cholesterol: Decoding Your Lipid Profile Report</h3>
+                        <p class="insight-card-desc">HDL, LDL, triglycerides — your lipid profile report contains crucial clues. Here is a plain-language breakdown of what each number means and when to act.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">PS</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Prasad Selvam</div>
+                                    <div class="insight-author-date">April 22, 2026 · 6 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 6 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="preventive">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #2a1f0a 0%, #1a130a 100%);">
+                        <i class="bi bi-shield-check" style="font-size: 3rem; color: #fbbf24;"></i>
+                        <div class="insight-card-category-badge">Preventive Care</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Health Screening</span>
+                            <span class="insight-tag">Checkup</span>
+                        </div>
+                        <h3 class="insight-card-title">The Annual Health Checkup Checklist: What Every Adult Needs</h3>
+                        <p class="insight-card-desc">Prevention is always better than cure. We break down the essential annual health tests by age group and gender so you can stay one step ahead.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">MK</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Mohan Kumar</div>
+                                    <div class="insight-author-date">April 15, 2026 · 4 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 7 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="diabetes">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #0a2a1a 0%, #051a0f 100%);">
+                        <i class="bi bi-graph-up-arrow" style="font-size: 3rem; color: #2dd4bf;"></i>
+                        <div class="insight-card-category-badge">Diabetes</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Prediabetes</span>
+                            <span class="insight-tag">Insulin</span>
+                        </div>
+                        <h3 class="insight-card-title">Pre-Diabetes: How to Reverse It Before It Becomes Type 2</h3>
+                        <p class="insight-card-desc">Nearly half of pre-diabetic adults don't know they have it. But this stage is reversible. Find out which tests reveal your status and what lifestyle changes truly work.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">VR</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Vijay Raj</div>
+                                    <div class="insight-author-date">April 8, 2026 · 7 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 8 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="nutrition">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #2a0a0a 0%, #1a0505 100%);">
+                        <i class="bi bi-droplet" style="font-size: 3rem; color: #f87171;"></i>
+                        <div class="insight-card-category-badge">Nutrition</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Iron</span>
+                            <span class="insight-tag">Anaemia</span>
+                        </div>
+                        <h3 class="insight-card-title">Iron Deficiency Anaemia in Women: Signs, Tests, and Treatment</h3>
+                        <p class="insight-card-desc">Anaemia is among the most common nutritional deficiencies in Indian women, yet it is widely under-diagnosed. A simple CBC test can reveal your haemoglobin and ferritin levels.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">NP</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Nithya Preethi</div>
+                                    <div class="insight-author-date">March 30, 2026 · 5 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 9 -->
+            <div class="col-md-6 col-lg-4 reveal-up insight-card-wrapper" data-category="preventive">
+                <div class="insight-blog-card">
+                    <div class="insight-card-img" style="background: linear-gradient(135deg, #0a1a2a 0%, #050f1a 100%);">
+                        <i class="bi bi-lungs" style="font-size: 3rem; color: #67e8f9;"></i>
+                        <div class="insight-card-category-badge">Preventive Care</div>
+                    </div>
+                    <div class="insight-card-body">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="insight-tag">Kidney</span>
+                            <span class="insight-tag">Liver</span>
+                        </div>
+                        <h3 class="insight-card-title">When Did You Last Check Your Kidney &amp; Liver Function?</h3>
+                        <p class="insight-card-desc">The kidneys and liver are silently overworked organs that rarely signal distress until damage is significant. Routine LFT and KFT tests are your best defence.</p>
+                        <div class="insight-card-footer">
+                            <div class="insight-author">
+                                <div class="insight-author-avatar" style="background: linear-gradient(135deg, #06b6d4, #0e7490);">SK</div>
+                                <div>
+                                    <div class="insight-author-name">Dr. Suresh Krishnan</div>
+                                    <div class="insight-author-date">March 22, 2026 · 6 min read</div>
+                                </div>
+                            </div>
+                            <a href="insights" class="insight-read-btn">Read <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter / CTA Section -->
+<section class="py-5">
+    <div class="container py-3">
+        <div class="glass-card-premium p-5 text-center reveal-up" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.12)); border: 1px solid rgba(96, 165, 250, 0.25);">
+            <i class="bi bi-envelope-paper" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem; display: block;"></i>
+            <h2 class="fw-800 mb-3" style="font-size: clamp(1.6rem, 3vw, 2.2rem);">Stay Informed, Stay Healthy</h2>
+            <p class="text-secondary mb-4" style="max-width: 550px; margin: 0 auto 1.5rem;">Get our latest health articles and wellness tips delivered straight to your inbox. No spam — just useful, expert-backed content.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="contact" class="btn-helium btn-helium-primary px-5 py-3">
+                    <i class="bi bi-calendar-check me-2"></i> Book a Health Test
+                </a>
+                <a href="services#health-packages" class="btn-helium btn-helium-secondary px-5 py-3">
+                    <i class="bi bi-box2-heart me-2"></i> Explore Packages
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+        }
+    }
+}
