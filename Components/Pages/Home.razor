@@ -5,7 +5,7 @@
 <PageTitle>Home - Alpha Diagnostics Centre</PageTitle>
 
 <!-- 1. HERO SECTION (EXACT ALIGNMENT WITH REACT REFERENCE) -->
-<section class="position-relative d-flex align-items-center overflow-hidden" style="padding-top: 7rem; padding-bottom: 1rem; min-height: 65vh;">
+<section class="position-relative d-flex align-items-center overflow-visible" style="padding-top: 5rem; padding-bottom: 0.5rem; min-height: 65vh;">
     <!-- Reference Animations Background -->
     <div class="dna-bg" aria-hidden="true">
         <div class="floating-blob b1"></div>
@@ -15,7 +15,7 @@
     </div>
 
     <!-- Particle Simulation -->
-    <div class="position-absolute inset-0 pointer-events-none overflow-hidden" style="z-index: 1;">
+    <div class="position-absolute inset-0 pointer-events-none overflow-visible" style="z-index: 1;">
         @for (int i = 0; i < 20; i++)
         {
             var left = Random.Shared.Next(0, 100);
@@ -26,7 +26,7 @@
         }
     </div>
 
-    <div class="container-fluid position-relative mx-auto px-4" style="max-width: 1280px; z-index: 10;">
+    <div class="container-fluid position-relative mx-auto px-4" style="max-width: 1280px; z-index: 10; overflow: visible;">
         <!-- Hero Carousel Container -->
         <div class="hero-carousel-container">
             @for (int i = 0; i < slides.Count; i++)
@@ -34,116 +34,84 @@
                 var slide = slides[i];
                 var index = i;
                 <div class="hero-slide @(currentSlideIndex == index ? "active" : "")">
-                    <div class="row align-items-center gx-lg-5 gy-5 w-100 m-0">
-                        <!-- Left Column: Content -->
-                        <div class="col-lg-6 col-12 m-0 p-0">
-                            <div class="reveal-badge">
-                                @if (slide.Tagline.Contains("NABL"))
-                                {
-                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-nabl-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
-                                        <i class="bi bi-patch-check-fill text-emerald-icon"></i> @slide.Tagline
-                                    </span>
-                                }
-                                else if (slide.Tagline.Contains("Offer"))
-                                {
-                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-offer-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
-                                        <i class="bi bi-gift-fill text-gold-icon"></i> @slide.Tagline
-                                    </span>
-                                }
-                                else if (slide.Tagline.Contains("Convenient"))
-                                {
-                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-convenient-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
-                                        <i class="bi bi-shield-fill-check text-cyan-icon"></i> @slide.Tagline
-                                    </span>
-                                }
-                                else if (slide.Tagline.Contains("Screening"))
-                                {
-                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-screening-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
-                                        <i class="bi bi-heart-pulse-fill text-purple-icon"></i> @slide.Tagline
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill theme-badge-hero fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
-                                        <i class="bi bi-stars"></i> @slide.Tagline
-                                    </span>
-                                }
-                            </div>
-                            <h1 class="hero-title mt-4 reveal-title" style="min-height: 120px;">
-                                @slide.Title
-                            </h1>
-                            <p class="hero-body-custom reveal-body">
-                                @slide.Body
-                            </p>
-                            
-                            <div class="mt-8 d-flex flex-wrap gap-4 reveal-buttons">
-                                @if (!string.IsNullOrEmpty(slide.Cta1Text))
-                                {
-                                    <a href="@slide.Cta1Link" class="btn-helium btn-helium-primary px-7 py-3 rounded-pill shadow-lg shadow-blue-200 d-flex align-items-center gap-2" style="background: #2563eb; color: #fff;">
-                                        @slide.Cta1Text
-                                    </a>
-                                }
-                                @if (!string.IsNullOrEmpty(slide.Cta2Text))
-                                {
-                                    <a href="@slide.Cta2Link" class="btn btn-hero-outline px-7 py-3 rounded-pill d-flex align-items-center justify-content-center fw-700">
-                                        @slide.Cta2Text
-                                    </a>
-                                }
-                            </div>
+                    <!-- Full-bleed right image (absolutely positioned, no box) -->
+                    <div class="hero-slide-bg-image reveal-image" aria-hidden="true">
+                        <img src="@slide.ImagePath" alt="@slide.Title" class="hero-slide-img" />
+                    </div>
+
+                    <!-- Left Column: Content -->
+                    <div class="hero-slide-content">
+                        <div class="reveal-badge">
+                            @if (slide.Tagline.Contains("NABL"))
+                            {
+                                <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-nabl-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                    <i class="bi bi-patch-check-fill text-emerald-icon"></i> @slide.Tagline
+                                </span>
+                            }
+                            else if (slide.Tagline.Contains("Offer"))
+                            {
+                                <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-offer-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                    <i class="bi bi-gift-fill text-gold-icon"></i> @slide.Tagline
+                                </span>
+                            }
+                            else if (slide.Tagline.Contains("Convenient"))
+                            {
+                                <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-convenient-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                    <i class="bi bi-shield-fill-check text-cyan-icon"></i> @slide.Tagline
+                                </span>
+                            }
+                            else if (slide.Tagline.Contains("Screening"))
+                            {
+                                <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill badge-screening-premium fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                    <i class="bi bi-heart-pulse-fill text-purple-icon"></i> @slide.Tagline
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill theme-badge-hero fw-bold tracking-wide mb-4" style="font-size: 0.72rem;">
+                                    <i class="bi bi-stars"></i> @slide.Tagline
+                                </span>
+                            }
                         </div>
+                        <h1 class="hero-title mt-4 reveal-title">
+                            @slide.Title
+                        </h1>
+                        <p class="hero-body-custom reveal-body">
+                            @slide.Body
+                        </p>
 
-                        <!-- Right Column: Image -->
-                        <div class="col-lg-6 d-none d-lg-block">
-                            <div class="position-relative reveal-image">
-                                <!-- DNA Graphic Overlay -->
-                                <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(20%, -20%); z-index: 0;">
-                                    <i class="bi bi-dna text-primary" style="font-size: 140px;"></i>
-                                </div>
-
-                                <!-- Main Image with Tilt effect -->
-                                <div class="slide-image-wrapper tilt rounded-5 overflow-hidden shadow-2xl border-white border-8 position-relative" style="border-radius: 40px !important;">
-                                    <img src="@slide.ImagePath" alt="@slide.Title" class="w-100" style="height: 400px; object-fit: cover;" />
-                                    <div class="position-absolute inset-0" style="background: linear-gradient(to top right, rgba(30, 64, 175, 0.2), transparent);"></div>
-
-                                    <!-- TOP-LEFT floating glass badge -->
-                                    <div class="hero-float-badge-left">
-                                        <div class="hero-badge-icon-left">
-                                            <i class="bi bi-patch-check-fill"></i>
-                                        </div>
-                                        <div class="hero-badge-text-left">
-                                            <span class="hero-badge-sub-left">Certified Lab</span>
-                                            <span class="hero-badge-main-left">NABL Accredited</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mt-8 d-flex flex-wrap gap-4 reveal-buttons">
+                            @if (!string.IsNullOrEmpty(slide.Cta1Text))
+                            {
+                                <a href="@slide.Cta1Link" class="btn-helium btn-helium-primary btn-carousel-cta rounded-pill shadow-lg shadow-blue-200 d-flex align-items-center gap-2" style="background: #2563eb; color: #fff;">
+                                    @slide.Cta1Text
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(slide.Cta2Text))
+                            {
+                                <a href="@slide.Cta2Link" class="btn btn-hero-outline btn-carousel-cta rounded-pill d-flex align-items-center justify-content-center fw-700">
+                                    @slide.Cta2Text
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
             }
 
-            <!-- Navigation Arrows -->
-            <button class="carousel-nav-btn prev" @onclick="PrevSlide" aria-label="Previous slide">
-                <i class="bi bi-chevron-left fs-5"></i>
-            </button>
-            <button class="carousel-nav-btn next" @onclick="NextSlide" aria-label="Next slide">
-                <i class="bi bi-chevron-right fs-5"></i>
-            </button>
-
-            <!-- Indicators Dots -->
-            <div class="carousel-dots-container">
-                @for (int i = 0; i < slides.Count; i++)
-                {
-                    var index = i;
-                    <button class="carousel-dot @(currentSlideIndex == index ? "active" : "")" @onclick="() => SetSlide(index)" aria-label="Go to slide @(index + 1)"></button>
-                }
-            </div>
         </div>
     </div>
+
+    <!-- Navigation Arrows -->
+    <button class="carousel-nav-btn prev" @onclick="PrevSlide" aria-label="Previous slide">
+        <i class="bi bi-chevron-left fs-5"></i>
+    </button>
+    <button class="carousel-nav-btn next" @onclick="NextSlide" aria-label="Next slide">
+        <i class="bi bi-chevron-right fs-5"></i>
+    </button>
 </section>
 
 <!-- STATS CARD SECTION -->
-<section class="position-relative py-3" style="z-index: 15; margin-top: 0.5rem;">
+<section class="position-relative py-3" style="z-index: 15; margin-top: 0.5rem; isolation: isolate;">
     <!-- Location Marquee Banner -->
     <div class="w-100 marquee-banner mb-4 position-relative" style="z-index: 12; margin-top: 0;">
         <div class="seamless-marquee-container">
@@ -1057,7 +1025,7 @@
             Tagline = "NABL Accredited",
             Title = "Trusted Diagnostic Centre Since 2015",
             Body = "Know what is happening inside your body — before it becomes a problem. A quick blood test today can prevent serious health complications tomorrow. NABL-accredited quality, honest pricing, and results you can trust.",
-            ImagePath = "images/hero-lab.png",
+            ImagePath = "images/indian-pathologist-new.png",
             Cta1Text = "Book a Test Now ↗",
             Cta1Link = "contact",
             Cta2Text = "View Health Packages",
@@ -1068,7 +1036,7 @@
             Tagline = "Limited Time Offer",
             Title = "Alpha Diagnostics Centre Special Offers for this Month — June 2026",
             Body = "Prioritize your wellness this June with exclusive, limited-time discounts on Alpha Diagnostics Centre full-body checkups—safe home collection included!",
-            ImagePath = "images/lab-process.png",
+            ImagePath = "images/tamil-family-checkup.png",
             Cta1Text = "Book Your Tests Now ↗",
             Cta1Link = "contact",
             Cta2Text = "View Packages",
@@ -1079,7 +1047,7 @@
             Tagline = "Convenient & Safe",
             Title = "Home Blood Sample Collection — We Come to You",
             Body = "No travel. No queues. Our trained phlebotomists visit your home at a time that suits you, collect your blood sample safely, and deliver your report directly to your WhatsApp — fast, hygienic, and hassle-free.",
-            ImagePath = "images/home-visit.png",
+            ImagePath = "images/tamil-home-blood-collection.png",
             Cta1Text = "Book Home Collection ↗",
             Cta1Link = "contact",
             Cta2Text = "View Packages",
@@ -1090,7 +1058,7 @@
             Tagline = "Complete Screening",
             Title = "Affordable Full Body Health Packages for the Whole Family",
             Body = "Our all-in-one health packages screen your blood sugar, liver function, kidney health, heart health, thyroid levels, and more — all in a single visit. Get your complete health report within 4 hours.",
-            ImagePath = "images/booking-step.png",
+            ImagePath = "images/tamil-couple-consultation.png",
             Cta1Text = "View Health Packages ↗",
             Cta1Link = "services",
             Cta2Text = "",
@@ -1101,7 +1069,7 @@
             Tagline = "NABL Accredited Precision",
             Title = "Advanced AI Diagnostics Centre You Can Rely On",
             Body = "Barcoded, automated testing with NABL-accredited precision. Every sample is handled by qualified professionals and processed with strict quality controls — because your health results must be accurate.",
-            ImagePath = "images/digital-report.png",
+            ImagePath = "images/indian-doctor-family.png",
             Cta1Text = "View Packages ↗",
             Cta1Link = "services",
             Cta2Text = "Call Us Now",

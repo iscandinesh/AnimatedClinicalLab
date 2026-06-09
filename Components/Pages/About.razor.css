@@ -1,6 +1,6 @@
 .page-header {
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .shape-blob {

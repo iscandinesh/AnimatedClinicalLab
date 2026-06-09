@@ -74,7 +74,7 @@
 .dna-bg {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    overflow: visible;
     pointer-events: none;
     z-index: 0;
 }
@@ -83,12 +83,14 @@
     position: absolute;
     border-radius: 50%;
     filter: blur(60px);
-    opacity: 0.15;
+    opacity: 0;
+    display: none;
     animation: float-blob 14s ease-in-out infinite;
 }
 
 .dark-theme .floating-blob {
-    opacity: 0.08;
+    opacity: 0;
+    display: none;
 }
 
 .floating-blob.b1 {
@@ -134,27 +136,28 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% + 250px);
     background-image:
         linear-gradient(var(--primary-blue) 1.2px, transparent 1.2px),
         linear-gradient(90deg, var(--primary-blue) 1.2px, transparent 1.2px);
     background-size: 40px 40px;
-    opacity: 0.08;
-    /* Standardized opacity for Home page */
-    mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+    opacity: 0.03;
+    /* Very subtle grid — barely visible */
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
     z-index: 1;
     pointer-events: none;
 }
 
 /* Enhanced Blue Grid for Inner Pages (Light Mode) */
 .page-header .hero-grid-bg {
-    opacity: 0.12;
-    /* Softened blue presence */
+    opacity: 0.04;
+    /* Very subtle on inner pages */
 }
 
 .dark-theme .hero-grid-bg {
-    opacity: 0.04;
-    /* Subtle blue grid for dark mode */
+    opacity: 0.02;
+    /* Nearly invisible in dark mode */
 }
 
 .particle {
@@ -163,8 +166,9 @@
     height: 6px;
     background: #3b82f6;
     border-radius: 50%;
-    opacity: 0.6;
-    animation: rise linear infinite;
+    opacity: 0;
+    display: none;
+    animation: none;
     pointer-events: none;
 }
 
@@ -197,6 +201,7 @@
     overflow: hidden;
     z-index: -1;
     pointer-events: none;
+    display: none; /* Hidden as requested by user */
 }
 
 .bubble {
@@ -333,15 +338,13 @@ h6 {
 
 /* Marquee Styles */
 .marquee-banner {
-    background: rgba(59, 130, 246, 0.05);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--bg-primary);
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
     padding: 0.4rem 0;
     overflow: hidden;
     position: relative;
-    z-index: 10;
+    z-index: 20;
 }
 
 .marquee-wrapper {
@@ -525,6 +528,26 @@ body {
 }
 
 /* Typography */
+*:focus,
+*:focus-visible,
+[tabindex="-1"]:focus {
+    outline: none !important;
+    outline-width: 0 !important;
+}
+
+h1:focus,
+h2:focus,
+h3:focus,
+h4:focus,
+h5:focus,
+h6:focus,
+.hero-title:focus,
+.reveal-title:focus,
+[tabindex="-1"]:focus {
+    box-shadow: none !important;
+}
+
+
 h1,
 h2,
 h3,
@@ -885,6 +908,26 @@ h5 {
 .btn-helium-secondary:hover {
     background: rgba(255, 255, 255, 0.05);
     border-color: var(--text-primary);
+}
+
+.btn-carousel-cta {
+    padding: 1rem 2.2rem !important;
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+}
+
+@media (max-width: 991px) {
+    .btn-carousel-cta {
+        padding: 0.75rem 1.6rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-carousel-cta {
+        padding: 0.55rem 1.25rem !important;
+        font-size: 0.8rem !important;
+    }
 }
 
 /* Navbar */
@@ -1702,8 +1745,12 @@ h5 {
 
 @media (max-width: 575.98px) {
     .footer-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
+    }
+    .footer-brand-col,
+    .footer-contact-col {
+        grid-column: 1 / -1;
     }
 }
 
@@ -1768,7 +1815,7 @@ h5 {
     letter-spacing: -0.04em;
     line-height: 1.1;
     color: var(--text-primary);
-    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-size: clamp(1.6rem, 5vw, 3rem);
     /* Reduced from 5.5rem */
 }
 
@@ -2461,32 +2508,67 @@ section {
 .hero-carousel-container {
     position: relative;
     width: 100%;
-    height: 480px; /* Fixed stable height on desktop */
+    height: 500px; /* Reduced height so stats section is visible without scrolling */
     display: flex;
     align-items: center;
+    padding-left: 70px;
+    padding-right: 70px;
+    overflow: visible;
 }
 
 @media (max-width: 991px) {
     .hero-carousel-container {
-        height: 380px;
+        height: 420px;
+        padding-left: 55px;
+        padding-right: 55px;
     }
 }
 
 @media (max-width: 576px) {
     .hero-carousel-container {
-        height: 460px;
+        height: 500px;
+        padding-left: 45px;
+        padding-right: 45px;
     }
 }
 
 .hero-slide {
     position: absolute;
-    inset: 0;
+    top: 0;
+    bottom: 0;
+    left: 70px;
+    right: -70px; /* extend well past container to page right edge */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
     display: flex;
     align-items: center;
     z-index: 1;
+    overflow: visible;
+}
+
+@media (max-width: 991px) {
+    .hero-slide {
+        left: 60px;
+        right: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-slide {
+        left: 55px;
+        right: 55px;
+    }
+}
+
+.hero-title.reveal-title {
+    min-height: 120px;
+}
+
+@media (max-width: 991px) {
+    .hero-title.reveal-title {
+        min-height: auto;
+    }
 }
 
 .hero-slide.active {
@@ -2539,27 +2621,97 @@ section {
 
 /* Image blending */
 .slide-image-wrapper {
-    position: relative;
-    border-radius: 40px;
-    overflow: hidden;
-    border: 6px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.25);
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(5px);
+    display: none !important;
 }
 
-.dark-theme .slide-image-wrapper {
-    border-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 25px 50px -12px rgba(96, 165, 250, 0.15);
-}
-
-.slide-image-wrapper::after {
-    content: '';
+/* === Full-bleed Hero Slide Image (right side, no box) === */
+.hero-slide-bg-image {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, transparent 30%, var(--bg-body) 100%),
-                linear-gradient(to top, var(--bg-body) 0%, transparent 40%);
+    top: 0;              /* stay within hero section — no bleed behind navbar */
+    right: -70px;        /* bleed to right page edge */
+    bottom: 0;           /* stop at container bottom — no overlap into marquee */
+    width: 68%;
+    z-index: 0;
     pointer-events: none;
+    border-radius: 0;
+    overflow: hidden;
+    /* 4-sided gradient: left fade starts earlier & width extended; top, right, bottom fade out smoothly */
+    -webkit-mask-image: 
+        linear-gradient(to right, transparent 0%, transparent 5%, rgba(0,0,0,0.4) 15%, black 30%, black 80%, rgba(0,0,0,0.4) 92%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
+    mask-image: 
+        linear-gradient(to right, transparent 0%, transparent 5%, rgba(0,0,0,0.4) 15%, black 30%, black 80%, rgba(0,0,0,0.4) 92%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+}
+
+.hero-slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+}
+
+/* Left content column — occupies left ~45% */
+.hero-slide-content {
+    position: relative;
+    z-index: 2;
+    width: 48%;
+    max-width: 580px;
+    padding-right: 1rem;
+}
+
+@media (max-width: 1400px) {
+    .hero-slide-bg-image {
+        width: 66%;
+        -webkit-mask-image: 
+            linear-gradient(to right, transparent 0%, transparent 4%, rgba(0,0,0,0.4) 12%, black 25%, black 80%, rgba(0,0,0,0.4) 92%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
+        mask-image: 
+            linear-gradient(to right, transparent 0%, transparent 4%, rgba(0,0,0,0.4) 12%, black 25%, black 80%, rgba(0,0,0,0.4) 92%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+    }
+    .hero-slide-content {
+        width: 52%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .hero-slide-bg-image {
+        width: 64%;
+        -webkit-mask-image: 
+            linear-gradient(to right, transparent 0%, transparent 3%, rgba(0,0,0,0.4) 10%, black 22%, black 80%, rgba(0,0,0,0.4) 92%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
+        mask-image: 
+            linear-gradient(to right, transparent 0%, transparent 3%, rgba(0,0,0,0.4) 10%, black 22%, black 80%, rgba(0,0,0,0.4) 92%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+    }
+    .hero-slide-content {
+        width: 54%;
+    }
+}
+
+@media (max-width: 991px) {
+    /* On tablet/mobile: hide background image, content takes full width */
+    .hero-slide-bg-image {
+        display: none;
+    }
+    .hero-slide-content {
+        width: 100%;
+        max-width: 100%;
+        padding-right: 0;
+    }
+}
+
+/* Faded and enlarged image styling (legacy, kept for fallback) */
+.slide-fade-image {
+    display: none;
 }
 
 /* === TOP-LEFT Hero Floating Glass Badge === */
@@ -2628,68 +2780,83 @@ section {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-primary);
+    width: 60px;
+    height: 60px;
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-primary) !important;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 10;
-    backdrop-filter: blur(10px);
+    z-index: 20; /* Keep on top of particle and slider layers */
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    border-radius: 0 !important;
 }
 
 .carousel-nav-btn:hover {
-    background: var(--primary-blue);
-    color: white;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 15px var(--accent-glow);
-    transform: translateY(-50%) scale(1.1);
+    background: transparent !important;
+    border: none !important;
+    color: var(--primary-blue) !important;
+    box-shadow: none !important;
+    transform: translateY(-50%) scale(1.25);
+}
+
+.carousel-nav-btn i {
+    font-size: 2.8rem !important;
 }
 
 .carousel-nav-btn.prev {
-    left: -80px;
+    left: 30px; /* Positions prev button 30px from left edge of screen */
 }
 
 .carousel-nav-btn.next {
-    right: -80px;
+    right: 30px; /* Positions next button 30px from right edge of screen */
 }
 
-/* Responsive arrows for touch/desktop */
-@media (max-width: 1440px) {
+/* Dark Theme Support */
+.dark-theme .carousel-nav-btn {
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    box-shadow: none !important;
+}
+
+.dark-theme .carousel-nav-btn:hover {
+    color: #ffffff !important;
+}
+
+@media (max-width: 991px) {
+    .carousel-nav-btn {
+        width: 44px;
+        height: 44px;
+    }
+    .carousel-nav-btn i {
+        font-size: 2rem !important;
+    }
     .carousel-nav-btn.prev {
-        left: -35px;
+        left: 15px;
     }
     .carousel-nav-btn.next {
-        right: -35px;
+        right: 15px;
     }
 }
 
-@media (max-width: 1350px) {
+@media (max-width: 576px) {
+    .carousel-nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+    .carousel-nav-btn i {
+        font-size: 1.8rem !important;
+    }
     .carousel-nav-btn.prev {
-        left: -15px;
+        left: 10px;
     }
     .carousel-nav-btn.next {
-        right: -15px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .carousel-nav-btn.prev {
-        left: 5px;
-        background: rgba(15, 23, 42, 0.7) !important;
-        color: white !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
-    }
-    .carousel-nav-btn.next {
-        right: 5px;
-        background: rgba(15, 23, 42, 0.7) !important;
-        color: white !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
+        right: 10px;
     }
 }
 

@@ -441,7 +441,7 @@
 
 /* ── Page Header section ─────────────────────────────────────── */
 .page-header {
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 }
 
