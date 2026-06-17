@@ -4,6 +4,7 @@
 
 <PageTitle>Home - Alpha Diagnostics Centre</PageTitle>
 
+
 <!-- 1. HERO SECTION (EXACT ALIGNMENT WITH REACT REFERENCE) -->
 <section class="position-relative d-flex align-items-center overflow-visible" style="padding-top: 5rem; padding-bottom: 0.5rem; min-height: 65vh;">
     <!-- Reference Animations Background -->
@@ -14,17 +15,7 @@
         <div class="hero-grid-bg"></div>
     </div>
 
-    <!-- Particle Simulation -->
-    <div class="position-absolute inset-0 pointer-events-none overflow-visible" style="z-index: 1;">
-        @for (int i = 0; i < 20; i++)
-        {
-            var left = Random.Shared.Next(0, 100);
-            var delay = Random.Shared.NextDouble() * 8;
-            var duration = 8 + Random.Shared.NextDouble() * 10;
-            var size = 4 + Random.Shared.NextDouble() * 6;
-            <span class="particle" style="left: @(left)%; animation-delay: @(delay)s; animation-duration: @(duration)s; width: @(size)px; height: @(size)px;"></span>
-        }
-    </div>
+
 
     <div class="container-fluid position-relative mx-auto px-4" style="max-width: 1280px; z-index: 10; overflow: visible;">
         <!-- Hero Carousel Container -->
@@ -34,9 +25,26 @@
                 var slide = slides[i];
                 var index = i;
                 <div class="hero-slide @(currentSlideIndex == index ? "active" : "")">
-                    <!-- Full-bleed right image (absolutely positioned, no box) -->
+                    <!-- Full-bleed right image or trust logos layout -->
                     <div class="hero-slide-bg-image reveal-image" aria-hidden="true">
-                        <img src="@slide.ImagePath" alt="@slide.Title" class="hero-slide-img" />
+                        @if (index == 0)
+                        {
+                            <div class="hero-trust-logos-layout">
+                                <div class="trust-logo-card">
+                                    <img src="images/anniversary-logo-trans.png?v=3" alt="10 Years Excellence Wreath" class="anniversary-logo-img" />
+                                </div>
+                                <div class="trust-logo-card">
+                                    <img src="images/nabl-accredited-logo-trans.png" alt="NABL Accredited Lab" class="nabl-logo-img" />
+                                </div>
+                                <div class="trust-logo-card">
+                                    <img src="images/cmc-vellore-logo-trans.png" alt="CMC Vellore EQAS Approved" class="cmc-logo-img" />
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@slide.ImagePath" alt="@slide.Title" class="hero-slide-img" />
+                        }
                     </div>
 
                     <!-- Left Column: Content -->
@@ -189,7 +197,7 @@
                 <div class="hstat-label">Years Service</div>
             </div>
             <div class="hstat-item">
-                <div class="hstat-value">50K+</div>
+                <div class="hstat-value">700K+</div>
                 <div class="hstat-label">Happy Patients & Counting</div>
             </div>
             <div class="hstat-item">
@@ -201,7 +209,7 @@
                 <div class="hstat-label">Report Time</div>
             </div>
             <div class="hstat-item">
-                <div class="hstat-value">15+</div>
+                <div class="hstat-value">19+</div>
                 <div class="hstat-label">Centres</div>
             </div>
             <div class="hstat-item">
@@ -235,23 +243,81 @@
     </div>
 </section>
 
+<!-- OUR LAB PARTNERS SECTION -->
+<section class="lab-partners-section py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 10%; left: 5%; opacity: 0.15; background: var(--primary-cyan); width: 300px; height: 300px;"></div>
+    <div class="glow-orb" style="bottom: 10%; right: 5%; opacity: 0.15; background: var(--primary-blue); width: 320px; height: 320px;"></div>
+    
+    <div class="container mx-auto px-4 position-relative" style="max-width: 1280px; z-index: 2;">
+        <!-- Section Title -->
+        <div class="text-center mb-5 reveal-up">
+            <h1 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4.5vw, 3rem);">Our Lab Partners</h1>
+            <div class="badge-excellence mb-3 d-inline-block">Trusted Healthcare Collaborations</div>
+        </div>
+
+        <!-- Partners Logo Marquee -->
+        <div class="partners-marquee-container mt-4">
+            
+            <div class="partners-marquee-track">
+                <!-- Group 1 -->
+                <div class="partners-marquee-group">
+                    <div class="partner-logo-card">
+                        <img src="images/partners/aaditya.png" class="logo-aaditya" alt="Aaditya Hospital" />
+                    </div>
+                    <div class="partner-logo-card">
+                        <div class="partner-text-logo">
+                            <span class="text-thangam-main">THANGAM</span>
+                            <span class="text-thangam-sub">HOSPITAL</span>
+                        </div>
+                    </div>
+                    <div class="partner-logo-card">
+                        <img src="images/partners/nishanth.png" class="logo-nishanth" alt="Nishanth Hospital" />
+                    </div>
+                    <div class="partner-logo-card">
+                        <img src="images/partners/ck.png" class="logo-ck" alt="CK Hospital" />
+                    </div>
+                    <div class="partner-logo-card">
+                        <img src="images/partners/sss.png" class="logo-sss" alt="SSS Hospital" />
+                    </div>
+                </div>
+                <!-- Group 2 (Duplicate for infinite looping) -->
+                <div class="partners-marquee-group" aria-hidden="true">
+                    <div class="partner-logo-card">
+                        <img src="images/partners/aaditya.png" class="logo-aaditya" alt="Aaditya Hospital" />
+                    </div>
+                    <div class="partner-logo-card">
+                        <div class="partner-text-logo">
+                            <span class="text-thangam-main">THANGAM</span>
+                            <span class="text-thangam-sub">HOSPITAL</span>
+                        </div>
+                    </div>
+                    <div class="partner-logo-card">
+                        <img src="images/partners/nishanth.png" class="logo-nishanth" alt="Nishanth Hospital" />
+                    </div>
+                    <div class="partner-logo-card">
+                        <img src="images/partners/ck.png" class="logo-ck" alt="CK Hospital" />
+                    </div>
+                    <div class="partner-logo-card">
+                        <img src="images/partners/sss.png" class="logo-sss" alt="SSS Hospital" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- DIAGNOSTIC SERVICES SECTION -->
 <section class="diagnostic-services-section py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 5%; right: 10%; opacity: 0.25; background: var(--primary-purple); width: 350px; height: 350px;"></div>
+    <div class="glow-orb" style="bottom: 10%; left: 5%; opacity: 0.25; background: var(--primary-blue); width: 380px; height: 380px;"></div>
     <div class="container mx-auto px-4 position-relative" style="max-width: 1280px; z-index: 2;">
         <!-- Section Title -->
         <div class="text-center mb-5 reveal-up">
             <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2.5rem, 5vw, 4rem);">Our Services</h2>
             <div class="badge-excellence mb-3 d-inline-block">Diagnostic Services</div>
-        </div>
-
-        <!-- Header -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end mb-5 gap-3 reveal-up">
-            <div>
-                <h2 class="services-main-title fw-800 m-0">
-                    Everything You Need — 500+ Tests <span class="italic-serif text-emerald">under one roof</span>
-                </h2>
-            </div>
-            <div class="flex-shrink-0">
+            <div class="mt-3">
                 <a href="services" class="view-all-services-link fw-bold d-inline-flex align-items-center gap-2">
                     View all services <i class="bi bi-arrow-right"></i>
                 </a>
@@ -366,6 +432,9 @@
         <div class="floating-blob b2" style="bottom: 10%; right: -5%;"></div>
         <div class="grid-pattern opacity-25"></div>
     </div>
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 10%; opacity: 0.2; background: var(--primary-blue); width: 360px; height: 360px;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 10%; opacity: 0.2; background: var(--primary-purple); width: 400px; height: 400px;"></div>
 
     <div class="container py-5 position-relative" style="z-index: 1;">
         <div class="text-center mb-5 reveal-up">
@@ -460,6 +529,9 @@
 
 <!-- 3. HOW IT WORKS (HORIZONTAL PREMIUM PROCESS DESIGN) -->
 <section id="how-it-works" class="py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.25; background: var(--primary-cyan); width: 350px; height: 350px;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; opacity: 0.25; background: var(--primary-blue); width: 380px; height: 380px;"></div>
     <div class="container py-4 position-relative" style="z-index: 1;">
         <div class="text-center mb-5 reveal-up">
             <div class="badge-excellence mb-3 d-inline-block">The Alpha Process</div>
@@ -623,8 +695,111 @@
     </div>
 </section>
 
+<!-- FLEET OF MACHINES SECTION -->
+<section class="machines-section py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; right: 10%; opacity: 0.15; background: var(--primary-cyan); width: 350px; height: 350px;"></div>
+    <div class="glow-orb" style="bottom: 15%; left: 10%; opacity: 0.15; background: var(--primary-blue); width: 350px; height: 350px;"></div>
+
+    <div class="container mx-auto px-4 position-relative" style="max-width: 1280px; z-index: 2;">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3">Fleet of Machines <span class="text-logo-green">We Have</span></h2>
+            <h3 class="section-subtitle">Discover the advanced technology and high-precision equipment driving our daily operations.</h3>
+        </div>
+
+        <!-- Showcase card -->
+        <div class="machine-showcase-card mt-5 shadow-2xl overflow-hidden" 
+             style="--machine-theme-color: @machines[activeMachineIndex].ThemeColor; --machine-theme-gradient: @machines[activeMachineIndex].ThemeGradient;"
+             @onmouseenter="OnMachinesMouseEnter" @onmouseleave="OnMachinesMouseLeave">
+            <!-- Sleek Autoplay Progress Bar -->
+            <div class="machine-progress-bar-wrapper">
+                <div class="machine-progress-bar" @key="_progressBarKey"></div>
+            </div>
+            <div class="row g-0 h-100">
+                <!-- Left: Image Zone (with dynamic split background) -->
+                <div class="col-lg-6 position-relative machine-image-zone d-flex align-items-center justify-content-center">
+                    <div class="machine-image-wrapper" @key="activeMachineIndex">
+                        <img src="@machines[activeMachineIndex].ImagePath" alt="@machines[activeMachineIndex].Name" class="main-machine-img" />
+                    </div>
+
+                    <!-- Thumbnails overlayed at the bottom left -->
+                    <div class="machine-thumbnails-container">
+                        @for (int i = 0; i < machines.Count; i++)
+                        {
+                            var index = i;
+                            <button class="machine-thumb-btn @(activeMachineIndex == index ? "active" : "")" @onclick="() => SetMachine(index)" aria-label="Select @machines[index].Name">
+                                <img src="@machines[index].ImagePath" alt="@machines[index].Name" />
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Right: Details Zone -->
+                <div class="col-lg-6 machine-details-zone d-flex flex-column justify-content-between" @key="activeMachineIndex">
+                    <!-- Top Details (in colored split) -->
+                    <div class="details-top-split p-5 d-flex align-items-center justify-content-between gap-4">
+                        <div class="d-flex flex-column justify-content-center">
+                            <span class="machine-top-tag mb-2">ADVANCED TECHNOLOGY</span>
+                            <h4 class="machine-name-title mb-1">
+                                @machines[activeMachineIndex].Name
+                            </h4>
+                            <span class="machine-subtitle">@machines[activeMachineIndex].Subtitle</span>
+                        </div>
+                        <div class="machine-logo-wrapper d-flex align-items-center justify-content-center">
+                            @((MarkupString)machines[activeMachineIndex].LogoSvg)
+                        </div>
+                    </div>
+
+                    <!-- Bottom Details (in white/dark split) -->
+                    <div class="details-bottom-split p-5 d-flex flex-column justify-content-between flex-grow-1">
+                        <div>
+                            <p class="machine-desc-text">@machines[activeMachineIndex].Description</p>
+                            
+                            <!-- Specs list -->
+                            <div class="specs-grid mt-4">
+                                @foreach (var spec in machines[activeMachineIndex].Specs)
+                                {
+                                    <div class="spec-item-badge">
+                                        <i class="bi bi-patch-check-fill text-success-icon me-2"></i>
+                                        <span>@spec</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Footer actions inside the details -->
+                        <div class="details-footer mt-4 pt-4 border-top-subtle d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div class="status-indicator">
+                                <span class="pulse-dot"></span>
+                                <span class="status-text font-bold">@machines[activeMachineIndex].Status</span>
+                            </div>
+
+                            <a href="contact" class="btn-machine-action px-4 py-2 rounded-pill text-white fw-700 text-decoration-none" style="background-color: var(--machine-theme-color); font-size: 0.82rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;">
+                                Explore how it works! ↗
+                            </a>
+                            
+                            <!-- Arrows navigation -->
+                            <div class="showcase-nav-arrows d-flex gap-2">
+                                <button class="showcase-arrow-btn" @onclick="PrevMachine" aria-label="Previous Machine">
+                                    <i class="bi bi-arrow-left"></i>
+                                </button>
+                                <button class="showcase-arrow-btn" @onclick="NextMachine" aria-label="Next Machine">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Testimonials Section -->
 <section id="testimonials" class="py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 10%; right: 10%; opacity: 0.22; background: var(--primary-purple); width: 360px; height: 360px;"></div>
+    <div class="glow-orb" style="bottom: 10%; left: 10%; opacity: 0.22; background: var(--primary-blue); width: 380px; height: 380px;"></div>
     <div class="container py-4 position-relative" style="z-index: 1;">
         <!-- Centered Header matching How It Works -->
         <div class="text-center mb-5 reveal-up">
@@ -998,7 +1173,127 @@
 @code {
     private int activeIndex = 0;
     private int currentSlideIndex = 0;
+    private int activeMachineIndex = 0;
+    private int _progressBarKey = 0;
     private System.Threading.CancellationTokenSource? _cts;
+    private System.Threading.CancellationTokenSource? _machinesCts;
+
+    private class MachineItem
+    {
+        public string Name { get; set; } = "";
+        public string Subtitle { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ImagePath { get; set; } = "";
+        public string ThemeColor { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string[] Specs { get; set; } = Array.Empty<string>();
+        public string LogoSvg { get; set; } = "";
+        public string ThemeGradient { get; set; } = "";
+    }
+
+    private List<MachineItem> machines = new()
+    {
+        new MachineItem
+        {
+            Name = "Abbott",
+            Subtitle = "Clinical Chemistry & Immunoassay",
+            Description = "Our advanced Abbott analyzer delivers high-throughput testing with exceptional precision, running chemistry and immunoassay profiles under bidirectionally interfaced control.",
+            ImagePath = "images/machines/abbott.png",
+            ThemeColor = "#10355c",
+            ThemeGradient = "linear-gradient(135deg, #10355c 0%, #071f38 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "High-Throughput", "Bidirectional Interface", "NABL Approved" },
+            LogoSvg = "<svg viewBox=\"0 0 24 24\" fill=\"#009CDE\" style=\"height: 64px; width: 64px; opacity: 1.0;\"><path d=\"M20.812 2.4H0v3.197h19.773V5.6a1.03 1.03 0 0 1 1.032 1.031v10.742l-.004.007a1.034 1.034 0 0 1-1.034 1.025H4.23c-.569 0-1.033-.46-1.033-1.033v-4.34c0-.57.464-1.032 1.033-1.032H17.6V8.803H3.188A3.185 3.185 0 0 0 0 11.99v6.423A3.188 3.188 0 0 0 3.188 21.6h17.624A3.187 3.187 0 0 0 24 18.412V5.587A3.186 3.186 0 0 0 20.812 2.4\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Vector V5600",
+            Subtitle = "High-Precision Biochemistry",
+            Description = "The Vector V5600 Biochemistry analyzer utilizes innovative dry chemistry slide technology to execute complex biochemical profiles with ultra-precise volumetric metering.",
+            ImagePath = "images/machines/vector.png",
+            ThemeColor = "#0d5c3a",
+            ThemeGradient = "linear-gradient(135deg, #0d5c3a 0%, #042416 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Dry Chemistry Tech", "Micro-volume Sampling", "NABL Approved" },
+            LogoSvg = "<svg viewBox=\"0 0 24 24\" fill=\"#10B981\" style=\"height: 64px; width: 64px; opacity: 1.0;\"><path d=\"M12 2L2 22h4.5l5.5-12 5.5 12h4.5L12 2z\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Siemens",
+            Subtitle = "Integrated Lab Automation",
+            Description = "The Siemens automated lab solution offers clinical chemistry and immunoassay testing with magnetic sample transport, ensuring rapid turnaround time (TAT) and clinical accuracy.",
+            ImagePath = "images/machines/siemens.png",
+            ThemeColor = "#4c1d95",
+            ThemeGradient = "linear-gradient(135deg, #4c1d95 0%, #240a4d 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Magnetic Sample Track", "Rapid Turnaround (TAT)", "NABL Approved" },
+            LogoSvg = "<svg viewBox=\"0 0 110 24\" fill=\"#009999\" style=\"height: 42px; width: auto; opacity: 1.0;\"><text x=\"0\" y=\"20\" font-family=\"'Inter', sans-serif\" font-weight=\"900\" font-size=\"20\" letter-spacing=\"0.5px\">SIEMENS</text></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Sysmex",
+            Subtitle = "Automated Hematology Profiler",
+            Description = "The Sysmex system provides comprehensive blood profiling (CBC) with advanced flow cytometry, ensuring exact leukocyte, erythrocyte, and platelet analysis.",
+            ImagePath = "images/machines/sysmex.png",
+            ThemeColor = "#881337",
+            ThemeGradient = "linear-gradient(135deg, #881337 0%, #470619 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Flow Cytometry CBC", "Reticulocyte Analysis", "NABL Approved" },
+            LogoSvg = "<svg viewBox=\"0 0 24 24\" fill=\"#005BAC\" style=\"height: 64px; width: 64px; opacity: 1.0;\"><path d=\"M7 7c-2.76 0-5 2.24-5 5s2.24 5 5 5c2.24 0 3.78-1.5 5-3 1.22 1.5 2.76 3 5 3 2.76 0 5-2.24 5-5s-2.24-5-5-5c-2.24 0-3.78 1.5-5 3-1.22-1.5-2.76-3-5-3zm0 2c1.42 0 2.45.9 3.5 2.18C9.45 12.45 8.42 15 7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3zm10 0c1.66 0 3 1.34 3 3s-1.34 3-3 3c-1.42 0-2.45-.9-3.5-2.18 1.05-1.28 2.08-3.82 3.5-3.82z\"/></svg>"
+        }
+    };
+
+    private void StartMachinesAutoplay()
+    {
+        _progressBarKey++;
+        _machinesCts?.Cancel();
+        _machinesCts = new System.Threading.CancellationTokenSource();
+        var token = _machinesCts.Token;
+        _ = Task.Run(async () =>
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(6000, token);
+                if (token.IsCancellationRequested) break;
+                
+                await InvokeAsync(() =>
+                {
+                    activeMachineIndex = (activeMachineIndex + 1) % machines.Count;
+                    _progressBarKey++;
+                    StateHasChanged();
+                });
+            }
+        }, token);
+    }
+
+    private void PrevMachine()
+    {
+        activeMachineIndex = (activeMachineIndex - 1 + machines.Count) % machines.Count;
+        StartMachinesAutoplay();
+    }
+
+    private void NextMachine()
+    {
+        activeMachineIndex = (activeMachineIndex + 1) % machines.Count;
+        StartMachinesAutoplay();
+    }
+
+    private void SetMachine(int index)
+    {
+        activeMachineIndex = index;
+        StartMachinesAutoplay();
+    }
+
+    private void OnMachinesMouseEnter()
+    {
+        _machinesCts?.Cancel();
+    }
+
+    private void OnMachinesMouseLeave()
+    {
+        StartMachinesAutoplay();
+    }
+
 
     private class FaqItem
     {
@@ -1022,10 +1317,10 @@
     {
         new SlideItem
         {
-            Tagline = "NABL Accredited",
-            Title = "Trusted Diagnostic Centre Since 2015",
-            Body = "Know what is happening inside your body — before it becomes a problem. A quick blood test today can prevent serious health complications tomorrow. NABL-accredited quality, honest pricing, and results you can trust.",
-            ImagePath = "images/indian-pathologist-new.png",
+            Tagline = "NABL ACCREDITED | EQAS APPROVED",
+            Title = "Trusted Diagnostic Excellence for 10+ Years",
+            Body = "Understand your health before issues arise. A precise, quality-checked test today prevents serious complications tomorrow. Get results you can trust with our 10-year legacy of NABL and EQAS accredited excellence.",
+            ImagePath = "images/cmc-vellore-logo.png",
             Cta1Text = "Book a Test Now ↗",
             Cta1Link = "contact",
             Cta2Text = "View Health Packages",
@@ -1118,7 +1413,7 @@
         {
             while (!token.IsCancellationRequested)
             {
-                await Task.Delay(6000, token);
+                await Task.Delay(10000, token);
                 if (token.IsCancellationRequested) break;
                 
                 await InvokeAsync(() =>
@@ -1153,6 +1448,7 @@
             await JS.InvokeVoidAsync("initHeliumAnimations");
             await JS.InvokeVoidAsync("testimonialScroller.init");
             StartAutoplay();
+            StartMachinesAutoplay();
         }
     }
 
@@ -1160,5 +1456,7 @@
     {
         _cts?.Cancel();
         _cts?.Dispose();
+        _machinesCts?.Cancel();
+        _machinesCts?.Dispose();
     }
 }

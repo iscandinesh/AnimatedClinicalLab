@@ -4,20 +4,35 @@
 @inject IJSRuntime JS
 
 <div class="app-shell">
-    <!-- Background Bubbles -->
-    <div class="bubble-container">
-        <div class="bubble" style="left: 5%; width: 20px; height: 20px; animation-delay: 0s; animation-duration: 12s;"></div>
-        <div class="bubble" style="left: 15%; width: 35px; height: 35px; animation-delay: 2s; animation-duration: 15s;"></div>
-        <div class="bubble" style="left: 25%; width: 15px; height: 15px; animation-delay: 4s; animation-duration: 10s;"></div>
-        <div class="bubble" style="left: 35%; width: 45px; height: 45px; animation-delay: 1s; animation-duration: 18s;"></div>
-        <div class="bubble" style="left: 45%; width: 25px; height: 25px; animation-delay: 6s; animation-duration: 14s;"></div>
-        <div class="bubble" style="left: 55%; width: 40px; height: 40px; animation-delay: 3s; animation-duration: 16s;"></div>
-        <div class="bubble" style="left: 65%; width: 20px; height: 20px; animation-delay: 8s; animation-duration: 11s;"></div>
-        <div class="bubble" style="left: 75%; width: 50px; height: 50px; animation-delay: 5s; animation-duration: 20s;"></div>
-        <div class="bubble" style="left: 85%; width: 30px; height: 30px; animation-delay: 7s; animation-duration: 13s;"></div>
-        <div class="bubble" style="left: 95%; width: 20px; height: 20px; animation-delay: 9s; animation-duration: 17s;"></div>
-        <div class="bubble" style="left: 10%; width: 40px; height: 40px; animation-delay: 11s; animation-duration: 19s;"></div>
-        <div class="bubble" style="left: 90%; width: 15px; height: 15px; animation-delay: 12s; animation-duration: 9s;"></div>
+    <!-- Global Animated Background (Floating blobs, grid overlay, and particles) -->
+    <div class="dna-bg" aria-hidden="true" style="position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;">
+        <div class="floating-blob b1" style="opacity: 0.08;"></div>
+        <div class="floating-blob b2" style="opacity: 0.08;"></div>
+        <div class="floating-blob b3" style="opacity: 0.06;"></div>
+        <div class="hero-grid-bg" style="opacity: 0.015; height: 100vh;"></div>
+    </div>
+
+    <!-- Global Background Bubbles -->
+    <div class="bubble-container" aria-hidden="true">
+        <div class="bubble" style="left: 10%; width: 40px; height: 40px; animation-delay: 0s; animation-duration: 12s;"></div>
+        <div class="bubble" style="left: 25%; width: 60px; height: 60px; animation-delay: 2s; animation-duration: 15s;"></div>
+        <div class="bubble" style="left: 40%; width: 30px; height: 30px; animation-delay: 4s; animation-duration: 10s;"></div>
+        <div class="bubble" style="left: 55%; width: 50px; height: 50px; animation-delay: 1s; animation-duration: 14s;"></div>
+        <div class="bubble" style="left: 70%; width: 70px; height: 70px; animation-delay: 3s; animation-duration: 18s;"></div>
+        <div class="bubble" style="left: 85%; width: 45px; height: 45px; animation-delay: 5s; animation-duration: 13s;"></div>
+        <div class="bubble" style="left: 95%; width: 35px; height: 35px; animation-delay: 7s; animation-duration: 11s;"></div>
+    </div>
+
+    <!-- Particle Simulation -->
+    <div class="position-fixed inset-0 pointer-events-none" style="z-index: 0; overflow: hidden;">
+        @for (int i = 0; i < 20; i++)
+        {
+            var left = System.Random.Shared.Next(0, 100);
+            var delay = System.Random.Shared.NextDouble() * 8;
+            var duration = 10 + System.Random.Shared.NextDouble() * 12;
+            var size = 3 + System.Random.Shared.NextDouble() * 5;
+            <span class="particle" style="left: @(left)%; animation-delay: @(delay)s; animation-duration: @(duration)s; width: @(size)px; height: @(size)px;"></span>
+        }
     </div>
 
     <div class="app-layout">
@@ -42,7 +57,7 @@
                              class="app-logo"
                              style="height: 80px; width: auto;"
                              width="836" height="312" />
-                        <img src="images/anniversary-logo.png" alt="10 Years Quality" style="height: 68px; width: auto; object-fit: contain;" />
+                        <img src="images/anniversary-logo.png?v=3" alt="10 Years Quality" style="height: 68px; width: auto; object-fit: contain;" />
                     </div>
                     <p class="footer-brand-desc">
                         Alpha Diagnostics Centre is a trusted diagnostic lab offering a wide range of tests and health check-ups with accurate results and caring service. We aim to make quality diagnostics simple, fast, and affordable for everyone.
@@ -120,7 +135,7 @@
                         </div>
                         <div class="d-flex align-items-center gap-2 mt-1">
                             <i class="bi bi-patch-check-fill footer-badge-icon"></i>
-                            <span class="footer-contact-text fw-bold footer-badge-text">NABL Accredited &amp; ICMR Approved</span>
+                            <span class="footer-contact-text fw-bold footer-badge-text">NABL, EQAS &amp; ICMR Approved</span>
                         </div>
                     </div>
                 </div>
@@ -132,6 +147,8 @@
                 </p>
                 <div class="d-flex align-items-center gap-3 x-small footer-bottom-links">
                     <span><i class="bi bi-shield-check me-1 footer-badge-icon"></i> NABL Accredited</span>
+                    <span class="opacity-50">|</span>
+                    <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> EQAS Approved</span>
                     <span class="opacity-50">|</span>
                     <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> ICMR Approved</span>
                     <span class="opacity-50">|</span>

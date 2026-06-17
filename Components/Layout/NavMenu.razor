@@ -1,7 +1,9 @@
 @inject IJSRuntime JS
 @inject ThemeService ThemeState
+@inject NavigationManager Navigation
+@implements IDisposable
 
-<nav class="helium-nav">
+<nav class="helium-nav @(IsOnDarkHeroPage ? "on-dark-hero" : "")">
     <div class="nav-container">
         <!-- Brand -->
         <a class="nav-brand" href="">
@@ -24,7 +26,14 @@
                 </div>
             </div>
             <a class="nav-link" href="about">About</a>
-            <a class="nav-link" href="locations">Locations</a>
+            <div class="nav-dropdown">
+                <a class="nav-link nav-dropdown-trigger" href="locations">
+                    Locations <i class="bi bi-chevron-down nav-arrow"></i>
+                </a>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-dropdown-item" href="tiruppur">Tiruppur</a>
+                </div>
+            </div>
             <a class="nav-link" href="insights">Insights</a>
             <a class="nav-link" href="contact">Contact</a>
         </div>
@@ -53,7 +62,10 @@
                     <a class="nav-link fs-5 text-secondary mt-2" href="services#health-packages" @onclick="ToggleNavMenu" style="font-size: 1.1rem; border-left: 2px solid var(--border-subtle); padding-left: 10px;">Health Check Packages</a>
                 </div>
                 <a class="nav-link fs-4" href="about" @onclick="ToggleNavMenu">About Us</a>
-                <a class="nav-link fs-4" href="locations" @onclick="ToggleNavMenu">Locations</a>
+                <div class="d-flex flex-column align-items-center w-100">
+                    <a class="nav-link fs-4" href="locations" @onclick="ToggleNavMenu">Locations</a>
+                    <a class="nav-link fs-5 text-secondary mt-2" href="tiruppur" @onclick="ToggleNavMenu" style="font-size: 1.1rem; border-left: 2px solid var(--border-subtle); padding-left: 10px;">Tiruppur</a>
+                </div>
                 <a class="nav-link fs-4" href="insights" @onclick="ToggleNavMenu">Insights</a>
                 <a class="nav-link fs-4" href="contact" @onclick="ToggleNavMenu">Contact</a>
                 <a href="contact" class="btn-helium btn-helium-primary w-100 text-center" @onclick="ToggleNavMenu">Book a Test</a>
@@ -71,6 +83,17 @@
 @code {
     private bool collapseNavMenu = true;
 
+    private bool IsOnDarkHeroPage
+    {
+        get
+        {
+            var relativePath = Navigation.ToBaseRelativePath(Navigation.Uri);
+            return relativePath.Equals("contact", StringComparison.OrdinalIgnoreCase)
+                || relativePath.Equals("tiruppur", StringComparison.OrdinalIgnoreCase)
+                || relativePath.Equals("locations/tiruppur", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -79,6 +102,12 @@
     protected override void OnInitialized()
     {
         ThemeState.OnChange += StateHasChanged;
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -87,5 +116,11 @@
         {
             await JS.InvokeVoidAsync("initHeliumAnimations");
         }
+    }
+
+    public void Dispose()
+    {
+        ThemeState.OnChange -= StateHasChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
     }
 }

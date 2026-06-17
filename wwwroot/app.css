@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     /* Base spacing & Radius */
     --radius-lg: 24px;
@@ -22,6 +26,7 @@
     --primary-blue: #2563EB;
     /* Solid professional blue */
     --accent-glow: rgba(59, 130, 246, 0.05);
+    --machine-bg-bottom: #faf9f6;
 }
 
 .dark-theme {
@@ -40,6 +45,7 @@
     --border-subtle: rgba(255, 255, 255, 0.12);
     --border-glow: rgba(96, 165, 250, 0.3);
     --gradient-hero: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+    --machine-bg-bottom: #090e18;
 }
 
 .dark-theme .page-header,
@@ -82,15 +88,16 @@
 .floating-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0;
-    display: none;
+    filter: blur(80px);
+    opacity: 0.15;
+    display: block;
     animation: float-blob 14s ease-in-out infinite;
+    mix-blend-mode: screen;
 }
 
 .dark-theme .floating-blob {
-    opacity: 0;
-    display: none;
+    opacity: 0.12;
+    display: block;
 }
 
 .floating-blob.b1 {
@@ -164,11 +171,11 @@
     position: absolute;
     width: 6px;
     height: 6px;
-    background: #3b82f6;
+    background: var(--primary-blue);
     border-radius: 50%;
-    opacity: 0;
-    display: none;
-    animation: none;
+    opacity: 0.5;
+    display: block;
+    animation: rise 12s infinite linear;
     pointer-events: none;
 }
 
@@ -201,7 +208,6 @@
     overflow: hidden;
     z-index: -1;
     pointer-events: none;
-    display: none; /* Hidden as requested by user */
 }
 
 .bubble {
@@ -942,13 +948,51 @@ h5 {
     background: transparent;
 }
 
+/* === Scrolled Navbar: Frosted Glass — content blurs behind it === */
 .helium-nav.scrolled {
-    padding: 1rem 0;
-    background: var(--bg-card);
-    /* More solid background */
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border-subtle);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    padding: 0.85rem 0;
+    /* Light theme: semi-transparent white frosted glass */
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-bottom: none; /* Removed scrolled white/gray line */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s var(--easing-standard);
+}
+
+/* Dark theme: semi-transparent deep navy frosted glass */
+.dark-theme .helium-nav.scrolled {
+    background: rgba(8, 12, 35, 0.65);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border-bottom: none; /* Removed scrolled border line */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Force navigation menu elements to be white before scrolling on dark hero headers */
+.helium-nav.on-dark-hero:not(.scrolled) .nav-link {
+    color: #ffffff !important;
+}
+.helium-nav.on-dark-hero:not(.scrolled) .nav-link:hover {
+    color: #60a5fa !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+.helium-nav.on-dark-hero:not(.scrolled) .nav-arrow {
+    color: #ffffff !important;
+}
+.helium-nav.on-dark-hero:not(.scrolled) .theme-toggle-btn {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+.helium-nav.on-dark-hero:not(.scrolled) .theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #60a5fa !important;
+}
+.helium-nav.on-dark-hero:not(.scrolled) .app-logo {
+    filter: brightness(0) invert(1) !important;
+}
+.helium-nav.on-dark-hero:not(.scrolled) button {
+    color: #ffffff !important;
 }
 
 .nav-icon-link {
@@ -1196,6 +1240,39 @@ h5 {
 .reveal-up.active {
     opacity: 1;
     transform: translateY(0);
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.8s var(--easing-framer), transform 0.8s var(--easing-framer);
+}
+
+.reveal-left.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.8s var(--easing-framer), transform 0.8s var(--easing-framer);
+}
+
+.reveal-right.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reveal-scale {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.8s var(--easing-framer), transform 0.8s var(--easing-framer);
+}
+
+.reveal-scale.active {
+    opacity: 1;
+    transform: scale(1);
 }
 
 /* New Hero Entrance Animations */
@@ -2518,17 +2595,17 @@ section {
 
 @media (max-width: 991px) {
     .hero-carousel-container {
-        height: 420px;
-        padding-left: 55px;
-        padding-right: 55px;
+        height: 520px;
+        padding-left: 45px;
+        padding-right: 45px;
     }
 }
 
 @media (max-width: 576px) {
     .hero-carousel-container {
-        height: 500px;
-        padding-left: 45px;
-        padding-right: 45px;
+        height: 520px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 }
 
@@ -2556,8 +2633,49 @@ section {
 
 @media (max-width: 576px) {
     .hero-slide {
-        left: 55px;
-        right: 55px;
+        left: 15px;
+        right: 15px;
+    }
+    .hero-slide-content {
+        width: 70% !important;
+    }
+    .hero-slide-bg-image {
+        width: 68% !important;
+        right: -15px !important;
+        opacity: 0.35 !important;
+        /* 4-sided fade: all edges and corners fade out */
+        mask-image:
+            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, black 45%, black 80%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+        -webkit-mask-image:
+            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, black 45%, black 80%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+    }
+    .dark-theme .hero-slide-bg-image {
+        opacity: 0.35 !important;
+    }
+    /* Trust logos slide: full opacity, right-aligned vertical column */
+    .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        mask-image: none !important;
+        -webkit-mask-image: none !important;
+        opacity: 1 !important;
+        width: 35% !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+        pointer-events: auto;
+        box-sizing: border-box !important;
+    }
+    .dark-theme .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        opacity: 1 !important;
     }
 }
 
@@ -2575,6 +2693,18 @@ section {
     opacity: 1;
     visibility: visible;
     z-index: 2;
+    animation: heroSlideFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes heroSlideFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Animations for active slide content */
@@ -2698,14 +2828,125 @@ section {
 }
 
 @media (max-width: 991px) {
-    /* On tablet/mobile: hide background image, content takes full width */
+    /* On tablet/mobile: overlay image and text side-by-side in the same slide area */
+    .hero-slide {
+        flex-direction: row;
+        align-items: center;
+        left: 20px;
+        right: 20px;
+    }
     .hero-slide-bg-image {
-        display: none;
+        position: absolute !important;
+        top: 0 !important;
+        right: -20px !important;
+        bottom: 0 !important;
+        left: auto !important;
+        width: 65% !important;
+        height: 100% !important;
+        display: block !important;
+        z-index: 0 !important;
+        pointer-events: none;
+        border-radius: 0;
+        box-shadow: none !important;
+        overflow: hidden;
+        /* 4-sided fade: left (text overlap), right, top, bottom all fade to transparent */
+        mask-image:
+            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 10%, black 50%, black 80%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+        -webkit-mask-image:
+            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 10%, black 50%, black 80%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        opacity: 0.4 !important;
+    }
+    /* For slide 0 (trust logos), remove fading and show full opacity, confined to slide height */
+    .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        mask-image: none !important;
+        -webkit-mask-image: none !important;
+        opacity: 1 !important;
+        width: 38% !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+        pointer-events: auto;
+        box-sizing: border-box !important;
+    }
+    .dark-theme .hero-slide-bg-image {
+        opacity: 0.45 !important;
+    }
+    /* Dark theme: trust logos container still full opacity */
+    .dark-theme .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        opacity: 1 !important;
     }
     .hero-slide-content {
-        width: 100%;
-        max-width: 100%;
-        padding-right: 0;
+        width: 65% !important;
+        max-width: 100% !important;
+        padding-right: 15px !important;
+        text-align: left !important;
+        z-index: 2 !important;
+    }
+    .reveal-buttons {
+        justify-content: flex-start !important;
+    }
+    .reveal-badge {
+        display: flex !important;
+        justify-content: flex-start !important;
+    }
+}
+
+
+@media (max-width: 576px) {
+    .hero-slide {
+        left: 15px;
+        right: 15px;
+    }
+    .hero-slide-content {
+        width: 70% !important;
+    }
+    .hero-slide-bg-image {
+        width: 68% !important;
+        right: -15px !important;
+        opacity: 0.35 !important;
+        /* 4-sided fade: all edges and corners fade out */
+        mask-image:
+            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, black 45%, black 80%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+        -webkit-mask-image:
+            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, black 45%, black 80%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+    }
+    .dark-theme .hero-slide-bg-image {
+        opacity: 0.35 !important;
+    }
+    /* Trust logos slide: full opacity, right-aligned vertical column */
+    .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        mask-image: none !important;
+        -webkit-mask-image: none !important;
+        opacity: 1 !important;
+        width: 35% !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+        pointer-events: auto;
+        box-sizing: border-box !important;
+    }
+    .dark-theme .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        opacity: 1 !important;
     }
 }
 
@@ -5198,4 +5439,55 @@ section {
 /* Category hidden state for JS filtering */
 .insight-card-wrapper.hidden {
     display: none;
+}
+
+/* Global Dark Theme Component Overrides */
+.dark-theme .partner-logo-card {
+    background: #ffffff !important; /* keep card background white in dark theme */
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark-theme .partner-logo-card img {
+    /* original logo colors are kept in dark mode since the card is white */
+    mix-blend-mode: multiply !important;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.02)) !important;
+}
+
+.dark-theme .partner-logo-card img.logo-aaditya {
+    filter: invert(1) hue-rotate(180deg) brightness(0.9) !important;
+    mix-blend-mode: normal !important;
+}
+
+.dark-theme .spec-item-badge {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-theme .border-top-subtle {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark-theme .trust-logo-card {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dark-theme .trust-logo-card:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.25) !important;
+}
+
+.dark-theme .trust-logo-card img.nabl-logo-img {
+    filter: invert(1) hue-rotate(180deg) brightness(1.35) contrast(1.1) !important;
+}
+
+.dark-theme .trust-logo-card img.anniversary-logo-img {
+    filter: brightness(1.1) drop-shadow(0 2px 8px rgba(218, 165, 32, 0.4)) !important;
+}
+
+.dark-theme .trust-logo-card img.cmc-logo-img {
+    filter: brightness(1.2) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3)) !important;
 }

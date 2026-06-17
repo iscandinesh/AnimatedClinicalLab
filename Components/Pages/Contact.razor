@@ -3,183 +3,172 @@
 
 <PageTitle>Contact Us - Alpha Diagnostics Centre</PageTitle>
 
-<section class="page-header text-center position-relative">
-    <!-- Blended banner image -->
-    <img src="images/indian-pathologist-new.png" alt="Diagnostics Lab" class="header-banner-image" />
-
-    <div class="container position-relative z-2 py-0">
-        <h1 class="header-title fw-bold mb-2 reveal-up" style="font-size: 2.5rem;">Contact us</h1>
-        <p class="header-subtitle lead mb-0 small reveal-up" style="max-width: 600px; margin: 0 auto; font-size: 0.95rem; line-height: 1.5;">
-            Book a test, request a home visit, or reach out with any questions. We are here to help.
+<!-- Top Hero Banner with Gradient & Blurred Background Image -->
+<div class="contact-hero-section">
+    <div class="hero-bg-image"></div>
+    <div class="hero-bg-overlay"></div>
+    <div class="container text-center text-white position-relative z-3">
+        <h1 class="hero-title fw-800 mb-3 animate-fade-in" style="color: #ffffff !important;">Feel free to get in touch</h1>
+        <p class="hero-subtitle mx-auto opacity-90 animate-fade-in" style="max-width: 650px; color: rgba(255, 255, 255, 0.85) !important;">
+            With over 10 years of experience, we can deliver great results for your healthcare diagnostic needs without additional costs or commitments.
         </p>
     </div>
+</div>
 
-    <!-- Wavy Bottom Boundary -->
-    <div class="header-wave">
-        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,60 C300,120 900,0 1200,60 L1200,120 L0,120 Z" class="wave-path"></path>
-        </svg>
-    </div>
-</section>
-
-<section class="pt-0 pb-4">
-    <div class="container pb-3">
-        <div class="contact-card-container reveal-up">
-            <!-- Contact Info Panel (Left Column) -->
-            <div class="contact-info-panel">
-                <div>
-                    <h3 class="contact-item-title fs-4 mb-2">Get in touch</h3>
-                    <p class="text-secondary small mb-5">Reach us through any of the channels below. We will respond promptly.</p>
-
-                    <div class="contact-items-list">
-                        <!-- Main Lab Address -->
-                        <div class="contact-item">
-                            <div class="contact-icon-wrapper">
-                                <i class="bi bi-geo-alt"></i>
+<!-- Main Split Section with Diagonal Division -->
+<div class="contact-split-section">
+    <div class="container">
+        <div class="row g-5 align-items-stretch">
+            
+            <!-- Left Side: Form Card -->
+            <div class="col-lg-6 d-flex reveal-up">
+                <div class="contact-form-card w-100">
+                    <h3 class="form-title mb-4">Send us a message</h3>
+                    
+                    @if (isSubmitted)
+                    {
+                        <div class="text-center py-5 animate-fade-in h-100 d-flex flex-column justify-content-center">
+                            <div class="success-icon-box mx-auto mb-4">
+                                <i class="bi bi-check-lg"></i>
                             </div>
-                            <div class="contact-text-wrapper">
-                                <span class="contact-item-title">Main Laboratory</span>
-                                <span class="contact-item-desc">31, Patel Street, Erode – 638 001.</span>
-                                <a href="https://maps.google.com" target="_blank" class="contact-item-link">View on Map →</a>
+                            <h4 class="fw-bold mb-3" style="color: #0f172a;">Message Sent!</h4>
+                            <p class="text-secondary small mb-4">Thank you for reaching out. Our team will contact you shortly.</p>
+                            <button class="btn-send-message mx-auto" @onclick="() => isSubmitted = false">Send Another Message</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <form @onsubmit="HandleSubmit" class="d-flex flex-column gap-3">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Full Name</label>
+                                    <input type="text" class="form-input-custom" placeholder="Name" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Phone Number</label>
+                                    <input type="tel" class="form-input-custom" placeholder="Phone" required />
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Email Address</label>
+                                    <input type="email" class="form-input-custom" placeholder="Email" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Subject / Test Type</label>
+                                    <select class="form-select form-input-custom" style="height: auto;">
+                                        <option selected>Home Sample Collection</option>
+                                        <option>Health Package Inquiry</option>
+                                        <option>General Question</option>
+                                        <option>Feedback</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label-custom">Your Message</label>
+                                <textarea class="form-input-custom" style="min-height: 100px; resize: none;" rows="2" placeholder="Message"></textarea>
+                            </div>
+                            
+                            <div class="mt-2 text-end">
+                                <button type="submit" class="btn-send-message">
+                                    <i class="bi bi-send-fill me-2"></i> Send
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+            
+            <!-- Right Side: Info Panel -->
+            <div class="col-lg-6 d-flex align-items-center reveal-up" style="transition-delay: 0.1s;">
+                <div class="contact-info-content w-100">
+                    <h2 class="info-title mb-3">Don't hesitate to contact us</h2>
+                    <p class="info-desc mb-5">
+                        Alpha Diagnostics Centre is a trusted partner for medical testing. Reach out to book a test, request home collection, or discuss your health needs.
+                    </p>
+                    
+                    <div class="info-cards-grid mb-5">
+                        <!-- Card 1: Office -->
+                        <div class="info-item-card reveal-up">
+                            <div class="info-icon-circle bg-blue-light">
+                                <i class="bi bi-geo-alt-fill text-blue"></i>
+                            </div>
+                            <div class="info-text">
+                                <div class="info-label">Office</div>
+                                <div class="info-value">31, Patel Street, Erode – 638 001.</div>
                             </div>
                         </div>
-
-                        <!-- Sample Collection & Support -->
-                        <div class="contact-item">
-                            <div class="contact-icon-wrapper">
-                                <i class="bi bi-telephone"></i>
+                        
+                        <!-- Card 2: Phone -->
+                        <div class="info-item-card reveal-up" style="transition-delay: 0.1s;">
+                            <div class="info-icon-circle bg-yellow-light">
+                                <i class="bi bi-telephone-fill text-yellow"></i>
                             </div>
-                            <div class="contact-text-wrapper">
-                                <span class="contact-item-title">Sample Collection &amp; Call Support</span>
-                                <span class="contact-item-desc">70944 90917 | 81108 99999</span>
-                            </div>
-                        </div>
-
-                        <!-- WhatsApp Support -->
-                        <div class="contact-item">
-                            <div class="contact-icon-wrapper">
-                                <i class="bi bi-whatsapp"></i>
-                            </div>
-                            <div class="contact-text-wrapper">
-                                <span class="contact-item-title">WhatsApp Support</span>
-                                <a href="https://wa.me/918110899999" target="_blank" class="contact-item-link">81108 99999 →</a>
+                            <div class="info-text">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">70944 90917 | 81108 99999</div>
                             </div>
                         </div>
-
-                        <!-- Email Support -->
-                        <div class="contact-item">
-                            <div class="contact-icon-wrapper">
-                                <i class="bi bi-envelope"></i>
+                        
+                        <!-- Card 3: Work Hours -->
+                        <div class="info-item-card reveal-up" style="transition-delay: 0.2s;">
+                            <div class="info-icon-circle bg-purple-light">
+                                <i class="bi bi-clock-fill text-purple"></i>
                             </div>
-                            <div class="contact-text-wrapper">
-                                <span class="contact-item-title">Email Support</span>
-                                <span class="contact-item-desc">info@alphadiagnosticscentre.com</span>
+                            <div class="info-text">
+                                <div class="info-label">Work Hours</div>
+                                <div class="info-value">Open 24 Hours & Sunday Available</div>
                             </div>
                         </div>
-
-                        <!-- Complaints & Feedback -->
-                        <div class="contact-item">
-                            <div class="contact-icon-wrapper">
-                                <i class="bi bi-exclamation-triangle"></i>
+                        
+                        <!-- Card 4: Email -->
+                        <div class="info-item-card reveal-up" style="transition-delay: 0.3s;">
+                            <div class="info-icon-circle bg-green-light">
+                                <i class="bi bi-envelope-fill text-green"></i>
                             </div>
-                            <div class="contact-text-wrapper">
-                                <span class="contact-item-title">Complaints &amp; Feedback</span>
-                                <span class="contact-item-desc">70944 90913 | 70944 90907</span>
+                            <div class="info-text">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">info@alphadiagnosticscentre.com</div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Follow Our Social Media Links -->
-                <div class="social-media-wrapper">
-                    <div class="social-title">Follow our social media</div>
-                    <div class="social-icons-list">
-                        <a href="https://facebook.com" target="_blank" class="social-link-btn" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" class="social-link-btn" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://twitter.com" target="_blank" class="social-link-btn" aria-label="Twitter">
-                            <i class="bi bi-twitter-x"></i>
-                        </a>
-                        <a href="https://youtube.com" target="_blank" class="social-link-btn" aria-label="YouTube">
-                            <i class="bi bi-youtube"></i>
-                        </a>
+                    
+                    <div class="social-share-row d-flex align-items-center gap-3">
+                        <span class="social-label">Social Media :</span>
+                        <div class="social-list">
+                            <a href="https://facebook.com" target="_blank" class="social-circle-btn bg-fb" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="https://instagram.com" target="_blank" class="social-circle-btn bg-ig" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                            <a href="https://linkedin.com" target="_blank" class="social-circle-btn bg-ln" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                            <a href="https://youtube.com" target="_blank" class="social-circle-btn bg-yt" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                            <a href="https://wa.me/918110899999" target="_blank" class="social-circle-btn bg-wa" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Message Form Panel (Right Column) -->
-            <div class="contact-form-panel">
-                <!-- Premium Quick Highlights Banner to fill empty space -->
-                <div class="form-quick-info-banner mb-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="banner-icon-box">
-                            <i class="bi bi-patch-check-fill text-primary"></i>
-                        </div>
-                        <div>
-                            <span class="banner-title">NABL Accredited &amp; ICMR Approved</span>
-                            <span class="banner-subtitle">Get certified reports on your WhatsApp in 4 hours</span>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 class="form-title">Send us a message</h3>
-                <p class="form-subtitle">Fill out the form below to book a home sample collection or inquire about a test.</p>
-
-                @if (isSubmitted)
-                {
-                    <div class="text-center py-5 animate-fade-in">
-                        <div class="bg-success bg-opacity-10 text-success p-4 rounded-circle d-inline-block mb-4" style="width: 80px; height: 80px; display: inline-flex !important; align-items: center; justify-content: center;">
-                            <i class="bi bi-check-lg fs-1"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Message Sent!</h4>
-                        <p class="text-secondary">Thank you for reaching out. Our team will contact you shortly.</p>
-                        <button class="contact-submit-btn w-auto px-5 mx-auto" @onclick="() => isSubmitted = false">Send Another Message</button>
-                    </div>
-                }
-                else
-                {
-                    <form @onsubmit="HandleSubmit" class="d-flex flex-column gap-2">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label-top">Full Name</label>
-                                <input type="text" class="contact-form-input" placeholder="Name" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label-top">Phone Number</label>
-                                <input type="tel" class="contact-form-input" placeholder="Phone" required>
-                            </div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label-top">Email Address</label>
-                                <input type="email" class="contact-form-input" placeholder="Email" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label-top">Subject / Test Type</label>
-                                <select class="form-select contact-form-input" style="height: auto;">
-                                    <option selected>Home Sample Collection</option>
-                                    <option>Health Package Inquiry</option>
-                                    <option>General Question</option>
-                                    <option>Feedback</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="form-label-top">Your Message</label>
-                            <textarea class="contact-form-input" rows="2" placeholder="Message"></textarea>
-                        </div>
-                        <button type="submit" class="contact-submit-btn">
-                            <i class="bi bi-send-fill"></i> Send
-                        </button>
-                    </form>
-                }
-            </div>
+            
         </div>
     </div>
-</section>
+</div>
+
+<!-- Bottom Call to Action Section -->
+<div class="contact-bottom-cta">
+    <div class="container position-relative z-2">
+        <div class="cta-inner-card text-center text-white reveal-up">
+            <div class="cta-badge d-inline-flex align-items-center gap-2 mb-4">
+                <i class="bi bi-house-door-fill"></i> We Ready 24 Hours
+            </div>
+            <h2 class="cta-heading fw-800 mb-3">Have questions in mind? Let's Talk</h2>
+            <p class="cta-paragraph mx-auto mb-4 opacity-80" style="max-width: 580px;">
+                For urgent enquiries, blood collection bookings, or diagnostic support, feel free to call our direct lines anytime.
+            </p>
+            <a href="tel:918110899999" class="cta-phone-btn text-decoration-none">
+                +91 81108 99999 <i class="bi bi-telephone-fill ms-2"></i>
+            </a>
+        </div>
+    </div>
+</div>
 
 @code {
     private bool isSubmitted = false;

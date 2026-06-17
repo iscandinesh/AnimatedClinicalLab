@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <defs>
+    <linearGradient id="ck-navy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    <linearGradient id="ck-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#DC2626" />
+    </linearGradient>
+  </defs>
+  <!-- Logo Icon: CK Ligature and pulse -->
+  <g transform="translate(15, 12)">
+    <!-- Main circle outer ring -->
+    <circle cx="28" cy="28" r="20" fill="none" stroke="url(#ck-navy)" stroke-width="2.5"/>
+    <!-- C shape -->
+    <path d="M 32 18 A 11 11 0 0 0 22 28 A 11 11 0 0 0 32 38" fill="none" stroke="url(#ck-navy)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- K vertical leg -->
+    <line x1="33" y1="18" x2="33" y2="38" stroke="url(#ck-red)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- K diagonal legs -->
+    <path d="M 41 18 L 33 28 L 41 38" fill="none" stroke="url(#ck-red)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Typography -->
+  <g transform="translate(75, 25)">
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="16" font-weight="800" fill="#0f172a" letter-spacing="0.5">CK HOSPITAL</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="11" font-weight="600" fill="#475569" letter-spacing="1.5" y="16">MEDICAL CENTER</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="9" font-weight="500" fill="#ef4444" letter-spacing="1" y="28">SINCE 1975 • ERODE</text>
+  </g>
+</svg>

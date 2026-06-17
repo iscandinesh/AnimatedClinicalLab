@@ -4,7 +4,7 @@ namespace AlphaRazor.Services
 {
     public class ThemeService
     {
-        public bool IsDarkMode { get; private set; } = false;
+        public bool IsDarkMode { get; private set; } = true;
 
         public event Action OnChange;
 

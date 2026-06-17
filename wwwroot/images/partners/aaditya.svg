@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <defs>
+    <linearGradient id="aaditya-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5722" />
+      <stop offset="100%" stop-color="#FF9800" />
+    </linearGradient>
+    <linearGradient id="aaditya-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a58ca" />
+      <stop offset="100%" stop-color="#0dcaf0" />
+    </linearGradient>
+  </defs>
+  <!-- Logo Icon -->
+  <g transform="translate(15, 12)">
+    <!-- Sun rays backdrop -->
+    <path d="M 28 8 A 20 20 0 0 1 48 28 A 20 20 0 0 1 28 48 A 20 20 0 0 1 8 28 A 20 20 0 0 1 28 8" fill="none" stroke="url(#aaditya-grad)" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <!-- Medical Cross -->
+    <path d="M 24 16 L 32 16 L 32 24 L 40 24 L 40 32 L 32 32 L 32 40 L 24 40 L 24 32 L 16 32 L 16 24 L 24 24 Z" fill="url(#aaditya-blue)"/>
+    <!-- Rising Sun Core -->
+    <circle cx="28" cy="28" r="8" fill="url(#aaditya-grad)" opacity="0.85"/>
+  </g>
+  <!-- Typography -->
+  <g transform="translate(75, 25)">
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="16" font-weight="800" fill="#0f172a" letter-spacing="0.5">AADITYA</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="11" font-weight="600" fill="#475569" letter-spacing="1.5" y="16">HOSPITAL</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="9" font-weight="500" fill="#10b981" letter-spacing="1" y="28">ERODE</text>
+  </g>
+</svg>

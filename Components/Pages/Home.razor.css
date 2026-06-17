@@ -123,3 +123,656 @@
     margin-right: 15px;
     overflow: hidden;
 }
+
+/* --- Our Lab Partners Section CSS --- */
+.lab-partners-section {
+    background: transparent;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 60px 0;
+    position: relative;
+}
+
+/* Partners Marquee Container with smooth CSS mask-image opacity fade */
+.partners-marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    padding: 10px 0;
+    width: 100%;
+    /* Graceful edge fade using transparency mask (no colored boxes/overlays) */
+    mask-image: linear-gradient(to right, transparent, #fff 15%, #fff 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #fff 15%, #fff 85%, transparent);
+}
+
+
+/* Marquee Track */
+.partners-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: partners-scroll-marquee 25s linear infinite;
+}
+
+.partners-marquee-track:hover {
+    animation-play-state: paused;
+}
+
+/* Logo groups inside the track */
+.partners-marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding-right: 40px; /* space between loop cycles */
+}
+
+/* Individual logo card design (always white background to preserve logo originality) */
+.partner-logo-card {
+    width: 220px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    padding: 4px 12px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+    cursor: pointer;
+}
+
+.partner-logo-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 40px var(--border-glow);
+    border-color: var(--primary-blue);
+}
+
+.partner-logo-card img {
+    height: 70px;
+    width: auto;
+    max-width: 195px;
+    object-fit: contain;
+    display: block;
+    mix-blend-mode: multiply; /* removes white margins in both light and dark mode */
+    transition: filter 0.3s ease;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.02));
+}
+
+/* Aaditya logo has white text in source file, so invert in both light & dark mode to make it visible on the white card */
+.partner-logo-card img.logo-aaditya {
+    filter: invert(1) hue-rotate(180deg) brightness(0.9);
+    mix-blend-mode: normal; /* Already transparent, no blend multiplier needed */
+}
+
+/* SSS and Nishanth logos have empty whitespace margins in their files, make them visually larger */
+.partner-logo-card img.logo-sss,
+.partner-logo-card img.logo-nishanth {
+    height: 95px;
+    max-width: 210px;
+}
+
+
+
+
+/* Typography/Text logo for Thangam Hospital */
+.partner-text-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 85px;
+    width: 195px;
+}
+
+
+.text-thangam-main {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 1.5px;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-thangam-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    color: #475569;
+    margin-top: 2px;
+}
+
+/* Scroll Animation */
+@keyframes partners-scroll-marquee {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+/* --- Fleet of Machines Section --- */
+.machines-section {
+    padding: 80px 0;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.machines-section .section-title {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.machines-section .section-subtitle {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--text-secondary);
+    max-width: 650px;
+    margin: 0 auto;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* --- Showcase Container --- */
+.machine-showcase-card {
+    border-radius: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    height: 640px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* --- Split backgrounds --- */
+.machine-image-zone {
+    height: 100%;
+    background: var(--machine-bg-bottom, #faf9f6);
+    transition: background 0.6s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.machine-image-zone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 42%;
+    background: var(--machine-theme-gradient, var(--machine-theme-color));
+    transition: background 0.6s ease;
+    z-index: 1;
+}
+
+.machine-details-zone {
+    height: 100%;
+}
+
+.details-top-split {
+    height: 42%;
+    background: var(--machine-theme-gradient, var(--machine-theme-color));
+    transition: background 0.6s ease;
+    color: #ffffff;
+    padding: 32px 40px !important;
+    position: relative;
+    z-index: 2;
+}
+
+.details-top-split > div > * {
+    animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+.details-top-split > div > *:nth-child(1) { animation-delay: 0.05s; }
+.details-top-split > div > *:nth-child(2) { animation-delay: 0.12s; }
+.details-top-split > div > *:nth-child(3) { animation-delay: 0.18s; }
+
+.machine-logo-wrapper {
+    flex-shrink: 0;
+    max-width: 180px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.22s;
+    opacity: 0;
+}
+
+.machine-logo-wrapper svg {
+    height: 100%;
+    width: auto;
+    max-height: 100%;
+    max-width: 100%;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+.details-bottom-split {
+    height: 58%;
+    background: var(--machine-bg-bottom, #faf9f6);
+    color: var(--text-primary);
+    transition: background 0.6s ease;
+    padding: 32px 40px !important;
+}
+
+.details-bottom-split > div > * {
+    animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+.details-bottom-split > div > *:nth-child(1) { animation-delay: 0.2s; }
+.details-bottom-split > div > *:nth-child(2) { animation-delay: 0.3s; }
+
+.details-footer {
+    animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.38s;
+    opacity: 0;
+}
+
+@keyframes machineDetailsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Floating Image style --- */
+.machine-image-zone .machine-image-wrapper {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 550px;
+    height: 480px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Entry animation whenever Blazor recreates using @key */
+    animation: machineImageEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.main-machine-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    scale: 1.45;
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
+    /* Float animation */
+    animation: floatMachine 6s ease-in-out infinite;
+}
+
+@keyframes floatMachine {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(1deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes machineImageEntry {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -35%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* --- Thumbnails --- */
+.machine-thumbnails-container {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+}
+
+.machine-thumb-btn {
+    width: 65px;
+    height: 65px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid transparent;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.machine-thumb-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.machine-thumb-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.machine-thumb-btn.active {
+    border-color: var(--primary-blue);
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+/* --- Details Styles --- */
+.machine-top-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+}
+
+.machine-name-title {
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.machine-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.machine-desc-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Specs Grid */
+.specs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.spec-item-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.text-success-icon {
+    color: #10b981;
+}
+
+/* Footer & Status */
+.border-top-subtle {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    position: relative;
+}
+
+.pulse-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid #10b981;
+    animation: statusPulse 1.8s infinite ease-out;
+}
+
+@keyframes statusPulse {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+.status-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Machine Action CTA Button */
+.btn-machine-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-machine-action:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+    filter: brightness(1.15);
+}
+
+.btn-machine-action:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Showcase Navigation Arrows */
+.showcase-arrow-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcase-arrow-btn:hover {
+    background: var(--primary-blue);
+    color: #ffffff;
+    border-color: var(--primary-blue);
+    transform: scale(1.08);
+}
+
+/* Responsiveness */
+@media (max-width: 991px) {
+    .machine-showcase-card {
+        height: auto;
+    }
+    .machine-image-zone {
+        height: 320px;
+        background: linear-gradient(to bottom, var(--machine-theme-color) 60%, var(--machine-bg-bottom) 60%);
+    }
+    .machine-image-zone .machine-image-wrapper {
+        top: 60%;
+        height: 200px;
+    }
+    .machine-thumbnails-container {
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .details-top-split {
+        height: auto;
+        padding: 40px 24px !important;
+    }
+    .details-bottom-split {
+        height: auto;
+        padding: 40px 24px !important;
+    }
+}
+
+/* Hero Trust Logos Layout */
+.hero-trust-logos-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 12;
+}
+
+.trust-logo-card {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 24px;
+    padding: 16px;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.trust-logo-card:hover {
+    transform: translateY(-6px) scale(1.04);
+    border-color: var(--primary-blue);
+    background: rgba(0, 0, 0, 0.04);
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.12);
+}
+
+.trust-logo-card img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: filter 0.3s ease;
+}
+
+/* In light theme, invert the white lines of CMC Vellore logo to make it black/dark navy */
+.trust-logo-card img.cmc-logo-img {
+    filter: invert(1) brightness(0.1) contrast(1.5);
+}
+
+/* ===== MOBILE ONLY: Vertical stack of trust logos on the right side ===== */
+@media (max-width: 991px) {
+    .hero-trust-logos-layout {
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        padding: 10px 8px !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+    .trust-logo-card {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        max-height: 120px !important;
+        width: 90px !important;
+        height: auto !important;
+        padding: 8px !important;
+        border-radius: 14px !important;
+        box-sizing: border-box !important;
+    }
+    /* Push 1st logo (anniversary) down a bit */
+    .trust-logo-card:first-child {
+        margin-top: 20px !important;
+    }
+    .trust-logo-card:last-child {
+        margin: 0 !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-trust-logos-layout {
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        padding: 8px 6px !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+    .trust-logo-card {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        max-height: 100px !important;
+        width: 75px !important;
+        height: auto !important;
+        padding: 6px !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+    }
+    /* Push 1st logo (anniversary) down a bit */
+    .trust-logo-card:first-child {
+        margin-top: 16px !important;
+    }
+    .trust-logo-card:last-child {
+        margin: 0 !important;
+    }
+}
+
+/* Fleet of Machines Autoplay Progress Bar */
+.machine-progress-bar-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 30;
+}
+
+.machine-progress-bar {
+    height: 100%;
+    background: var(--machine-theme-color);
+    width: 0%;
+    animation: machineProgress 6s linear forwards;
+}
+
+.machine-showcase-card:hover .machine-progress-bar {
+    animation-play-state: paused;
+}
+
+@keyframes machineProgress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+

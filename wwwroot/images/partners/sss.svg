@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <defs>
+    <linearGradient id="sss-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="sss-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#0891B2" />
+    </linearGradient>
+  </defs>
+  <!-- Logo Icon: 3 overlapping curved shields/shapes representing SSS -->
+  <g transform="translate(15, 12)">
+    <!-- Shield 1 -->
+    <path d="M 14 16 C 14 16, 22 14, 22 22 C 22 30, 14 30, 14 38 M 22 38" fill="none" stroke="url(#sss-violet)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Shield 2 (Shifted right and colored cyan) -->
+    <path d="M 24 16 C 24 16, 32 14, 32 22 C 32 30, 24 30, 24 38" fill="none" stroke="url(#sss-cyan)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Shield 3 (Shifted right and colored violet) -->
+    <path d="M 34 16 C 34 16, 42 14, 42 22 C 42 30, 34 30, 34 38" fill="none" stroke="url(#sss-violet)" stroke-width="4.5" stroke-linecap="round"/>
+    
+    <!-- Heart pulse line behind/crossing -->
+    <path d="M 8 28 H 12 L 15 20 L 19 36 L 22 24 L 25 32 L 28 28 H 48" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  </g>
+  <!-- Typography -->
+  <g transform="translate(75, 25)">
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="16" font-weight="800" fill="#0f172a" letter-spacing="0.5">SSS HOSPITAL</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="11" font-weight="600" fill="#475569" letter-spacing="1.5" y="16">SUPER SPECIALITY</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="9" font-weight="500" fill="#6366f1" letter-spacing="1" y="28">THINDAL • ERODE</text>
+  </g>
+</svg>

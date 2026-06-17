@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <defs>
+    <linearGradient id="thangam-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <linearGradient id="thangam-crimson" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
+  </defs>
+  <!-- Logo Icon: Heart and hands medical cross -->
+  <g transform="translate(15, 12)">
+    <!-- Heart outline -->
+    <path d="M 28 42 C 12 30, 8 18, 18 12 C 24 8, 28 14, 28 14 C 28 14, 32 8, 38 12 C 48 18, 44 30, 28 42 Z" fill="none" stroke="url(#thangam-gold)" stroke-width="3"/>
+    <!-- Medical cross inside -->
+    <path d="M 25 18 L 31 18 L 31 23 L 36 23 L 36 29 L 31 29 L 31 34 L 25 34 L 25 29 L 20 29 L 20 23 L 25 23 Z" fill="url(#thangam-crimson)"/>
+    <!-- Gold sparkle -->
+    <path d="M 42 12 L 44 15 L 47 16 L 44 17 L 43 20 L 42 17 L 39 16 L 42 15 Z" fill="url(#thangam-gold)"/>
+  </g>
+  <!-- Typography -->
+  <g transform="translate(75, 25)">
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="16" font-weight="800" fill="#0f172a" letter-spacing="0.5">THANGAM</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="11" font-weight="600" fill="#475569" letter-spacing="1.5" y="16">HOSPITAL</text>
+    <text font-family="'Outfit', 'Inter', sans-serif" font-size="9" font-weight="500" fill="#f59e0b" letter-spacing="1" y="28">ERODE</text>
+  </g>
+</svg>

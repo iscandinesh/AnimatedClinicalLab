@@ -16,7 +16,7 @@ window.initHeliumAnimations = () => {
     }, observerOptions);
 
     // Only observe elements that aren't already active
-    document.querySelectorAll('.reveal-up:not(.active)').forEach(el => {
+    document.querySelectorAll('.reveal-up:not(.active), .reveal-left:not(.active), .reveal-right:not(.active), .reveal-scale:not(.active)').forEach(el => {
         revealObserver.observe(el);
     });
 

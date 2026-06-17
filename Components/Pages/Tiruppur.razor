@@ -1,0 +1,1524 @@
+@page "/locations/tiruppur"
+@page "/tiruppur"
+@implements IDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Tiruppur Branch Location - Alpha Diagnostics Centre</PageTitle>
+
+
+<style>
+    .tiruppur-hero {
+        position: relative;
+        background: #090c15 !important;
+        min-height: 650px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+    }
+    .tiruppur-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7)), url('images/tiruppur-vibrant-textile.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        opacity: 0.7; /* Highlight the vibrant textile theme clearly */
+        z-index: 1;
+        pointer-events: none;
+        animation: heroBackgroundZoom 10s ease-in-out infinite alternate;
+    }
+    
+    @@keyframes heroBackgroundZoom {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.12);
+        }
+    }
+    
+    /* Event Slider Styles */
+    .carousel-control-btn:hover {
+        background: rgba(59, 130, 246, 0.3) !important;
+        border-color: rgba(59, 130, 246, 0.5) !important;
+        transform: translateY(-50%) scale(1.05);
+    }
+    .dot-indicator:hover {
+        background: var(--primary-blue) !important;
+        opacity: 0.8;
+    }
+    .animate-fade-in {
+        animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @@keyframes slideFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* --- Machines Showcase Styles --- */
+    .machines-section {
+        padding: 80px 0;
+        background: transparent;
+        position: relative;
+        overflow: hidden;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .machines-section .section-title {
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        color: var(--text-primary);
+    }
+
+    .machines-section .section-subtitle {
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        color: var(--text-secondary);
+        max-width: 650px;
+        margin: 0 auto;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    .machine-showcase-card {
+        border-radius: 28px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        height: 640px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .machine-image-zone {
+        height: 100%;
+        background: var(--machine-bg-bottom, #faf9f6);
+        transition: background 0.6s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .machine-image-zone::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 42%;
+        background: var(--machine-theme-gradient, var(--machine-theme-color));
+        transition: background 0.6s ease;
+        z-index: 1;
+    }
+
+    .machine-details-zone {
+        height: 100%;
+    }
+
+    .details-top-split {
+        height: 42%;
+        background: var(--machine-theme-gradient, var(--machine-theme-color));
+        transition: background 0.6s ease;
+        color: #ffffff;
+        padding: 32px 40px !important;
+        position: relative;
+        z-index: 2;
+    }
+
+    .details-top-split > div > * {
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+    }
+    .details-top-split > div > *:nth-child(1) { animation-delay: 0.05s; }
+    .details-top-split > div > *:nth-child(2) { animation-delay: 0.12s; }
+    .details-top-split > div > *:nth-child(3) { animation-delay: 0.18s; }
+
+    .machine-logo-wrapper {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        border-radius: 18px;
+        background: #091527;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.05);
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation-delay: 0.22s;
+        opacity: 0;
+    }
+
+    .machine-logo-wrapper svg {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    }
+
+    .details-bottom-split {
+        height: 58%;
+        background: var(--machine-bg-bottom, #faf9f6);
+        color: var(--text-primary);
+        transition: background 0.6s ease;
+        padding: 32px 40px !important;
+    }
+
+    .details-bottom-split > div > * {
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+    }
+    .details-bottom-split > div > *:nth-child(1) { animation-delay: 0.2s; }
+    .details-bottom-split > div > *:nth-child(2) { animation-delay: 0.3s; }
+
+    .details-footer {
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation-delay: 0.38s;
+        opacity: 0;
+    }
+
+    @@keyframes machineDetailsFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .machine-image-zone .machine-image-wrapper {
+        position: absolute;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 550px;
+        height: 480px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: machineImageEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .main-machine-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        scale: 1.25;
+        filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
+        animation: floatMachine 6s ease-in-out infinite;
+    }
+
+    @@keyframes floatMachine {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-12px) rotate(1deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @@keyframes machineImageEntry {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -35%) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    .machine-thumbnails-container {
+        position: absolute;
+        bottom: 24px;
+        left: 24px;
+        right: 24px;
+        display: flex;
+        gap: 8px;
+        z-index: 20;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 5px;
+    }
+
+    .machine-thumbnails-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .machine-thumb-btn {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid transparent;
+        padding: 3px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .machine-thumb-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .machine-thumb-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .machine-thumb-btn.active {
+        border-color: var(--primary-blue);
+        transform: translateY(-4px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    .machine-top-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 2px;
+    }
+
+    .machine-name-title {
+        font-size: clamp(1.5rem, 3vw, 2.3rem);
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+        text-transform: uppercase;
+    }
+
+    .machine-subtitle {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .machine-desc-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .specs-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .spec-item-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .text-success-icon {
+        color: #10b981;
+    }
+
+    .border-top-subtle {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        position: relative;
+    }
+
+    .pulse-dot::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 2px solid #10b981;
+        animation: statusPulse 1.8s infinite ease-out;
+    }
+
+    @@keyframes statusPulse {
+        0% { transform: scale(0.8); opacity: 0.8; }
+        100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .status-text {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .btn-machine-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-machine-action:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+        filter: brightness(1.15);
+    }
+
+    .btn-machine-action:active {
+        transform: translateY(-1px) scale(1.02);
+    }
+
+    .showcase-nav-arrows {
+        display: flex;
+        gap: 8px;
+    }
+
+    .showcase-arrow-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .showcase-arrow-btn:hover {
+        background: var(--primary-blue);
+        color: #ffffff;
+        border-color: var(--primary-blue);
+        transform: scale(1.08);
+    }
+
+    @@media (max-width: 991px) {
+        .machine-showcase-card {
+            height: auto;
+        }
+        .machine-image-zone {
+            height: 320px;
+            background: linear-gradient(to bottom, var(--machine-theme-color) 60%, var(--machine-bg-bottom) 60%);
+        }
+        .machine-image-zone .machine-image-wrapper {
+            top: 60%;
+            height: 200px;
+        }
+        .machine-thumbnails-container {
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .details-top-split {
+            height: auto;
+            padding: 40px 24px !important;
+        }
+        .details-bottom-split {
+            height: auto;
+            padding: 40px 24px !important;
+        }
+    }
+
+    /* Fleet of Machines Autoplay Progress Bar */
+    .machine-progress-bar-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 30;
+    }
+
+    .machine-progress-bar {
+        height: 100%;
+        background: var(--machine-theme-color);
+        width: 0%;
+        animation: machineProgress 6s linear forwards;
+    }
+
+    .machine-showcase-card:hover .machine-progress-bar {
+        animation-play-state: paused;
+    }
+
+    @@keyframes machineProgress {
+        from {
+            width: 0%;
+        }
+        to {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="page-header tiruppur-hero py-5 position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important;">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.25;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.25;"></div>
+    
+    <div class="container position-relative z-2 reveal-up">
+        <div class="mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block text-white" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">
+                <i class="bi bi-geo-alt-fill me-2" style="color: var(--primary-blue);"></i> Tiruppur Branch Lab • Now Open
+            </div>
+            <h1 class="hero-title mb-4 text-center text-white display-3 fw-bold" style="font-family: 'Inter', sans-serif; text-shadow: 0 4px 15px rgba(0,0,0,0.6); line-height: 1.25; font-size: clamp(2.5rem, 5vw, 4rem);">
+                Diagnostics & Health Checkups <br />in <span style="background: linear-gradient(135deg, #60a5fa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tiruppur</span>
+            </h1>
+            <p class="lead mb-5 text-white text-center mx-auto" style="max-width: 750px; font-size: 1.35rem; font-weight: 500; text-shadow: 0 4px 15px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9);">
+                Alpha Diagnostics Centre brings pathology, automated microbiology, and high-precision clinical screening to the heart of the Textile Capital.
+            </p>
+            
+            <!-- CTA Button: View Health Packages -->
+            <div class="text-center">
+                <a href="services#health-packages" class="btn-helium btn-helium-primary px-5 py-3 rounded-pill shadow-lg d-inline-flex align-items-center gap-2" style="font-size: 1.1rem; font-weight: 600; text-decoration: none;">
+                    <i class="bi bi-heart-pulse-fill"></i> View Health Packages
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- High-Contrast Services Strengths Section -->
+<section class="py-5" style="background: transparent; border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <span class="text-primary"><i class="bi bi-shield-check me-2"></i> Clinical Excellence</span>
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Why Choose Our Tiruppur Lab?</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Our diagnostic services are built on advanced digital systems, automated analyzers, and strict quality control standards, ensuring that every result is highly dependable.</p>
+        </div>
+        
+        <div class="row g-4 reveal-up">
+            <!-- Strength 1 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-blue mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                        <i class="bi bi-cpu fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Fully Automated Setup</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Computerized, barcoded, and fully interfaced laboratory.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 2 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-cyan mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(6,182,212,0.1); color: var(--primary-cyan);">
+                        <i class="bi bi-hospital fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Leading Referral Lab</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Serving hospitals, clinics, and residents in Tiruppur and surrounding regions.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 3 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-purple mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(124,58,237,0.1); color: var(--primary-purple);">
+                        <i class="bi bi-lightning-charge fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Fast & Reliable</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Prompt sample processing and highly dependable report delivery.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 4 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-red mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(244,63,94,0.1); color: var(--primary-red);">
+                        <i class="bi bi-virus fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Microbiology Lab</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Fully automated microbiology department with advanced culture systems.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 5 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-purple mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(124,58,237,0.1); color: var(--primary-purple);">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Immunochemistry</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Equipped with advanced fully automated immunochemistry analyzers.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 6 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-blue mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                        <i class="bi bi-droplet-half fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">5-Part CBC Analyzer</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Fully automated body fluid and CBC hematology analyzer.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 7 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-cyan mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(6,182,212,0.1); color: var(--primary-cyan);">
+                        <i class="bi bi-patch-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Quality Control</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Stringent quality control programs with internal & external assurance (EQAS).</p>
+                </div>
+            </div>
+            
+            <!-- Strength 8 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-blue mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                        <i class="bi bi-people fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Expert Medical Panel</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Experienced team of Pathologists, Biochemists, and Microbiologists.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Tiruppur Branch Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <!-- Left: Stats & trust signals -->
+            <div class="col-lg-6 reveal-up">
+                <div class="d-flex flex-column gap-4">
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-blue flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-gear-wide-connected fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Delivering Accurate Automated Results</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Fully automated biochemistry, immunology, and hematology analyzers ensure rapid processing and high-precision reporting.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-cyan flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-patch-check-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Doctor-led Quality Standards</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Adhering strictly to standard quality guidelines and EQAS protocols (Bio-Rad, AIIMS panels) for maximum diagnostic assurance.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-purple flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-lightning-charge-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">4-Hour Turnaround</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Get your routine blood test results on your phone within 4 hours. No long waiting periods.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-4">
+                        <div class="orb-blue flex-shrink-0" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+                            <i class="bi bi-house-door-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Home Sample Collection</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.7;">Professional phlebotomists will visit your home/office anywhere in Tiruppur for safe sample collection.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Intro Content Card -->
+            <div class="col-lg-6 reveal-up" style="transition-delay: 0.15s;">
+                <div class="glass-card h-100 p-5 position-relative" style="border-radius: 40px; box-shadow: -15px 15px 0 rgba(59, 130, 246, 0.05); border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="position-absolute top-0 end-0 p-4 opacity-10">
+                        <i class="bi bi-hospital display-1 text-primary"></i>
+                    </div>
+                    <h2 class="h3 fw-bold mb-4">A Trusted Healthcare Partner</h2>
+                    <p class="text-secondary mb-4" style="line-height: 1.8;">
+                        Alpha Diagnostics Centre’s Tiruppur Branch has been established to serve the people, hospitals, and clinics of Tiruppur district with high-quality, doctor-led clinical diagnostics.
+                    </p>
+                    <p class="text-secondary mb-4" style="line-height: 1.8;">
+                        Equipped with advanced machinery platforms, our Tiruppur branch ensures zero discrepancies, barcoded tracking, and direct system interfaces. All tests are processed and verified directly in our laboratory itself, without sending the samples out to other labs.
+                    </p>
+                    <p class="text-secondary mb-0" style="line-height: 1.8;">
+                        Whether you need a routine HbA1c test, a lipid profile, thyroid screenings, or a comprehensive executive full body checkup, our professional diagnostic team is ready to serve you.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Available Services & Departments -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-microscope me-2"></i> Facilities
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Testing Capabilities at Tiruppur</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Comprehensive testing across pathology departments processed directly at our Tiruppur facility.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Biochemistry -->
+            <div class="col-md-4 reveal-up">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-droplet-half fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Biochemistry</h5>
+                    <p class="text-secondary small mb-0">Blood sugar profile, liver panel (LFT), kidney markers (RFT/Creatinine), lipid levels, and electrolyte balances.</p>
+                </div>
+            </div>
+            <!-- Hematology -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-water fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Hematology</h5>
+                    <p class="text-secondary small mb-0">Complete Blood Count (CBC), ESR, peripheral blood smears, coagulation metrics, and fluid analysis.</p>
+                </div>
+            </div>
+            <!-- Immunology -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Immunology & Hormones</h5>
+                    <p class="text-secondary small mb-0">Thyroid panels (T3, T4, TSH), Vitamin D, Vitamin B12, diabetes markers (HbA1c), and hormone profiles.</p>
+                </div>
+            </div>
+            <!-- Microbiology -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-virus fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Microbiology</h5>
+                    <p class="text-secondary small mb-0">Culture and sensitivity testing for blood, urine, and body fluids utilizing automated detection systems.</p>
+                </div>
+            </div>
+            <!-- Molecular / PCR -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.4s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-fingerprint fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">PCR & Molecular</h5>
+                    <p class="text-secondary small mb-0">High-sensitivity molecular assays for viral load detection, TB molecular panels, and infectious disease screenings.</p>
+                </div>
+            </div>
+            <!-- Digital Reporting -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.5s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-lightning fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Instant Digital Reports</h5>
+                    <p class="text-secondary small mb-0">Automated delivery of secure PDF reports via WhatsApp, Email, or the web portal, with physical printouts available.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Medical Team Section -->
+<section class="py-5 bg-midnight-soft" style="background: rgba(255,255,255,0.015); border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-people-fill me-2" style="color: var(--primary-blue);"></i> Our Experts
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Meet Our Pathologists</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">
+                Our Tiruppur branch is led by highly qualified and experienced pathologists, ensuring clinical accuracy, doctor-to-doctor consultations, and precise diagnostic verification.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Pathologist 1: Dr. K. Akash MD -->
+            <div class="col-lg-5 col-md-6 reveal-up">
+                <div class="glass-card hover-glow h-100 p-4 d-flex flex-column" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 24px;">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-5 text-center">
+                            <div class="position-relative d-inline-block rounded-circle overflow-hidden shadow-lg" style="width: 140px; height: 140px; border: 3px solid rgba(59, 130, 246, 0.4); padding: 3px; background: rgba(59,130,246,0.1);">
+                                <img src="images/avatar-placeholder.png" alt="Dr. K. Akash MD" class="w-100 h-100 object-fit-cover rounded-circle" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="h5 fw-bold mb-0 text-white">Dr. K. Akash</h4>
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded small" style="font-size: 0.7rem;">MD</span>
+                            </div>
+                            <p class="text-primary small fw-semibold mb-2" style="font-size: 0.85rem; letter-spacing: 0.5px;">Consultant Pathologist</p>
+                            <p class="text-muted small mb-0"><i class="bi bi-briefcase me-1 opacity-70"></i> Diagnostics Validation Expert</p>
+                            <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1 opacity-70"></i> Tiruppur Branch Laboratory</p>
+                        </div>
+                    </div>
+                    <hr class="border-white border-opacity-10 my-4" />
+                    <p class="text-secondary small mb-0 flex-grow-1" style="line-height: 1.6;">
+                        Dr. K. Akash MD., specializes in clinical pathology and diagnostic reporting. He leads the laboratory validation protocols at our Tiruppur facility, ensuring all reports match the highest accuracy standards.
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- Pathologist 2: L.E. Vishnu Karthikeyan M.D -->
+            <div class="col-lg-5 col-md-6 reveal-up" style="transition-delay: 0.15s;">
+                <div class="glass-card hover-glow h-100 p-4 d-flex flex-column" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 24px;">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-5 text-center">
+                            <div class="position-relative d-inline-block rounded-circle overflow-hidden shadow-lg" style="width: 140px; height: 140px; border: 3px solid rgba(6, 182, 212, 0.4); padding: 3px; background: rgba(6,182,212,0.1);">
+                                <img src="images/avatar-placeholder.png" alt="L.E. Vishnu Karthikeyan M.D" class="w-100 h-100 object-fit-cover rounded-circle" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="h5 fw-bold mb-0 text-white">L.E.Vishnu Karthikeyan</h4>
+                                <span class="badge bg-cyan bg-opacity-10 text-cyan border border-cyan border-opacity-25 px-2 py-1 rounded small" style="color: var(--primary-cyan) !important; border-color: rgba(6, 182, 212, 0.25) !important; font-size: 0.7rem;">M.D (Path)</span>
+                            </div>
+                            <p class="text-cyan small fw-semibold mb-2" style="color: var(--primary-cyan); font-size: 0.85rem; letter-spacing: 0.5px;">Managing Director</p>
+                            <p class="text-muted small mb-0"><i class="bi bi-hospital me-1 opacity-70"></i> Erode Blood Centre</p>
+                            <p class="text-muted small mb-0"><i class="bi bi-patch-check-fill me-1 opacity-70"></i> Pathology & Blood Banking Expert</p>
+                        </div>
+                    </div>
+                    <hr class="border-white border-opacity-10 my-4" />
+                    <p class="text-secondary small mb-0 flex-grow-1" style="line-height: 1.6;">
+                        Dr. L.E. Vishnu Karthikeyan M.D (Path) is the Managing Director of Erode Blood Centre. He oversees pathology divisions and blood safety operations, ensuring rigorous quality controls and donor validation standards.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-5 position-relative overflow-hidden" style="background: rgba(255,255,255,0.005); border-top: 1px solid rgba(255,255,255,0.01);">
+    <div class="container py-4 position-relative" style="z-index: 1;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-gear-wide-connected me-2"></i> The Process
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4.5vw, 3rem);">How It Works</h2>
+            <h3 class="fw-700 mb-3" style="font-size: clamp(1.3rem, 2.5vw, 1.7rem); color: var(--text-primary); opacity: 0.9;">
+                3 Simple Steps to Your Health Reports
+            </h3>
+        </div>
+
+        <div class="process-timeline-container">
+            <!-- Continuous horizontal line for 3 steps -->
+            <div class="process-connecting-line d-none d-lg-block" style="left: 16.67%; right: 16.67%;"></div>
+
+            <!-- Visual breakpoint nodes on the connecting line -->
+            <div class="process-breakpoint-node d-none d-lg-flex" style="left: 33.33%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+            <div class="process-breakpoint-node d-none d-lg-flex" style="left: 66.67%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+
+            <div class="row g-4 position-relative" style="z-index: 1;">
+                <!-- Step 1 -->
+                <div class="col-lg-4 col-md-6 text-center process-step reveal-up">
+                    <div class="process-icon-wrapper bg-blue mx-auto mb-4">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 01</div>
+                    <h4 class="process-step-title mb-2">Book Your Test</h4>
+                    <span class="d-block text-primary small mb-3" style="font-style: italic; font-size: 0.85rem; font-weight: 500;">Takes less than 2 mins</span>
+                    <p class="process-step-desc text-secondary small px-3">
+                        Select your required tests or health packages online, or call our Tiruppur branch directly to schedule your appointment.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="col-lg-4 col-md-6 text-center process-step reveal-up" style="transition-delay: 0.1s;">
+                    <div class="process-icon-wrapper bg-emerald mx-auto mb-4">
+                        <i class="bi bi-droplet-half"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 02</div>
+                    <h4 class="process-step-title mb-2">Sample Collection</h4>
+                    <span class="d-block text-success small mb-3" style="font-style: italic; font-size: 0.85rem; font-weight: 500; color: #10b981 !important;">At our center or your home</span>
+                    <p class="process-step-desc text-secondary small px-3">
+                        Visit our hygienic Tiruppur center, or relax at home while our trained, certified professional visits you for a quick, painless sample collection.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="col-lg-4 col-md-12 text-center process-step reveal-up" style="transition-delay: 0.2s;">
+                    <div class="process-icon-wrapper bg-logo-purple mx-auto mb-4">
+                        <i class="bi bi-file-text-fill"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 03</div>
+                    <h4 class="process-step-title mb-2">Get Digital Reports</h4>
+                    <span class="d-block text-purple small mb-3" style="font-style: italic; font-size: 0.85rem; font-weight: 500; color: #8b5cf6 !important;">Fast turnaround</span>
+                    <p class="process-step-desc text-secondary small px-3">
+                        Your samples are processed using high-precision automated systems. Secure, verified digital reports are sent directly to your phone via WhatsApp and Email.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fleet of Machines Section (Interactive Showcase) -->
+<section class="machines-section py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; right: 10%; opacity: 0.15; background: var(--primary-cyan); width: 350px; height: 350px;"></div>
+    <div class="glow-orb" style="bottom: 15%; left: 10%; opacity: 0.15; background: var(--primary-blue); width: 350px; height: 350px;"></div>
+
+    <div class="container mx-auto px-4 position-relative" style="max-width: 1280px; z-index: 2;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-cpu me-2" style="color: var(--primary-cyan);"></i> Automated Technology
+            </div>
+            <h2 class="section-title fw-800 mb-3">Our Machinery Infrastructure <span style="background: linear-gradient(135deg, #60a5fa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">at Tiruppur</span></h2>
+            <p class="text-secondary mx-auto" style="max-width: 800px; font-size: 1.05rem; line-height: 1.8;">
+                We use advanced diagnostic machinery to deliver highly accurate test results ready in just 4 hours. Discover the state-of-the-art equipment driving our daily laboratory operations in Tiruppur.
+            </p>
+        </div>
+
+        <!-- Showcase card -->
+        <div class="machine-showcase-card mt-5 shadow-2xl overflow-hidden" 
+             style="--machine-theme-color: @machines[activeMachineIndex].ThemeColor; --machine-theme-gradient: @machines[activeMachineIndex].ThemeGradient;"
+             @onmouseenter="OnMachinesMouseEnter" @onmouseleave="OnMachinesMouseLeave">
+            <!-- Sleek Autoplay Progress Bar -->
+            <div class="machine-progress-bar-wrapper">
+                <div class="machine-progress-bar" @key="_progressBarKey"></div>
+            </div>
+            <div class="row g-0 h-100">
+                <!-- Left: Image Zone (with dynamic split background) -->
+                <div class="col-lg-6 position-relative machine-image-zone d-flex align-items-center justify-content-center">
+                    <div class="machine-image-wrapper" @key="activeMachineIndex">
+                        <img src="@machines[activeMachineIndex].ImagePath" alt="@machines[activeMachineIndex].Name" class="main-machine-img" />
+                    </div>
+
+                    <!-- Thumbnails overlayed at the bottom left -->
+                    <div class="machine-thumbnails-container">
+                        @for (int i = 0; i < machines.Count; i++)
+                        {
+                            var index = i;
+                            <button class="machine-thumb-btn @(activeMachineIndex == index ? "active" : "")" @onclick="() => SetMachine(index)" aria-label="Select @machines[index].Name">
+                                <img src="@machines[index].ImagePath" alt="@machines[index].Name" />
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Right: Details Zone -->
+                <div class="col-lg-6 machine-details-zone d-flex flex-column justify-content-between" @key="activeMachineIndex">
+                    <!-- Top Details (in colored split) -->
+                    <div class="details-top-split p-5 d-flex align-items-center justify-content-between gap-4">
+                        <div class="d-flex flex-column justify-content-center">
+                            <span class="machine-top-tag mb-2">ADVANCED DIAGNOSTICS</span>
+                            <h4 class="machine-name-title mb-1">
+                                @machines[activeMachineIndex].Name
+                            </h4>
+                            <span class="machine-subtitle">@machines[activeMachineIndex].Subtitle</span>
+                        </div>
+                        <div class="machine-logo-wrapper d-flex align-items-center justify-content-center">
+                            @((MarkupString)machines[activeMachineIndex].LogoSvg)
+                        </div>
+                    </div>
+
+                    <!-- Bottom Details (in white/dark split) -->
+                    <div class="details-bottom-split p-5 d-flex flex-column justify-content-between flex-grow-1">
+                        <div>
+                            <p class="machine-desc-text">@machines[activeMachineIndex].Description</p>
+                            
+                            <!-- Specs list -->
+                            <div class="specs-grid mt-4">
+                                @foreach (var spec in machines[activeMachineIndex].Specs)
+                                {
+                                    <div class="spec-item-badge">
+                                        <i class="bi bi-patch-check-fill text-success-icon me-2"></i>
+                                        <span>@spec</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Footer actions inside the details -->
+                        <div class="details-footer mt-4 pt-4 border-top-subtle d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div class="status-indicator">
+                                <span class="pulse-dot"></span>
+                                <span class="status-text font-bold">@machines[activeMachineIndex].Status</span>
+                            </div>
+
+                            <a href="https://wa.me/918110966766" target="_blank" class="btn-helium btn-helium-primary px-4 py-2 rounded-pill text-white fw-700 text-decoration-none" style="background-color: var(--machine-theme-color); font-size: 0.82rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;">
+                                Inquire about tests! ↗
+                            </a>
+                            
+                            <!-- Arrows navigation -->
+                            <div class="showcase-nav-arrows">
+                                <button class="showcase-arrow-btn" @onclick="PrevMachine" aria-label="Previous Machine">
+                                    <i class="bi bi-arrow-left"></i>
+                                </button>
+                                <button class="showcase-arrow-btn" @onclick="NextMachine" aria-label="Next Machine">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Branch Events & Activities Section -->
+<section class="py-5 bg-midnight-soft" style="background: rgba(255,255,255,0.015); border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-calendar-event me-2" style="color: var(--primary-blue);"></i> Events & Initiatives
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Branch Activities</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Stay updated with our local health camps, diagnostic drives, and community events happening in Tiruppur.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Event 1 -->
+            <div class="col-lg-6 reveal-up">
+                <div class="glass-card h-100 position-relative hover-glow d-flex flex-column" style="border: 1px solid rgba(59, 130, 246, 0.2); background: rgba(255,255,255,0.015); border-radius: 24px; padding: 2.5rem;">
+                    <div class="position-absolute top-0 end-0 mt-4 me-4 badge bg-primary px-3 py-2 rounded-pill small fw-bold" style="font-size: 0.7rem;">Upcoming</div>
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="orb-blue flex-shrink-0" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                            <i class="bi bi-heart-pulse fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-primary small fw-bold d-block" style="font-size: 0.8rem;">June 20 - June 25, 2026</span>
+                            <h4 class="h5 fw-bold mb-0">Free Blood Sugar & BP Camp</h4>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-4" style="line-height: 1.6;">We are organizing a week-long free diabetes and blood pressure screening drive at our Tiruppur branch for all walk-in patients. Early detection helps in better lifestyle management.</p>
+                    <div class="border-top border-white border-opacity-10 pt-3 mt-auto d-flex justify-content-between align-items-center">
+                        <span class="text-muted small"><i class="bi bi-clock me-1"></i> 7:00 AM - 11:00 AM</span>
+                        <a href="https://wa.me/918110966766" target="_blank" class="text-primary text-decoration-none small fw-bold">Register Now <i class="bi bi-chevron-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Event 2 -->
+            <div class="col-lg-6 reveal-up" style="transition-delay: 0.15s;">
+                <div class="glass-card h-100 position-relative hover-glow d-flex flex-column" style="border: 1px solid rgba(124, 58, 237, 0.2); background: rgba(255,255,255,0.015); border-radius: 24px; padding: 2.5rem;">
+                    <div class="position-absolute top-0 end-0 mt-4 me-4 badge bg-white bg-opacity-20 border border-white border-opacity-30 px-3 py-2 rounded-pill small fw-bold" style="color: var(--text-primary); font-size: 0.7rem;">Special Offer</div>
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="orb-purple flex-shrink-0" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(124,58,237,0.1); color: var(--primary-purple);">
+                            <i class="bi bi-stars fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-primary small fw-bold d-block" style="color: var(--primary-purple) !important; font-size: 0.8rem;">Grand Opening Month</span>
+                            <h4 class="h5 fw-bold mb-0">50% Off on Executive Packages</h4>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-4" style="line-height: 1.6;">To celebrate our launch in Tiruppur, get a flat 50% discount on comprehensive executive full-body health evaluations booked online or walk-in. Valid till the end of the month.</p>
+                    <div class="border-top border-white border-opacity-10 pt-3 mt-auto d-flex justify-content-between align-items-center">
+                        <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i> Tiruppur Branch Lab Only</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Past Event Slideshow -->
+        <div class="mt-5 pt-4 reveal-up">
+            <h3 class="fw-bold mb-4 fs-4 text-center text-lg-start" style="letter-spacing: -0.5px;">Recent Event Highlights</h3>
+            
+            <div class="glass-card overflow-hidden" style="border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); border-radius: 24px;">
+                <div class="row g-0">
+                    <!-- Left Side: Interactive Slide Show -->
+                    <div class="col-lg-7 position-relative" style="min-height: 380px;">
+                        <div class="h-100 w-100 position-relative overflow-hidden">
+                            @for (int i = 0; i < eventSlides.Count; i++)
+                            {
+                                var index = i;
+                                <div class="slide-item" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: @(index == currentSlideIndex ? "1" : "0"); visibility: @(index == currentSlideIndex ? "visible" : "hidden"); transition: opacity 0.8s ease, visibility 0.8s ease;">
+                                    <img src="@eventSlides[index].ImageUrl" alt="@eventSlides[index].Title" class="w-100 h-100" style="object-fit: cover;" />
+                                    <!-- Ambient Dark Gradient Overlay -->
+                                    <div class="position-absolute bottom-0 start-0 w-100 h-50" style="background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));"></div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Navigation Arrows -->
+                        <button class="carousel-control-btn prev" @onclick="PrevSlide" style="position: absolute; top: 50%; left: 15px; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="carousel-control-btn next" @onclick="NextSlide" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                        <!-- Slide Indicators (Dots) -->
+                        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex gap-2" style="z-index: 10;">
+                            @for (int i = 0; i < eventSlides.Count; i++)
+                            {
+                                var index = i;
+                                <button class="dot-indicator" @onclick="() => SetSlide(index)" style="width: @(index == currentSlideIndex ? "24px" : "8px"); height: 8px; border-radius: 4px; border: none; background: @(index == currentSlideIndex ? "var(--primary-blue)" : "rgba(255,255,255,0.5)"); transition: all 0.3s ease;" aria-label="Go to slide @(index + 1)"></button>
+                            }
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side: Details / Metadata -->
+                    <div class="col-lg-5 d-flex flex-column justify-content-center p-4 p-md-5" style="background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(10px);">
+                        <div class="animate-fade-in" @key="currentSlideIndex">
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill small fw-bold mb-3 d-inline-block" style="font-size: 0.72rem;">
+                                <i class="bi bi-tag-fill me-1"></i> @eventSlides[currentSlideIndex].Tag
+                            </span>
+                            <span class="text-muted small d-block mb-2"><i class="bi bi-calendar3 me-1"></i> @eventSlides[currentSlideIndex].Date</span>
+                            <h4 class="fw-bold mb-3" style="font-size: 1.5rem; letter-spacing: -0.5px;">@eventSlides[currentSlideIndex].Title</h4>
+                            <p class="text-secondary mb-0" style="line-height: 1.6; font-size: 0.95rem;">@eventSlides[currentSlideIndex].Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Location & Map Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Find Us in Tiruppur</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Visit our branch laboratory or contact us directly to coordinate your test bookings.</p>
+        </div>
+
+        <div class="location-split-container reveal-up">
+            <div class="row g-0">
+                <!-- Map Side -->
+                <div class="col-lg-7">
+                    <div class="map-container-split h-100" style="min-height: 400px;">
+                        <iframe 
+                            class="google-map-iframe"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3914.996160161404!2d77.3332642!3d11.1118265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba907f7a4275f37%3A0xb178e48a4e03c0f6!2sAlpha%20Diagnostics%20Centre%20(Tiruppur%20Branch)!5e0!3m2!1sen!2sin!4v1715100000000!5m2!1sen!2sin" 
+                            width="100%" height="100%" style="border:0; min-height: 400px;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <!-- Info Side -->
+                <div class="col-lg-5">
+                    <div class="location-details-card h-100" style="border: none; border-radius: 0;">
+                        <!-- Header -->
+                        <div class="location-details-header">
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="bg-white bg-opacity-20 p-3 rounded-4 shadow-sm">
+                                    <i class="bi bi-hospital fs-2"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Tiruppur Branch</h3>
+                                    <span class="badge bg-white bg-opacity-20 border border-white border-opacity-30 px-3 py-1 rounded-pill small fw-bold">Active Branch Lab</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Details -->
+                        <div class="location-details-body">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Address</div>
+                                            <div class="text-secondary small">14, 2nd St Stanes Rd, KNP Puram,<br />Odakkadu, Tiruppur, Tamil Nadu 641602.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-telephone-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Phone Numbers</div>
+                                            <div class="text-secondary small">
+                                                <a href="tel:+918110966766" class="text-decoration-none text-secondary hover-primary">81109 66766</a> • 
+                                                <a href="tel:+918110966166" class="text-decoration-none text-secondary hover-primary"> 81109 66166</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-clock-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Hours of Operation</div>
+                                            <div class="text-secondary small">
+                                                <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-25 px-2 py-1 rounded-pill me-2" style="font-size:0.72rem;"><i class="bi bi-clock me-1"></i>24 Hours Open</span>
+                                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill" style="font-size:0.72rem;"><i class="bi bi-calendar-check me-1"></i>Sunday Available</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Categories -->
+                                <div class="col-12 mt-2">
+                                    <div class="fw-bold mb-3" style="font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; color:var(--text-secondary);">Department Contacts</div>
+
+                                    <!-- Sample Collection -->
+                                    <div class="p-3 mb-2 rounded-3" style="background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.15);">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <i class="bi bi-droplet-half text-primary" style="font-size:0.85rem;"></i>
+                                            <span class="fw-bold small" style="font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--primary-blue);">For Sample Collection</span>
+                                        </div>
+                                        <div class="d-flex gap-3 mt-1">
+                                            <a href="tel:+918110866366" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">81108 66366</a>
+                                            <a href="tel:+918110866766" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">81108 66766</a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Heartbeat divider -->
+                                    <div class="text-center my-2 opacity-30" style="font-size:0.75rem; letter-spacing:2px; color:var(--primary-blue);">— ♥ —</div>
+
+                                    <!-- Report Enquiry -->
+                                    <div class="p-3 mb-2 rounded-3" style="background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.15);">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-file-earmark-medical" style="font-size:0.85rem; color:var(--primary-cyan);"></i>
+                                            <span class="fw-bold small" style="font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--primary-cyan);">Report Enquiry</span>
+                                        </div>
+                                        <div class="mb-1">
+                                            <span class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px;">Hematology · Biochemistry · Immunology</span><br/>
+                                            <a href="tel:+918110966766" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">81109 66766</a>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px;">Microbiology · Pathology</span><br/>
+                                            <a href="tel:+918110966166" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">81109 66166</a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Heartbeat divider -->
+                                    <div class="text-center my-2 opacity-30" style="font-size:0.75rem; letter-spacing:2px; color:var(--primary-blue);">— ♥ —</div>
+
+                                    <!-- Complaints -->
+                                    <div class="p-3 rounded-3" style="background:rgba(244,63,94,0.06); border:1px solid rgba(244,63,94,0.15);">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <i class="bi bi-exclamation-circle" style="font-size:0.85rem; color:#f43f5e;"></i>
+                                            <span class="fw-bold small" style="font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:#f43f5e;">For Complaints</span>
+                                        </div>
+                                        <div class="d-flex gap-3 mt-1">
+                                            <a href="tel:+917094490913" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">70944 90913</a>
+                                            <a href="tel:+917094490907" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">70944 90907</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@code {
+    private int currentSlideIndex = 0;
+    private bool disposed = false;
+    private int activeMachineIndex = 0;
+    private int _progressBarKey = 0;
+    private System.Threading.CancellationTokenSource? _machinesCts;
+
+    private class MachineItem
+    {
+        public string Name { get; set; } = "";
+        public string Subtitle { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ImagePath { get; set; } = "";
+        public string ThemeColor { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string[] Specs { get; set; } = Array.Empty<string>();
+        public string LogoSvg { get; set; } = "";
+        public string ThemeGradient { get; set; } = "";
+    }
+
+    private List<MachineItem> machines = new()
+    {
+        new MachineItem
+        {
+            Name = "Ortho VITROS 5600",
+            Subtitle = "Efficient Integrated Clinical System",
+            Description = "An intricate diagnostic system that incorporates chemistry and immunoassay technologies on a single platform. Utilizes Microslide, Microtip, Microwell, Intellicheck, and MicroSensor technologies to ensure zero carrier carryover and absolute clinical reliability.",
+            ImagePath = "images/machines/vitros_5600.png",
+            ThemeColor = "#0284c7",
+            ThemeGradient = "linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Chemistry & Immunoassay", "Microslide Technology", "Intellicheck QC", "TAT Advance" },
+            LogoSvg = "<svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"#38bdf8\" stroke-width=\"8\" fill=\"none\"/><path d=\"M50 10A40 40 0 0 1 90 50\" stroke=\"#ff8200\" stroke-width=\"8\" fill=\"none\"/><path d=\"M50 90A40 40 0 0 1 10 50\" stroke=\"#00a0e9\" stroke-width=\"8\" fill=\"none\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "VITROS - ECIQ",
+            Subtitle = "Enhanced Chemiluminescence Immunodiagnostic",
+            Description = "Advanced immunodiagnostic analyzer providing enhanced chemiluminescence for superb precision, sensitivity, and speed. Features Intellicheck Technology for the highest level of validation confidence in hormone and tumor marker assays.",
+            ImagePath = "images/machines/vitros_eciq.png",
+            ThemeColor = "#0ea5e9",
+            ThemeGradient = "linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Enhanced Chemiluminescence", "Intellicheck Technology", "Superb Sensitivity", "Hormones & Immunology" },
+            LogoSvg = "<svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"#38bdf8\" stroke-width=\"8\" fill=\"none\"/><path d=\"M50 10A40 40 0 0 1 90 50\" stroke=\"#ff8200\" stroke-width=\"8\" fill=\"none\"/><path d=\"M50 90A40 40 0 0 1 10 50\" stroke=\"#00a0e9\" stroke-width=\"8\" fill=\"none\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Sysmex - XN 350",
+            Subtitle = "Automated 5-Part Hematology Analyzer",
+            Description = "Fully automated 5-part differential hematology system providing complete blood counts (CBC). FDA approved for fully automated body fluid analysis including cerebrospinal (CSF), pleural, ascitic, and synovial fluids.",
+            ImagePath = "images/machines/sysmex_xn350.png",
+            ThemeColor = "#e11d48",
+            ThemeGradient = "linear-gradient(135deg, #e11d48 0%, #881337 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "5-Part Differential CBC", "Body Fluid Analyser", "FDA Approved", "Flow Cytometry Tech" },
+            LogoSvg = "<svg viewBox=\"0 0 500 500\"><path fill=\"#38bdf8\" d=\"M207.285 166.602c-40.535 0-73.5 32.964-73.5 73.5 0 40.535 32.965 73.5 73.5 73.5 30.875 0 57.156-19.05 68-46.168 10.844 27.117 37.125 46.168 68 46.168 40.535 0 73.5-32.965 73.5-73.5 0-40.536-32.965-73.5-73.5-73.5-30.875 0-57.156 19.05-68 46.168-10.844-27.118-37.125-46.168-68-46.168zm0 30c12.84 0 23.97 8 28.61 19.602-12.18 15.37-12.18 32.426 0 47.797-4.64 11.602-15.77 19.602-28.61 19.602-24.008 0-43.5-19.492-43.5-43.5 0-24.008 19.492-43.5 43.5-43.5zm136 0c24.008 0 43.5 19.492 43.5 43.5 0 24.008-19.492 43.5-43.5 43.5-12.84 0-23.97-8-28.61-19.602 12.18-15.37 12.18-32.426 0-47.797 4.64-11.602 15.77-19.602 28.61-19.602z\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Bio Rad CFX96",
+            Subtitle = "Real-Time PCR Detection System",
+            Description = "Innovative, high-precision molecular diagnostic platform delivering precise PCR detection. Provides highly accurate and reliable data for infectious diseases, viral loads, and genetic screening profiles.",
+            ImagePath = "images/machines/biorad_cfx96.png",
+            ThemeColor = "#10b981",
+            ThemeGradient = "linear-gradient(135deg, #10b981 0%, #064e3b 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Innovative PCR Tech", "Precise Viral Detection", "High-Sensitivity Assay", "Reliable Molecular Data" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#ef4444\"/><rect x=\"22\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#38bdf8\"/><rect x=\"6\" y=\"22\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#38bdf8\"/><rect x=\"22\" y=\"22\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#ef4444\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Roche Cobas e411",
+            Subtitle = "Automated Immunoassay System",
+            Description = "Benchtop analyzer for immunology and hormone assays. Powered by ElectroChemiLuminescence (ECL) technology, offering high sensitivity and rapid results for thyroid, cardiac, and fertility panels.",
+            ImagePath = "images/machines/roche_cobas_e411.png",
+            ThemeColor = "#8b5cf6",
+            ThemeGradient = "linear-gradient(135deg, #8b5cf6 0%, #4c1d95 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "ECL Technology", "Automated Immunoassays", "High Sensitivity Panel", "Fast Turnaround" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><polygon points=\"20,5 36,14 36,29 20,37 4,29 4,14\" fill=\"none\" stroke=\"#38bdf8\" stroke-width=\"4.5\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Abbott Architect ci 4100",
+            Subtitle = "Modular Immunochemistry Analyzer",
+            Description = "High-end integrated clinical system imported from USA. Features a Robotic Sample Handler (RSH) to maximize sample loading capacity, ensuring high-quality diagnostic testing and rapid turnaround time.",
+            ImagePath = "images/machines/abbott_architect_ci4100.png",
+            ThemeColor = "#1e3a8a",
+            ThemeGradient = "linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Integrated Chemistry/Immuno", "Robotic Sample Handler", "Imported from USA", "High-End Automation" },
+            LogoSvg = "<svg viewBox=\"0 0 24 24\"><path fill=\"#38bdf8\" d=\"M20.812 2.4H0v3.197h19.773V5.6a1.03 1.03 0 0 1 1.032 1.031v10.742l-.004.007a1.034 1.034 0 0 1-1.034 1.025H4.23c-.569 0-1.033-.46-1.033-1.033v-4.34c0-.57.464-1.032 1.033-1.032H17.6V8.803H3.188A3.185 3.185 0 0 0 0 11.99v6.423A3.188 3.188 0 0 0 3.188 21.6h17.624A3.187 3.187 0 0 0 24 18.412V5.587A3.186 3.186 0 0 0 20.812 2.4\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Beckman Coulter Access 2",
+            Subtitle = "Immunoassay Workstation",
+            Description = "High-throughput immunodiagnostic workstation with proven chemiluminescence and magnetic particle separation technologies. Features a carousel layout maximizing productivity with a loading capacity of 60 samples.",
+            ImagePath = "images/machines/beckman_access2.png",
+            ThemeColor = "#f59e0b",
+            ThemeGradient = "linear-gradient(135deg, #f59e0b 0%, #78350f 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Magnetic Separation", "60 Samples Capacity", "Proven Chemiluminescence", "High Productivity" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><polygon points=\"12,8 36,8 28,32 4,32\" fill=\"#ef4444\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "BD BACTEC Fx40",
+            Subtitle = "Blood & Sterile Fluid Culture System",
+            Description = "Advanced microbiology culture analyzer for fast detection of pathogens in blood and sterile body fluids. Provides positive culture notifications and reports in as little as 4 hours for rapid antibiotic profiling.",
+            ImagePath = "images/machines/bd_bactec_fx40.png",
+            ThemeColor = "#ef4444",
+            ThemeGradient = "linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Blood & Fluid Culture", "Rapid 4-Hour Detection", "Pathogen Identification", "Continuous Monitoring" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><path fill=\"#38bdf8\" d=\"M20 4L36 20L20 36L4 20Z M20 10L30 20L20 30L10 20Z\" fill-rule=\"evenodd\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Vitek Compact 2",
+            Subtitle = "Automated Bacterial ID & Susceptibility",
+            Description = "State-of-the-art microbiology analyzer offering fully automated bacterial identification and antimicrobial susceptibility testing (AST). Delivers clinically validated reports in 6 hours.",
+            ImagePath = "images/machines/vitek_compact2.png",
+            ThemeColor = "#14b8a6",
+            ThemeGradient = "linear-gradient(135deg, #14b8a6 0%, #115e59 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Bacterial ID & AST", "6-Hour Fast Reporting", "Automated Cards Loading", "Clinical Microbiology" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><circle cx=\"20\" cy=\"20\" r=\"4.5\" fill=\"#10b981\"/><circle cx=\"20\" cy=\"10\" r=\"2.5\" fill=\"#10b981\"/><circle cx=\"27\" cy=\"13\" r=\"3\" fill=\"#10b981\"/><circle cx=\"29.5\" cy=\"21\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"25\" cy=\"28.5\" r=\"4\" fill=\"#10b981\"/><circle cx=\"16.5\" cy=\"29\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"10.5\" cy=\"23.5\" r=\"3\" fill=\"#10b981\"/><circle cx=\"10.5\" cy=\"15.5\" r=\"2.5\" fill=\"#10b981\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "BioRad - D10",
+            Subtitle = "HPLC Hemoglobin Analyzer",
+            Description = "Internationally standardized High-Performance Liquid Chromatography (HPLC) system. Delivers highly precise and automated HbA1c testing for diabetes screening and monitoring.",
+            ImagePath = "images/machines/biorad_d10.png",
+            ThemeColor = "#1e293b",
+            ThemeGradient = "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "HPLC Chromatography", "Gold Standard HbA1c", "Highly Precise Assay", "Internationally Standardized" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#ef4444\"/><rect x=\"22\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#38bdf8\"/><rect x=\"6\" y=\"22\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#38bdf8\"/><rect x=\"22\" y=\"22\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#ef4444\"/></svg>"
+        }
+    };
+
+    private void StartMachinesAutoplay()
+    {
+        _progressBarKey++;
+        _machinesCts?.Cancel();
+        _machinesCts = new System.Threading.CancellationTokenSource();
+        var token = _machinesCts.Token;
+        _ = Task.Run(async () =>
+        {
+            while (!token.IsCancellationRequested && !disposed)
+            {
+                await Task.Delay(6000, token);
+                if (token.IsCancellationRequested || disposed) break;
+                
+                await InvokeAsync(() =>
+                {
+                    activeMachineIndex = (activeMachineIndex + 1) % machines.Count;
+                    _progressBarKey++;
+                    StateHasChanged();
+                });
+            }
+        }, token);
+    }
+
+    private void PrevMachine()
+    {
+        activeMachineIndex = (activeMachineIndex - 1 + machines.Count) % machines.Count;
+        StartMachinesAutoplay();
+    }
+
+    private void NextMachine()
+    {
+        activeMachineIndex = (activeMachineIndex + 1) % machines.Count;
+        StartMachinesAutoplay();
+    }
+
+    private void SetMachine(int index)
+    {
+        activeMachineIndex = index;
+        StartMachinesAutoplay();
+    }
+
+    private void OnMachinesMouseEnter()
+    {
+        _machinesCts?.Cancel();
+    }
+
+    private void OnMachinesMouseLeave()
+    {
+        StartMachinesAutoplay();
+    }
+
+    private class EventSlide
+    {
+        public string ImageUrl { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Date { get; set; } = "";
+        public string Tag { get; set; } = "";
+    }
+
+    private List<EventSlide> eventSlides = new()
+    {
+        new EventSlide 
+        { 
+            ImageUrl = "images/event-camp.png", 
+            Title = "Free Diabetes & BP Screening Camp", 
+            Description = "Successfully conducted a free health camp screening over 150 local residents with instant reports.", 
+            Date = "June 12, 2026",
+            Tag = "Community Camp"
+        },
+        new EventSlide 
+        { 
+            ImageUrl = "images/event-offer.png", 
+            Title = "Tiruppur Branch Grand Inauguration", 
+            Description = "Welcoming doctors, clinic representatives, and local public to explore our state-of-the-art laboratory facility.", 
+            Date = "June 01, 2026",
+            Tag = "Inauguration"
+        }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+            _ = StartAutoPlay();
+            StartMachinesAutoplay();
+        }
+    }
+
+    private async Task StartAutoPlay()
+    {
+        while (!disposed)
+        {
+            await Task.Delay(5000);
+            if (disposed) break;
+            currentSlideIndex = (currentSlideIndex + 1) % eventSlides.Count;
+            StateHasChanged();
+        }
+    }
+
+    private void NextSlide()
+    {
+        currentSlideIndex = (currentSlideIndex + 1) % eventSlides.Count;
+    }
+
+    private void PrevSlide()
+    {
+        currentSlideIndex = (currentSlideIndex - 1 + eventSlides.Count) % eventSlides.Count;
+    }
+
+    private void SetSlide(int index)
+    {
+        currentSlideIndex = index;
+    }
+
+    public void Dispose()
+    {
+        disposed = true;
+        _machinesCts?.Cancel();
+        _machinesCts?.Dispose();
+    }
+}
