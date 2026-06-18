@@ -38,3 +38,9 @@
         z-index: 1050;
     }
 }
+
+@media (max-width: 576px) {
+    .nav-logo-img {
+        height: 48px !important;
+    }
+}

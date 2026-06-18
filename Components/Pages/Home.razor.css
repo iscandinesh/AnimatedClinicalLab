@@ -798,3 +798,23 @@
     }
 }
 
+/* Responsive padding for homepage hero to prevent overlapping navbar elements */
+.homepage-hero {
+    padding-top: 7.5rem;
+    padding-bottom: 2rem;
+}
+
+@media (max-width: 991px) {
+    .homepage-hero {
+        padding-top: 7rem;
+        padding-bottom: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .homepage-hero {
+        padding-top: 9rem; /* Increase top padding on mobile to clear fixed navbar and avoid tagline overlaps */
+        padding-bottom: 4rem; /* Additional space below CTA buttons */
+    }
+}
+

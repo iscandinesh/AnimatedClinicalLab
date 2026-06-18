@@ -44,12 +44,12 @@
                 <i class="bi @(ThemeState.IsDarkMode ? "bi-sun-fill" : "bi-moon-stars-fill")"></i>
             </button>
             <a href="contact" class="btn-helium btn-helium-primary d-none d-sm-inline-flex">Book a Test</a>
+            
+            <!-- Mobile Toggle -->
+            <button class="d-lg-none bg-transparent border-0 p-0" style="color: var(--text-primary); line-height: 1;" @onclick="ToggleNavMenu">
+                <i class="bi @(collapseNavMenu ? "bi-list" : "bi-x") fs-2"></i>
+            </button>
         </div>
-
-        <!-- Mobile Toggle -->
-        <button class="d-lg-none bg-transparent border-0" style="color: var(--text-primary);" @onclick="ToggleNavMenu">
-            <i class="bi @(collapseNavMenu ? "bi-list" : "bi-x") fs-2"></i>
-        </button>
     </div>
 
     <!-- Mobile Nav -->

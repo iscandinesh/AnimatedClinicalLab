@@ -2603,7 +2603,7 @@ section {
 
 @media (max-width: 576px) {
     .hero-carousel-container {
-        height: 520px;
+        height: 580px;
         padding-left: 20px;
         padding-right: 20px;
     }
