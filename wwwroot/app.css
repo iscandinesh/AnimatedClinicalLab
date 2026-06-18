@@ -1111,6 +1111,23 @@ h5 {
     padding: 0 2rem;
 }
 
+/* Tighten nav on small mobile */
+@media (max-width: 576px) {
+    .nav-container {
+        padding: 0 1rem;
+    }
+    /* Prevent logo from pushing other buttons off-screen */
+    .nav-brand {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+    /* Theme toggle + hamburger group — don't shrink */
+    .nav-cta {
+        flex-shrink: 0;
+        gap: 0.5rem !important;
+    }
+}
+
 .nav-links {
     display: flex;
     gap: 2.5rem;
@@ -2904,46 +2921,58 @@ section {
 
 @media (max-width: 576px) {
     .hero-slide {
-        left: 15px;
-        right: 15px;
+        left: 0;
+        right: 0;
     }
+    /* On mobile: content takes full width — no empty right gap */
     .hero-slide-content {
-        width: 70% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-right: 0 !important;
+        z-index: 2 !important;
     }
+    /* Background image: full-width transparent overlay behind text */
     .hero-slide-bg-image {
-        width: 68% !important;
-        right: -15px !important;
-        opacity: 0.35 !important;
-        /* 4-sided fade: all edges and corners fade out */
-        mask-image:
-            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, black 45%, black 80%, transparent 100%),
-            linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-        -webkit-mask-image:
-            linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, black 45%, black 80%, transparent 100%),
-            linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-        -webkit-mask-composite: source-in;
-        mask-composite: intersect;
-    }
-    .dark-theme .hero-slide-bg-image {
-        opacity: 0.35 !important;
-    }
-    /* Trust logos slide: full opacity, right-aligned vertical column */
-    .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        opacity: 0.18 !important;
+        z-index: 0 !important;
+        pointer-events: none;
+        overflow: hidden;
         mask-image: none !important;
         -webkit-mask-image: none !important;
-        opacity: 1 !important;
-        width: 35% !important;
-        right: 0 !important;
-        top: 0 !important;
-        bottom: 0 !important;
+        display: block !important;
+    }
+    .hero-slide-bg-image img {
+        width: 100% !important;
         height: 100% !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+    }
+    .dark-theme .hero-slide-bg-image {
+        opacity: 0.20 !important;
+    }
+    /* Trust logos slide: keep logos visible and right-aligned */
+    .hero-slide-bg-image:has(.hero-trust-logos-layout) {
+        opacity: 1 !important;
+        width: 36% !important;
+        left: auto !important;
+        right: 0 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        overflow: hidden !important;
         pointer-events: auto;
         box-sizing: border-box !important;
+    }
+    /* When it's the trust logos slide, content occupies left 64% */
+    .hero-slide:has(.hero-trust-logos-layout) .hero-slide-content {
+        width: 64% !important;
     }
     .dark-theme .hero-slide-bg-image:has(.hero-trust-logos-layout) {
         opacity: 1 !important;
@@ -3087,17 +3116,18 @@ section {
 
 @media (max-width: 576px) {
     .carousel-nav-btn {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
     .carousel-nav-btn i {
-        font-size: 1.8rem !important;
+        font-size: 1.5rem !important;
     }
+    /* Arrows sit on absolute edges, outside the text content area */
     .carousel-nav-btn.prev {
-        left: 10px;
+        left: 2px;
     }
     .carousel-nav-btn.next {
-        right: 10px;
+        right: 2px;
     }
 }
 
