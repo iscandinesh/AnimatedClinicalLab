@@ -648,24 +648,32 @@
 }
 
 .trust-logo-card {
-    background: rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 24px;
-    padding: 16px;
+    padding: 20px;
     width: 200px;
     height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    transform: perspective(1000px) rotateX(10deg) rotateY(-8deg) translateZ(0);
 }
 
 .trust-logo-card:hover {
-    transform: translateY(-6px) scale(1.04);
-    border-color: var(--primary-blue);
-    background: rgba(0, 0, 0, 0.04);
-    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.12);
+    transform: perspective(1000px) translate3d(0, -10px, 15px) rotateX(0deg) rotateY(0deg);
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.35),
+        0 0 30px rgba(37, 99, 235, 0.25),
+        inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 
 .trust-logo-card img {
@@ -703,6 +711,13 @@
         padding: 8px !important;
         border-radius: 14px !important;
         box-sizing: border-box !important;
+        transform: none !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    }
+    .trust-logo-card:hover {
+        transform: translateY(-4px) scale(1.02) !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25), 0 0 15px rgba(37, 99, 235, 0.15) !important;
     }
     /* Push 1st logo (anniversary) down a bit */
     .trust-logo-card:first-child {
@@ -735,6 +750,13 @@
         padding: 6px !important;
         border-radius: 12px !important;
         box-sizing: border-box !important;
+        transform: none !important;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    }
+    .trust-logo-card:hover {
+        transform: translateY(-3px) scale(1.02) !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 0 12px rgba(37, 99, 235, 0.15) !important;
     }
     /* Push 1st logo (anniversary) down a bit */
     .trust-logo-card:first-child {
