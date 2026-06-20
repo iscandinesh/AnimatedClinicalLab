@@ -167,18 +167,19 @@
 
 /* Individual logo card design (always white background to preserve logo originality) */
 .partner-logo-card {
-    width: 220px;
-    height: 100px;
+    width: 240px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-    padding: 4px 12px;
+    padding: 6px 16px;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .partner-logo-card:hover {
@@ -188,9 +189,9 @@
 }
 
 .partner-logo-card img {
-    height: 70px;
+    height: 55px;
     width: auto;
-    max-width: 195px;
+    max-width: 208px;
     object-fit: contain;
     display: block;
     mix-blend-mode: multiply; /* removes white margins in both light and dark mode */
@@ -198,31 +199,38 @@
     filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.02));
 }
 
-/* Aaditya logo has white text in source file, so invert in both light & dark mode to make it visible on the white card */
+/* Custom size adjustments for vertical and square logos to make them look larger */
+.partner-logo-card.logo-card-vertical {
+    padding: 2px 16px;
+}
+.partner-logo-card.logo-card-vertical img {
+    height: 76px;
+    transform: scale(1.2);
+}
+
+.partner-logo-card.logo-card-square {
+    padding: 4px 16px;
+}
+.partner-logo-card.logo-card-square img {
+    height: 72px;
+    transform: scale(1.35);
+}
+
+/* Invert white text in Aadhitya logo to black to make it visible on white cards */
 .partner-logo-card img.logo-aaditya {
-    filter: invert(1) hue-rotate(180deg) brightness(0.9);
-    mix-blend-mode: normal; /* Already transparent, no blend multiplier needed */
+    filter: invert(1) hue-rotate(180deg) brightness(0.9) !important;
+    mix-blend-mode: normal !important;
 }
 
-/* SSS and Nishanth logos have empty whitespace margins in their files, make them visually larger */
-.partner-logo-card img.logo-sss,
-.partner-logo-card img.logo-nishanth {
-    height: 95px;
-    max-width: 210px;
-}
-
-
-
-
-/* Typography/Text logo for Thangam Hospital */
+/* Typography/Text logo for partner clinics without image logos */
 .partner-text-logo {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 85px;
-    width: 195px;
+    height: 60px;
+    width: 208px;
 }
 
 

@@ -21,7 +21,7 @@
                 Diagnostic <span class="text-primary">Services</span>
             </h1>
             <p class="lead mb-0" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
-                Every sample goes through automated and quality-checked processes to ensure dependable results across all major pathology departments.
+                Every sample is processed through fully automated, quality-controlled systems to deliver accurate and reliable diagnostic results.
             </p>
         </div>
     </div>
@@ -131,7 +131,7 @@
                     <div class="notice-box">
                         <i class="bi bi-info-circle-fill notice-box-icon"></i>
                         <p class="notice-box-text">
-                            <strong>@SelectedPackage.TestCount tests included</strong> in this @SelectedPackage.Subcategory.ToLower() diagnostic panel. 
+                            <strong>@SelectedPackage.TestCount tests included</strong> in this @(SelectedPackage.Subcategory?.ToLower()) diagnostic panel. 
                             All tests are conducted by NABL-accredited labs. Reports are delivered digitally within 24 hours of sample collection. 
                             Home sample pickup is available across all our branch locations.
                         </p>
@@ -139,7 +139,9 @@
                     
                     <!-- Checklist Grid -->
                     <div class="tests-checklist-grid">
-                        @foreach (var test in SelectedPackage.Tests)
+                        @if (SelectedPackage.Tests != null)
+                        {
+                            foreach (var test in SelectedPackage.Tests)
                         {
                             <div class="test-check-item">
                                 <div class="test-check-icon-wrap">
@@ -147,6 +149,7 @@
                                 </div>
                                 <span class="test-check-name">@test</span>
                             </div>
+                        }
                         }
                     </div>
                 </div>
@@ -402,7 +405,7 @@
 
 @code {
     private string ActiveCategory = "All";
-    private MedicalPackage SelectedPackage = null;
+    private MedicalPackage? SelectedPackage = null;
 
     private void SetCategory(string category)
     {
@@ -443,18 +446,18 @@
 
     public class MedicalPackage
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Category { get; set; }
-        public string Subcategory { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Category { get; set; }
+        public string? Subcategory { get; set; }
         public double Price { get; set; }
         public double OriginalPrice { get; set; }
-        public string Discount { get; set; }
+        public string? Discount { get; set; }
         public int TestCount { get; set; }
-        public string Description { get; set; }
-        public string ImageUrl { get; set; }
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
         public bool IsBestseller { get; set; }
-        public List<string> Tests { get; set; }
+        public List<string>? Tests { get; set; }
     }
 
     private List<MedicalPackage> Packages = new()

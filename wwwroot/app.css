@@ -948,6 +948,11 @@ h5 {
     background: transparent;
 }
 
+.helium-nav .btn-helium {
+    padding: 0.5rem 1.4rem;
+    font-size: 0.88rem;
+}
+
 /* === Scrolled Navbar: Frosted Glass — content blurs behind it === */
 .helium-nav.scrolled {
     padding: 0.85rem 0;
@@ -5476,6 +5481,7 @@ section {
     background: #ffffff !important; /* keep card background white in dark theme */
     border-color: rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+    overflow: hidden !important;
 }
 
 .dark-theme .partner-logo-card img {

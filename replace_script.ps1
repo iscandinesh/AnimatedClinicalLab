@@ -1,0 +1,7 @@
+$text = [IO.File]::ReadAllText('d:\My project\AnimatedClinicalLab-main\AnimatedClinicalLab-main\Components\Pages\Locations.razor')
+$text = $text.Replace('style="font-size: 0.8rem;"', 'style="font-size: 0.75rem; white-space: normal; word-break: break-all;"')
+$text = $text.Replace('Erode â€“ 638 001.', 'Erode – 638 001.')
+$text = $text.Replace('81108 99999 â€¢ 70944 90917', '81108 99999 • 70944 90917')
+$text = $text.Replace('Authorised Collection Centres</h2>', 'Our Partner Hospitals and Clinics</h2>')
+$text = $text.Replace('Partner hospitals and clinics where you can submit samples for Alpha processing.', 'Our trusted network of healthcare partners where you can submit samples for Alpha processing.')
+[IO.File]::WriteAllText('d:\My project\AnimatedClinicalLab-main\AnimatedClinicalLab-main\Components\Pages\Locations.razor', $text)
