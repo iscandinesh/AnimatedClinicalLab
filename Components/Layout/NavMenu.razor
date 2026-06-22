@@ -55,7 +55,7 @@
     <!-- Mobile Nav -->
     @if (!collapseNavMenu)
     {
-        <div class="mobile-menu d-lg-none animate-fade-in" style="position: fixed; top: 80px; left: 0; width: 100%; height: 100vh; background: var(--bg-dark); z-index: 999; padding: 2rem;">
+        <div class="mobile-menu d-lg-none animate-fade-in" style="position: fixed; top: 80px; left: 0; right: 0; bottom: 0; background: var(--bg-dark); z-index: 999; padding: 2rem; overflow-y: auto;">
             <div class="d-flex flex-column gap-4 align-items-center">
                 <div class="d-flex flex-column align-items-center w-100">
                     <a class="nav-link fs-4" href="services" @onclick="ToggleNavMenu">Services</a>

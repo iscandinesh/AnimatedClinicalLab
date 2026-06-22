@@ -2,6 +2,21 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+.app-shell {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.app-layout {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 :root {
@@ -474,6 +489,7 @@ body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
+    max-width: 100%;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.5s ease, color 0.5s ease;
 }
@@ -1652,10 +1668,16 @@ h5 {
 
 /* Footer Grid - Vibrant Premium Styling */
 .app-footer {
-    padding: 4rem 0 2rem;
+    padding: 4rem 0 3.5rem;
     position: relative;
     z-index: 10;
     transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .app-footer {
+        padding: 3rem 0 4.5rem;
+    }
 }
 
 .app-footer::before {

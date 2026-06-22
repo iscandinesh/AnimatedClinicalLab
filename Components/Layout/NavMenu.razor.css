@@ -41,6 +41,7 @@
 
 @media (max-width: 576px) {
     .nav-logo-img {
-        height: 48px !important;
+        height: 42px !important;
+        max-width: 130px !important;
     }
 }
