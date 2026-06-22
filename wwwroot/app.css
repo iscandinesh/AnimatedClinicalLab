@@ -42,6 +42,7 @@ html {
     /* Solid professional blue */
     --accent-glow: rgba(59, 130, 246, 0.05);
     --machine-bg-bottom: #faf9f6;
+    --bg-dark: #FFFFFF;
 }
 
 .dark-theme {
@@ -962,6 +963,39 @@ h5 {
     padding: 1.5rem 0;
     transition: all 0.4s var(--easing-standard);
     background: transparent;
+}
+
+/* Mobile Menu Container */
+.mobile-menu {
+    position: fixed;
+    top: 92px; /* Navbar height when not scrolled */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-dark);
+    z-index: 999;
+    padding: 2rem;
+    overflow-y: auto;
+    transition: top 0.4s var(--easing-standard);
+}
+
+.helium-nav.scrolled .mobile-menu,
+.helium-nav.mobile-menu-open .mobile-menu {
+    top: 70px; /* Navbar height when scrolled */
+}
+
+/* Open Mobile Menu State for Navbar */
+.helium-nav.mobile-menu-open {
+    background: var(--bg-dark) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    padding: 0.85rem 0 !important;
+}
+
+.helium-nav.mobile-menu-open button {
+    color: var(--text-primary) !important;
 }
 
 .helium-nav .btn-helium {
@@ -5553,4 +5587,20 @@ section {
 
 .dark-theme .trust-logo-card img.cmc-logo-img {
     filter: brightness(1.2) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3)) !important;
+}
+
+/* Fading gradients for page banners on mobile viewports to prevent sharp cut-off lines */
+@media (max-width: 768px) {
+    .about-hero::before {
+        background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/about-banner.png') !important;
+        opacity: 0.85;
+    }
+    .services-hero::before {
+        background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/services-banner.png') !important;
+        opacity: 0.85;
+    }
+    .locations-hero::before {
+        background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/locations-banner.png') !important;
+        opacity: 0.85;
+    }
 }

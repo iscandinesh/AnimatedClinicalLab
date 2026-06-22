@@ -33,6 +33,12 @@
         pointer-events: none;
         animation: heroBackgroundZoom 10s ease-in-out infinite alternate;
     }
+    @@media (max-width: 768px) {
+        .tiruppur-hero::before {
+            background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/tiruppur-vibrant-textile.png') !important;
+            opacity: 0.85;
+        }
+    }
     
     @@keyframes heroBackgroundZoom {
         0% {
@@ -796,6 +802,7 @@
                             </div>
                             <p class="text-primary small fw-semibold mb-2" style="font-size: 0.85rem; letter-spacing: 0.5px;">Consultant Pathologist</p>
                             <p class="text-muted small mb-0"><i class="bi bi-briefcase me-1 opacity-70"></i> Diagnostics Validation Expert</p>
+                            <p class="text-muted small mb-0"><i class="bi bi-patch-check-fill me-1 opacity-70"></i> Expert in Cytology, Hematology and Histopathology</p>
                             <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1 opacity-70"></i> Tiruppur Branch Laboratory</p>
                         </div>
                     </div>
