@@ -1021,7 +1021,19 @@ h5 {
     backdrop-filter: blur(20px) saturate(1.6);
     -webkit-backdrop-filter: blur(20px) saturate(1.6);
     border-bottom: none; /* Removed scrolled border line */
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.dark-theme .helium-nav:not(.scrolled) {
+    background: linear-gradient(to bottom, rgba(8, 12, 35, 0.85) 0%, rgba(8, 12, 35, 0.3) 60%, transparent 100%) !important;
+}
+
+.light-theme .helium-nav:not(.scrolled) {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 60%, transparent 100%) !important;
+}
+
+.light-theme .helium-nav:not(.scrolled) .nav-link {
+    color: #0f172a !important;
+    font-weight: 600;
 }
 
 /* Force navigation menu elements to be white before scrolling on dark hero headers */
@@ -2852,6 +2864,10 @@ section {
         linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 6%, black 15%, black 85%, rgba(0,0,0,0.4) 94%, transparent 100%);
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
+}
+
+.hero-slide-bg-image:has(.hero-trust-logos-layout) {
+    pointer-events: auto !important;
 }
 
 .hero-slide-img {
@@ -5126,16 +5142,16 @@ section {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.45) 0%, rgba(2, 6, 23, 0.65) 100%);
+    background: none !important;
     z-index: 1;
 }
 
 .light-theme .locations-hero::after {
-    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0.55) 100%);
+    background: none !important;
 }
 
 .dark-theme .locations-hero::after {
-    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.5) 0%, rgba(2, 6, 23, 0.7) 100%);
+    background: none !important;
 }
 
 .locations-hero .badge-pill-premium {
@@ -5175,16 +5191,16 @@ section {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.45) 0%, rgba(2, 6, 23, 0.65) 100%);
+    background: none !important;
     z-index: 1;
 }
 
 .light-theme .about-hero::after {
-    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0.55) 100%);
+    background: none !important;
 }
 
 .dark-theme .about-hero::after {
-    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.5) 0%, rgba(2, 6, 23, 0.7) 100%);
+    background: none !important;
 }
 
 .about-hero .badge-pill-premium {
@@ -5225,16 +5241,16 @@ section {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.25) 0%, rgba(2, 6, 23, 0.45) 100%);
+    background: none !important;
     z-index: 1;
 }
 
 .light-theme .services-hero::after {
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(248, 250, 252, 0.5) 100%);
+    background: none !important;
 }
 
 .dark-theme .services-hero::after {
-    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4) 0%, rgba(2, 6, 23, 0.6) 100%);
+    background: none !important;
 }
 
 /* Custom legibility overrides for Services page header badge */
@@ -5565,16 +5581,37 @@ section {
         0 15px 35px rgba(0, 0, 0, 0.2),
         inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
     transform: perspective(1000px) rotateX(10deg) rotateY(-8deg) translateZ(0);
+    transform-style: preserve-3d;
+    pointer-events: auto !important;
+}
+
+/* Auto 3D Wobble Animations for Dark Theme */
+.dark-theme .trust-logo-card:nth-child(1) {
+    animation: auto3DWobble 5s ease-in-out infinite !important;
+}
+
+.dark-theme .trust-logo-card:nth-child(2) {
+    animation: auto3DWobble 5s ease-in-out infinite -1.6s !important;
+}
+
+.dark-theme .trust-logo-card:nth-child(3) {
+    animation: auto3DWobble 5s ease-in-out infinite -3.2s !important;
 }
 
 .dark-theme .trust-logo-card:hover {
-    transform: perspective(1000px) translate3d(0, -10px, 15px) rotateX(0deg) rotateY(0deg) !important;
+    animation: none !important;
+    transform: perspective(1000px) translate3d(0, -12px, 20px) rotateX(0deg) rotateY(0deg) !important;
     border-color: rgba(255, 255, 255, 0.18) !important;
     background: rgba(255, 255, 255, 0.06) !important;
     box-shadow: 
         0 25px 50px rgba(0, 0, 0, 0.35),
         0 0 30px rgba(37, 99, 235, 0.25),
         inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark-theme .trust-logo-card img {
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.3s ease !important;
+    transform: translateZ(0) !important;
 }
 
 .dark-theme .trust-logo-card img.nabl-logo-img {
@@ -5589,18 +5626,66 @@ section {
     filter: brightness(1.2) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3)) !important;
 }
 
+.dark-theme .trust-logo-card:hover img.anniversary-logo-img {
+    transform: scale(1.15) translateZ(25px) rotate(4deg) !important;
+    filter: brightness(1.2) drop-shadow(0 8px 20px rgba(218, 165, 32, 0.6)) !important;
+}
+
+.dark-theme .trust-logo-card:hover img.nabl-logo-img {
+    transform: scale(1.15) translateZ(25px) rotate(360deg) !important;
+    filter: invert(1) hue-rotate(180deg) brightness(1.5) contrast(1.2) drop-shadow(0 8px 20px rgba(59, 130, 246, 0.6)) !important;
+}
+
+.dark-theme .trust-logo-card:hover img.cmc-logo-img {
+    transform: scale(1.15) translateZ(25px) translateY(-5px) !important;
+    filter: brightness(1.35) drop-shadow(0 8px 25px rgba(255, 255, 255, 0.5)) !important;
+}
+
 /* Fading gradients for page banners on mobile viewports to prevent sharp cut-off lines */
 @media (max-width: 768px) {
     .about-hero::before {
-        background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/about-banner.png') !important;
+        background-image: url('images/about-banner.png') !important;
         opacity: 0.85;
     }
     .services-hero::before {
-        background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/services-banner.png') !important;
+        background-image: url('images/services-banner.png') !important;
         opacity: 0.85;
     }
     .locations-hero::before {
-        background-image: linear-gradient(to bottom, var(--bg-body) 0%, transparent 20%, transparent 80%, var(--bg-body) 100%), url('images/locations-banner.png') !important;
+        background-image: url('images/locations-banner.png') !important;
         opacity: 0.85;
     }
+}
+
+/* Global Keyframe for Trust Card Auto 3D Wobble */
+@keyframes auto3DWobble {
+    0%, 100% {
+        transform: perspective(1000px) rotateX(12deg) rotateY(-12deg) translateZ(0);
+    }
+    25% {
+        transform: perspective(1000px) rotateX(4deg) rotateY(12deg) translateZ(12px);
+    }
+    50% {
+        transform: perspective(1000px) rotateX(-10deg) rotateY(-10deg) translateZ(24px);
+    }
+    75% {
+        transform: perspective(1000px) rotateX(2deg) rotateY(8deg) translateZ(12px);
+    }
+}
+
+/* Apply Auto Wobble Globally to both Light and Dark Themes */
+.trust-logo-card:nth-child(1) {
+    animation: auto3DWobble 5s ease-in-out infinite !important;
+}
+
+.trust-logo-card:nth-child(2) {
+    animation: auto3DWobble 5s ease-in-out infinite -1.6s !important;
+}
+
+.trust-logo-card:nth-child(3) {
+    animation: auto3DWobble 5s ease-in-out infinite -3.2s !important;
+}
+
+.trust-logo-card:hover {
+    animation: none !important;
 }

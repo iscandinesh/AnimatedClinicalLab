@@ -1,0 +1,7 @@
+/* Locations Page - Scoped Styles */
+
+.page-header {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: visible;
+    position: relative;
+}
