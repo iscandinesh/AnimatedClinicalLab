@@ -1,5 +1,6 @@
-using System.Net;
-using System.Net.Mail;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -41,17 +42,14 @@ public class EmailService
             fromEmail = username;
         }
 
-        using var client = new SmtpClient(host, port)
-        {
-            Credentials = new NetworkCredential(username, password),
-            EnableSsl = enableSsl
-        };
+        var mimeMessage = new MimeMessage();
+        mimeMessage.From.Add(new MailboxAddress("Alpha Diagnostics Contact Form", fromEmail));
+        mimeMessage.To.Add(new MailboxAddress("Alpha Diagnostics Info", toEmail));
+        mimeMessage.Subject = $"New Inquiry: {subject}";
 
-        var mailMessage = new MailMessage
+        var bodyBuilder = new BodyBuilder
         {
-            From = new MailAddress(fromEmail, "Alpha Diagnostics Contact Form"),
-            Subject = $"New Inquiry: {subject}",
-            Body = $@"
+            HtmlBody = $@"
 <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;"">
     <h2 style=""color: #2563eb; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;"">New Contact Form Submission</h2>
     <table style=""width: 100%; border-collapse: collapse; margin-top: 15px;"">
@@ -76,13 +74,34 @@ public class EmailService
         <h4 style=""margin: 0 0 10px 0; color: #475569;"">Message:</h4>
         <p style=""margin: 0; color: #0f172a; line-height: 1.6; white-space: pre-wrap;"">{message}</p>
     </div>
-</div>
-",
-            IsBodyHtml = true
+</div>"
         };
 
-        mailMessage.To.Add(toEmail);
+        mimeMessage.Body = bodyBuilder.ToMessageBody();
 
-        await client.SendMailAsync(mailMessage);
+        using var client = new SmtpClient();
+        
+        // Determine the secure socket options based on port and ssl settings.
+        SecureSocketOptions options;
+        if (!enableSsl)
+        {
+            options = SecureSocketOptions.None;
+        }
+        else if (port == 465)
+        {
+            options = SecureSocketOptions.SslOnConnect; // Implicit SSL/TLS
+        }
+        else
+        {
+            options = SecureSocketOptions.StartTls; // STARTTLS for port 587 or 25
+        }
+
+        // Bypass SSL certificate validation if there's any certificate mismatch issue (helps prevent SSL errors on local setups or self-signed certs)
+        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+        await client.ConnectAsync(host, port, options);
+        await client.AuthenticateAsync(username, password);
+        await client.SendAsync(mimeMessage);
+        await client.DisconnectAsync(true);
     }
 }
