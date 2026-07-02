@@ -1,5 +1,6 @@
 @page "/contact"
 @inject IJSRuntime JS
+@inject AlphaRazor.Services.EmailService EmailService
 
 <PageTitle>Contact Us - Alpha Diagnostics Centre</PageTitle>
 
@@ -47,47 +48,62 @@
                             </div>
                             <h4 class="fw-bold mb-3" style="color: #0f172a;">Message Sent!</h4>
                             <p class="text-secondary small mb-4">Thank you for reaching out. Our team will contact you shortly.</p>
-                            <button class="btn-send-message mx-auto" @onclick="() => isSubmitted = false">Send Another Message</button>
+                            <button class="btn-send-message mx-auto" @onclick="ResetForm">Send Another Message</button>
                         </div>
                     }
                     else
                     {
                         <form @onsubmit="HandleSubmit" class="d-flex flex-column gap-3">
+                            @if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                <div class="alert alert-danger animate-fade-in small py-2 px-3 mb-2" role="alert" style="border-radius: 12px; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb;">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@errorMessage
+                                </div>
+                            }
+
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label-custom">Full Name</label>
-                                    <input type="text" class="form-input-custom" placeholder="Name" required />
+                                    <input type="text" class="form-input-custom" placeholder="Name" @bind="fullName" required />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label-custom">Phone Number</label>
-                                    <input type="tel" class="form-input-custom" placeholder="Phone" required />
+                                    <input type="tel" class="form-input-custom" placeholder="Phone" @bind="phoneNumber" required />
                                 </div>
                             </div>
                             
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label-custom">Email Address</label>
-                                    <input type="email" class="form-input-custom" placeholder="Email" required />
+                                    <input type="email" class="form-input-custom" placeholder="Email" @bind="emailAddress" required />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label-custom">Subject / Test Type</label>
-                                    <select class="form-select form-input-custom" style="height: auto;">
-                                        <option selected>Home Sample Collection</option>
-                                        <option>Health Package Inquiry</option>
-                                        <option>General Question</option>
-                                        <option>Feedback</option>
+                                    <select class="form-select form-input-custom" style="height: auto;" @bind="subject">
+                                        <option value="Home Sample Collection">Home Sample Collection</option>
+                                        <option value="Health Package Inquiry">Health Package Inquiry</option>
+                                        <option value="General Question">General Question</option>
+                                        <option value="Feedback">Feedback</option>
                                     </select>
                                 </div>
                             </div>
                             
                             <div>
                                 <label class="form-label-custom">Your Message</label>
-                                <textarea class="form-input-custom" style="min-height: 100px; resize: none;" rows="2" placeholder="Message"></textarea>
+                                <textarea class="form-input-custom" style="min-height: 100px; resize: none;" rows="2" placeholder="Message" @bind="message" required></textarea>
                             </div>
                             
                             <div class="mt-2 text-end">
-                                <button type="submit" class="btn-send-message">
-                                    <i class="bi bi-send-fill me-2"></i> Send
+                                <button type="submit" class="btn-send-message" disabled="@isSending">
+                                    @if (isSending)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        <span>Sending...</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-send-fill me-2"></i><span>Send</span>
+                                    }
                                 </button>
                             </div>
                         </form>
@@ -188,12 +204,44 @@
 </div>
 
 @code {
+    private string fullName = "";
+    private string phoneNumber = "";
+    private string emailAddress = "";
+    private string subject = "Home Sample Collection";
+    private string message = "";
+
     private bool isSubmitted = false;
+    private bool isSending = false;
+    private string? errorMessage = null;
 
     private async Task HandleSubmit()
     {
-        await Task.Delay(600);
-        isSubmitted = true;
+        errorMessage = null;
+        isSending = true;
+        try
+        {
+            await EmailService.SendContactFormEmailAsync(fullName, phoneNumber, emailAddress, subject, message);
+            isSubmitted = true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isSending = false;
+        }
+    }
+
+    private void ResetForm()
+    {
+        fullName = "";
+        phoneNumber = "";
+        emailAddress = "";
+        subject = "Home Sample Collection";
+        message = "";
+        isSubmitted = false;
+        errorMessage = null;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

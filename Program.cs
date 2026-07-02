@@ -8,6 +8,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<ThemeService>();
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 
