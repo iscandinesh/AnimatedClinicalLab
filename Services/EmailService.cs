@@ -27,7 +27,7 @@ public class EmailService
         string username = smtpSection["Username"] ?? string.Empty;
         string password = smtpSection["Password"] ?? string.Empty;
         string fromEmail = smtpSection["FromEmail"] ?? string.Empty;
-        string toEmail = smtpSection["ToEmail"] ?? "info@alphadiagnosticscentre.com";
+        string toEmail = smtpSection["ToEmail"] ?? "suriya@alphadiagnosticscentre.com";
 
         // Check validation
         if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
