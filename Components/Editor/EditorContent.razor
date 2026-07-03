@@ -1,0 +1,379 @@
+@using Microsoft.JSInterop
+@using AlphaRazor.EditorEngine.Models
+@using AlphaRazor.EditorEngine.Services
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div class="rte-content-editor"
+     contenteditable="true"
+     @ref="_editorRef"
+     style="min-height: 400px; padding: 1.5rem; outline: none; background: var(--rte-bg, #ffffff); color: var(--rte-color, #1e293b); border: 1px solid var(--rte-border, #e2e8f0); border-radius: 0 0 12px 12px; font-family: 'Outfit', sans-serif; font-size: 1rem; line-height: 1.6;"
+     data-placeholder="Start typing your document here...">
+    
+    @foreach (var child in EditorState.Document.Children)
+    {
+        @RenderNode(child)
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EditorState EditorState { get; set; } = null!;
+
+    [Parameter]
+    public SelectionManager SelectionManager { get; set; } = null!;
+
+    [Parameter]
+    public CommandExecuter CommandExecuter { get; set; } = null!;
+
+    private ElementReference _editorRef;
+    private DotNetObjectReference<EditorContent>? _objRef;
+    private bool _shouldSyncSelectionToDOM = false;
+    private bool _isTyping = false;
+
+    protected override void OnInitialized()
+    {
+        EditorState.OnChange += OnStateChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("editorInterop.init", _editorRef, _objRef);
+        }
+
+        if (_shouldSyncSelectionToDOM)
+        {
+            _shouldSyncSelectionToDOM = false;
+            await SelectionManager.SyncToDOMAsync();
+        }
+    }
+
+    private void OnStateChanged()
+    {
+        if (_isTyping)
+        {
+            _isTyping = false;
+            StateHasChanged();
+            return;
+        }
+
+        _shouldSyncSelectionToDOM = true;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnTextInput(string nodeId, string text, int offset)
+    {
+        _isTyping = true;
+        var path = EditorState.FindPathById(nodeId);
+        if (path != null)
+        {
+            var node = EditorState.GetNodeByPath(path) as TextNode;
+            if (node != null)
+            {
+                node.Text = text;
+                EditorState.Selection.Anchor = new PathOffset { Path = path, Offset = offset };
+                EditorState.Selection.Focus = EditorState.Selection.Anchor.Clone();
+                
+                EditorState.Normalize();
+                EditorState.NotifyStateChanged();
+            }
+        }
+    }
+
+    [JSInvokable]
+    public void OnKeyDownCommand(string command)
+    {
+        _isTyping = false;
+        if (command == "Enter")
+        {
+            EditorState.InsertBreak();
+        }
+        else if (command == "Backspace")
+        {
+            EditorState.DeleteBackward();
+        }
+        else if (command == "bold" || command == "italic" || command == "underline")
+        {
+            CommandExecuter.ToggleInlineFormat(command);
+        }
+    }
+
+    [JSInvokable]
+    public void OnSelectionChange(string anchorId, int anchorOffset, string focusId, int focusOffset)
+    {
+        _isTyping = false;
+        var anchorPath = EditorState.FindPathById(anchorId);
+        var focusPath = EditorState.FindPathById(focusId);
+
+        if (anchorPath != null && focusPath != null)
+        {
+            EditorState.Selection.Anchor = new PathOffset { Path = anchorPath, Offset = anchorOffset };
+            EditorState.Selection.Focus = new PathOffset { Path = focusPath, Offset = focusOffset };
+        }
+    }
+
+    private RenderFragment RenderNode(AstNode node) => builder =>
+    {
+        if (node is TextNode textNode)
+        {
+            builder.OpenElement(0, "span");
+            builder.AddAttribute(1, "data-node-id", textNode.Id);
+
+            var styles = new List<string>();
+            if (textNode.Bold) styles.Add("font-weight: bold;");
+            if (textNode.Italic) styles.Add("font-style: italic;");
+            
+            var textDecorations = new List<string>();
+            if (textNode.Underline) textDecorations.Add("underline");
+            if (textNode.Strikethrough) textDecorations.Add("line-through");
+            if (textDecorations.Count > 0) styles.Add($"text-decoration: {string.Join(" ", textDecorations)};");
+
+            if (textNode.Subscript) styles.Add("vertical-align: sub; font-size: 0.75em; line-height: 0;");
+            if (textNode.Superscript) styles.Add("vertical-align: super; font-size: 0.75em; line-height: 0;");
+            if (textNode.Code) styles.Add("font-family: monospace; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; color: #eb5757; font-size: 0.9em;");
+
+            if (!string.IsNullOrEmpty(textNode.Color)) styles.Add($"color: {textNode.Color};");
+            
+            if (styles.Count > 0)
+            {
+                builder.AddAttribute(2, "style", string.Join(" ", styles));
+            }
+
+            string displayText = string.IsNullOrEmpty(textNode.Text) ? "\u200B" : textNode.Text;
+            builder.AddContent(3, displayText);
+            builder.CloseElement();
+        }
+        else if (node is ElementNode elementNode)
+        {
+            string tagName = elementNode.Type switch
+            {
+                "paragraph" => "p",
+                "heading" => $"h{elementNode.Level ?? 1}",
+                "blockquote" => "blockquote",
+                "code-block" => "pre",
+                "list" => elementNode.Format == "ordered" ? "ol" : "ul",
+                "list-item" => "li",
+                "table" => "table",
+                "table-row" => "tr",
+                "table-cell" => "td",
+                "image" => "img",
+                "video" => "div",
+                "page-break" => "hr",
+                "horizontal-rule" => "hr",
+                _ => "div"
+            };
+
+            builder.OpenElement(0, tagName);
+            builder.AddAttribute(1, "data-node-id", elementNode.Id);
+            
+            string? alignStyle = !string.IsNullOrEmpty(elementNode.Align) ? $"text-align: {elementNode.Align};" : null;
+
+            if (elementNode.Type == "image")
+            {
+                builder.AddAttribute(2, "src", elementNode.Url);
+                builder.AddAttribute(3, "alt", elementNode.Alt);
+                builder.AddAttribute(4, "class", "rte-image");
+                
+                string imgWidth = "100%";
+                if (elementNode.Attributes.TryGetValue("width", out var wVal) && wVal != null)
+                {
+                    imgWidth = wVal.ToString();
+                }
+                
+                string imgAlign = "center";
+                if (elementNode.Attributes.TryGetValue("alignment", out var aVal) && aVal != null)
+                {
+                    imgAlign = aVal.ToString();
+                }
+                
+                string imgStyle = $"display: block; margin: 1rem auto; width: {imgWidth}; max-width: 100%; height: auto; border-radius: 8px; border: 2px solid #cbd5e1;";
+                if (imgAlign == "left")
+                {
+                    imgStyle = $"display: inline-block; margin: 1rem auto 1rem 0; float: left; width: {imgWidth}; max-width: 100%; height: auto; border-radius: 8px; border: 2px solid #cbd5e1;";
+                }
+                else if (imgAlign == "right")
+                {
+                    imgStyle = $"display: inline-block; margin: 1rem 0 1rem auto; float: right; width: {imgWidth}; max-width: 100%; height: auto; border-radius: 8px; border: 2px solid #cbd5e1;";
+                }
+                builder.AddAttribute(5, "style", imgStyle);
+                builder.AddAttribute(6, "data-alignment", imgAlign);
+            }
+            else if (elementNode.Type == "video")
+            {
+                var src = elementNode.Url ?? "";
+                if (src.Contains("youtube.com") || src.Contains("youtu.be") || src.Contains("vimeo.com") || src.Contains("player.vimeo.com"))
+                {
+                    string embedUrl = src;
+                    if (src.Contains("youtube.com/watch?v="))
+                    {
+                        var videoId = src.Split("v=")[1].Split('&')[0];
+                        embedUrl = $"https://www.youtube.com/embed/{videoId}";
+                    }
+                    else if (src.Contains("youtu.be/"))
+                    {
+                        var videoId = src.Split("youtu.be/")[1].Split('?')[0];
+                        embedUrl = $"https://www.youtube.com/embed/{videoId}";
+                    }
+                    builder.AddAttribute(2, "class", "video-wrapper");
+                    builder.AddAttribute(3, "style", "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 1.5rem 0;");
+                    builder.OpenElement(4, "iframe");
+                    builder.AddAttribute(5, "src", embedUrl);
+                    builder.AddAttribute(6, "style", "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;");
+                    builder.AddAttribute(7, "allowfullscreen", "true");
+                    builder.AddAttribute(8, "frameborder", "0");
+                    builder.CloseElement();
+                }
+                else
+                {
+                    builder.OpenElement(4, "video");
+                    builder.AddAttribute(5, "src", src);
+                    builder.AddAttribute(6, "controls", "true");
+                    builder.AddAttribute(7, "style", "max-width: 100%; margin: 1.5rem 0; display: block; border-radius: 8px;");
+                    builder.AddAttribute(8, "width", "100%");
+                    builder.CloseElement();
+                }
+            }
+            else if (elementNode.Type == "page-break")
+            {
+                builder.AddAttribute(2, "class", "page-break");
+                builder.AddAttribute(3, "style", "border: none; height: 24px; background: #f1f5f9; margin: 2rem 0; position: relative; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; page-break-after: always;");
+            }
+            else if (elementNode.Type == "horizontal-rule")
+            {
+                builder.AddAttribute(2, "style", "border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0;");
+            }
+            else if (elementNode.Type == "code-block")
+            {
+                builder.AddAttribute(2, "class", "rte-code-block");
+                builder.AddAttribute(3, "style", "background: #1e293b; color: #f8fafc; padding: 1.2rem; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 0.9em; overflow-x: auto; margin: 1rem 0; border-left: 4px solid #3b82f6;");
+                builder.OpenElement(4, "code");
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(5, RenderNode(child));
+                }
+                builder.CloseElement();
+            }
+            else if (elementNode.Type == "table")
+            {
+                builder.AddAttribute(2, "class", "rte-table");
+                string borderColor = "#cbd5e1";
+                if (elementNode.Attributes.TryGetValue("borderColor", out var bcVal) && bcVal != null)
+                {
+                    borderColor = bcVal.ToString();
+                }
+                string borderStyle = "solid";
+                if (elementNode.Attributes.TryGetValue("borderStyle", out var bsVal) && bsVal != null)
+                {
+                    borderStyle = bsVal.ToString();
+                }
+                string borderWidth = "2px";
+                if (elementNode.Attributes.TryGetValue("borderWidth", out var bwVal) && bwVal != null)
+                {
+                    borderWidth = bwVal.ToString();
+                }
+                string alignment = "center";
+                if (elementNode.Attributes.TryGetValue("alignment", out var alignVal) && alignVal != null)
+                {
+                    alignment = alignVal.ToString();
+                }
+                
+                string marginStyle = alignment switch
+                {
+                    "left" => "margin: 1.5rem auto 1.5rem 0;",
+                    "right" => "margin: 1.5rem 0 1.5rem auto;",
+                    _ => "margin: 1.5rem auto;"
+                };
+                
+                builder.AddAttribute(3, "style", $"border-collapse: collapse; width: 100%; {marginStyle} border-radius: 8px; overflow: hidden; border: {borderWidth} {borderStyle} {borderColor}; --table-border-color: {borderColor}; --table-border-style: {borderStyle}; --table-border-width: {borderWidth};");
+                builder.OpenElement(4, "tbody");
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(5, RenderNode(child));
+                }
+                builder.CloseElement();
+            }
+            else if (elementNode.Type == "table-row")
+            {
+                builder.OpenElement(4, "tr");
+                builder.AddAttribute(5, "style", "border-bottom: 1px solid var(--table-border-color, #e2e8f0);");
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(6, RenderNode(child));
+                }
+                builder.CloseElement();
+            }
+            else if (elementNode.Type == "table-cell")
+            {
+                builder.OpenElement(4, "td");
+                
+                string cellStyle = "border: var(--table-border-width, 2px) var(--table-border-style, solid) var(--table-border-color, #cbd5e1); min-width: 60px;";
+                
+                if (elementNode.Attributes.TryGetValue("backgroundColor", out var cellBgVal) && cellBgVal != null)
+                {
+                    cellStyle += $" background-color: {cellBgVal};";
+                }
+                else
+                {
+                    cellStyle += " background: #ffffff;";
+                }
+                
+                if (elementNode.Attributes.TryGetValue("padding", out var cellPadVal) && cellPadVal != null)
+                {
+                    cellStyle += $" padding: {cellPadVal};";
+                }
+                else
+                {
+                    cellStyle += " padding: 12px 16px;";
+                }
+                
+                builder.AddAttribute(5, "style", cellStyle);
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(6, RenderNode(child));
+                }
+                builder.CloseElement();
+            }
+            else if (elementNode.Type == "blockquote")
+            {
+                var blockquoteStyle = "border-left: 4px solid #3b82f6; padding: 0.5rem 0 0.5rem 1.5rem; margin: 1.5rem 0; color: #475569; font-style: italic; background: #f8fafc; border-radius: 0 8px 8px 0;" + (alignStyle != null ? " " + alignStyle : "");
+                builder.AddAttribute(2, "style", blockquoteStyle);
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(3, RenderNode(child));
+                }
+            }
+            else if (elementNode.Type == "paragraph")
+            {
+                var paraStyle = "margin-bottom: 1rem;" + (alignStyle != null ? " " + alignStyle : "");
+                builder.AddAttribute(2, "style", paraStyle);
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(3, RenderNode(child));
+                }
+            }
+            else
+            {
+                if (alignStyle != null)
+                {
+                    builder.AddAttribute(2, "style", alignStyle);
+                }
+                foreach (var child in elementNode.Children)
+                {
+                    builder.AddContent(3, RenderNode(child));
+                }
+            }
+
+            builder.CloseElement();
+        }
+    };
+
+    public void Dispose()
+    {
+        EditorState.OnChange -= OnStateChanged;
+        _objRef?.Dispose();
+    }
+}

@@ -1,0 +1,386 @@
+@using AlphaRazor.EditorEngine.Services
+@using AlphaRazor.EditorEngine.Models
+@implements IDisposable
+
+<div class="rte-toolbar" style="display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 12px 12px 0 0; align-items: center; user-select: none;">
+    <!-- History Group -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 2px;">
+        <button type="button" class="rte-btn" @onclick="Undo" @onmousedown:preventDefault="true" title="Undo" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-8 9 9 0 0 0-6 2.3L3 13"/></svg>
+        </button>
+        <button type="button" class="rte-btn" @onclick="Redo" @onmousedown:preventDefault="true" title="Redo" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-8 9 9 0 0 1 6 2.3l3 2.7"/></svg>
+        </button>
+    </div>
+
+    <div class="rte-separator" style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 0.25rem;"></div>
+
+    <!-- Block Dropdown -->
+    <div class="rte-dropdown-container" style="position: relative;">
+        <select @onchange="OnBlockTypeChange" class="rte-select" style="padding: 0.35rem 1.75rem 0.35rem 0.75rem; font-family: 'Outfit', sans-serif; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;">
+            <option value="paragraph">Paragraph</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="blockquote">Quote</option>
+            <option value="code-block">Code Block</option>
+        </select>
+        <div style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+    </div>
+
+    <div class="rte-separator" style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 0.25rem;"></div>
+
+    <!-- Inline Formatting Group -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 2px;">
+        <button type="button" class="rte-btn @(IsFormatActive("bold") ? "active" : "")" @onclick='() => ToggleInline("bold")' @onmousedown:preventDefault="true" title="Bold" style="@GetBtnStyle(IsFormatActive("bold"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8h8Z"/><path d="M15 20a4 4 0 0 0 0-8H6v8h9Z"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsFormatActive("italic") ? "active" : "")" @onclick='() => ToggleInline("italic")' @onmousedown:preventDefault="true" title="Italic" style="@GetBtnStyle(IsFormatActive("italic"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsFormatActive("underline") ? "active" : "")" @onclick='() => ToggleInline("underline")' @onmousedown:preventDefault="true" title="Underline" style="@GetBtnStyle(IsFormatActive("underline"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><line x1="4" x2="20" y1="20" y2="20"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsFormatActive("strikethrough") ? "active" : "")" @onclick='() => ToggleInline("strikethrough")' @onmousedown:preventDefault="true" title="Strikethrough" style="@GetBtnStyle(IsFormatActive("strikethrough"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4H9a3 3 0 0 0-2.83 4H19a3 3 0 0 1-2.83 4H9m-2 4h10a3 3 0 0 1 2.83 4H7"/><line x1="4" x2="20" y1="12" y2="12"/></svg>
+        </button>
+    </div>
+
+    <!-- Script formatting group -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 2px;">
+        <button type="button" class="rte-btn @(IsFormatActive("subscript") ? "active" : "")" @onclick='() => ToggleInline("subscript")' @onmousedown:preventDefault="true" title="Subscript" style="@GetBtnStyle(IsFormatActive("subscript"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 10-10"/><path d="m14 20-10-10"/><path d="M19 16c1-1.5 2-2.5 3-2.5a1.5 1.5 0 0 1 0 3c-1.5 1.5-3 3.5-3 3.5h3"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsFormatActive("superscript") ? "active" : "")" @onclick='() => ToggleInline("superscript")' @onmousedown:preventDefault="true" title="Superscript" style="@GetBtnStyle(IsFormatActive("superscript"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 10-10"/><path d="m14 20-10-10"/><path d="M19 11c1-1.5 2-2.5 3-2.5a1.5 1.5 0 0 1 0 3c-1.5 1.5-3 3.5-3 3.5h3"/></svg>
+        </button>
+    </div>
+
+    <div class="rte-separator" style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 0.25rem;"></div>
+
+    <!-- Color picker group -->
+    <div class="rte-toolbar-group" style="display: flex; align-items: center; gap: 4px;">
+        <span style="font-size: 0.8rem; color: #64748b; font-family: 'Outfit';">Color:</span>
+        <select @onchange="OnColorChange" class="rte-select-color" style="padding: 0.2rem; border-radius: 4px; border: 1px solid #cbd5e1; font-family: 'Outfit'; font-size: 0.8rem; outline: none; cursor: pointer;">
+            <option value="default">Default</option>
+            <option value="#ef4444">Red</option>
+            <option value="#3b82f6">Blue</option>
+            <option value="#10b981">Green</option>
+            <option value="#f59e0b">Orange</option>
+            <option value="#8b5cf6">Purple</option>
+            <option value="#090d16">Dark</option>
+        </select>
+    </div>
+
+    <div class="rte-separator" style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 0.25rem;"></div>
+
+    <!-- Lists Group -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 2px;">
+        <button type="button" class="rte-btn" @onclick='() => ToggleList("unordered")' @onmousedown:preventDefault="true" title="Bullet List" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+        </button>
+        <button type="button" class="rte-btn" @onclick='() => ToggleList("ordered")' @onmousedown:preventDefault="true" title="Numbered List" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="21" y1="6" y2="6"/><line x1="10" x2="21" y1="12" y2="12"/><line x1="10" x2="21" y1="18" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+        </button>
+    </div>
+
+    <div class="rte-separator" style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 0.25rem;"></div>
+
+    <!-- Alignment Group -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 2px;">
+        <button type="button" class="rte-btn @(IsAlignActive("left") ? "active" : "")" @onclick='() => SetAlignment("left")' @onmousedown:preventDefault="true" title="Align Left" style="@GetBtnStyle(IsAlignActive("left"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsAlignActive("center") ? "active" : "")" @onclick='() => SetAlignment("center")' @onmousedown:preventDefault="true" title="Align Center" style="@GetBtnStyle(IsAlignActive("center"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="18" x2="6" y1="12" y2="12"/><line x1="20" x2="4" y1="18" y2="18"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsAlignActive("right") ? "active" : "")" @onclick='() => SetAlignment("right")' @onmousedown:preventDefault="true" title="Align Right" style="@GetBtnStyle(IsAlignActive("right"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="21" x2="9" y1="12" y2="12"/><line x1="21" x2="7" y1="18" y2="18"/></svg>
+        </button>
+        <button type="button" class="rte-btn @(IsAlignActive("justify") ? "active" : "")" @onclick='() => SetAlignment("justify")' @onmousedown:preventDefault="true" title="Justify" style="@GetBtnStyle(IsAlignActive("justify"))">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="21" x2="3" y1="12" y2="12"/><line x1="21" x2="3" y1="18" y2="18"/></svg>
+        </button>
+    </div>
+
+    <div class="rte-separator" style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 0.25rem;"></div>
+
+    <!-- Inserts Group -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 2px;">
+        <button type="button" class="rte-btn" @onclick="InsertLink" @onmousedown:preventDefault="true" title="Insert Link" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <button type="button" class="rte-btn" @onclick="InsertImage" @onmousedown:preventDefault="true" title="Insert Image" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        </button>
+        <button type="button" class="rte-btn" @onclick="InsertTable" @onmousedown:preventDefault="true" title="Insert Table" style="@GetBtnStyle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/><line x1="15" x2="15" y1="3" y2="21"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="3" x2="21" y1="15" y2="15"/></svg>
+        </button>
+    </div>
+
+    <div style="flex-grow: 1;"></div>
+
+    <!-- Mode toggles -->
+    <div class="rte-toolbar-group" style="display: flex; gap: 4px; background: #e2e8f0; padding: 2px; border-radius: 6px;">
+        <button type="button" class="rte-btn-mode" @onclick='() => SetViewMode("wysiwyg")' style="@GetModeStyle(ViewMode == "wysiwyg")">
+            WYSIWYG
+        </button>
+        <button type="button" class="rte-btn-mode" @onclick='() => SetViewMode("html")' style="@GetModeStyle(ViewMode == "html")">
+            HTML
+        </button>
+        <button type="button" class="rte-btn-mode" @onclick='() => SetViewMode("markdown")' style="@GetModeStyle(ViewMode == "markdown")">
+            Markdown
+        </button>
+    </div>
+</div>
+
+@if (_showLinkModal)
+{
+    <div class="rte-modal-backdrop" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+        <div class="rte-modal" style="background: #ffffff; border-radius: 12px; width: 400px; padding: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; font-family: 'Outfit', sans-serif;">
+            <h3 style="margin-top: 0; font-weight: 700; color: #0f172a; margin-bottom: 1rem; font-size: 1.1rem;">Insert Hyperlink</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 600; color: #475569;">URL Address</label>
+                <input type="text" @bind="_linkUrl" style="padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;" />
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button type="button" @onclick="() => _showLinkModal = false" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">Cancel</button>
+                <button type="button" @onclick="ConfirmInsertLink" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; cursor: pointer;">Insert Link</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_showImageModal)
+{
+    <div class="rte-modal-backdrop" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+        <div class="rte-modal" style="background: #ffffff; border-radius: 12px; width: 420px; padding: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; font-family: 'Outfit', sans-serif;">
+            <h3 style="margin-top: 0; font-weight: 700; color: #0f172a; margin-bottom: 1rem; font-size: 1.1rem;">Insert Image</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: #475569;">Image URL</label>
+                    <input type="text" @bind="_imageUrl" style="padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;" />
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: #475569;">Alternative Text (Alt)</label>
+                    <input type="text" @bind="_imageAlt" style="padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none;" />
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button type="button" @onclick="() => _showImageModal = false" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">Cancel</button>
+                <button type="button" @onclick="ConfirmInsertImage" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; cursor: pointer;">Insert Image</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_showTableModal)
+{
+    <div class="rte-modal-backdrop" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+        <div class="rte-modal" style="background: #ffffff; border-radius: 12px; width: 380px; padding: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; font-family: 'Outfit', sans-serif;">
+            <h3 style="margin-top: 0; font-weight: 700; color: #0f172a; margin-bottom: 1rem; font-size: 1.1rem;">Insert Table</h3>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1;">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: #475569;">Rows</label>
+                    <input type="number" min="1" max="20" @bind="_tableRows" style="padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none; width: 100%;" />
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1;">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: #475569;">Columns</label>
+                    <input type="number" min="1" max="20" @bind="_tableCols" style="padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none; width: 100%;" />
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button type="button" @onclick="() => _showTableModal = false" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;">Cancel</button>
+                <button type="button" @onclick="ConfirmInsertTable" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.85rem; font-weight: 500; cursor: pointer;">Insert Table</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public EditorState EditorState { get; set; } = null!;
+
+    [Parameter]
+    public CommandExecuter CommandExecuter { get; set; } = null!;
+
+    [Parameter]
+    public string ViewMode { get; set; } = "wysiwyg";
+
+    [Parameter]
+    public EventCallback<string> OnViewModeChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        EditorState.OnChange += OnStateChanged;
+    }
+
+    private void OnStateChanged()
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        EditorState.OnChange -= OnStateChanged;
+    }
+
+    private void Undo() => EditorState.Undo();
+    private void Redo() => EditorState.Redo();
+
+    private void ToggleInline(string format) => CommandExecuter.ToggleInlineFormat(format);
+    
+    private void ToggleList(string format) => CommandExecuter.ToggleList(format);
+
+    private void OnColorChange(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString() ?? "default";
+        CommandExecuter.ApplyColorFormat(val);
+    }
+
+    private void OnBlockTypeChange(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString() ?? "paragraph";
+        if (val.StartsWith("h"))
+        {
+            int level = int.Parse(val.Substring(1));
+            CommandExecuter.FormatBlock("heading", level);
+        }
+        else
+        {
+            CommandExecuter.FormatBlock(val);
+        }
+    }
+
+    private bool _showLinkModal = false;
+    private string _linkUrl = "https://";
+
+    private bool _showImageModal = false;
+    private string _imageUrl = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
+    private string _imageAlt = "Workspace Photo";
+
+    private bool _showTableModal = false;
+    private int _tableRows = 3;
+    private int _tableCols = 3;
+
+    private void InsertLink()
+    {
+        _linkUrl = "https://";
+        _showLinkModal = true;
+    }
+
+    private void ConfirmInsertLink()
+    {
+        _showLinkModal = false;
+        if (!string.IsNullOrWhiteSpace(_linkUrl))
+        {
+            CommandExecuter.ToggleLink(_linkUrl);
+        }
+    }
+
+    private void InsertImage()
+    {
+        _imageUrl = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80";
+        _imageAlt = "Workspace Photo";
+        _showImageModal = true;
+    }
+
+    private void ConfirmInsertImage()
+    {
+        _showImageModal = false;
+        if (!string.IsNullOrWhiteSpace(_imageUrl))
+        {
+            CommandExecuter.InsertImage(_imageUrl, _imageAlt);
+        }
+    }
+
+    private void InsertTable()
+    {
+        _tableRows = 3;
+        _tableCols = 3;
+        _showTableModal = true;
+    }
+
+    private void ConfirmInsertTable()
+    {
+        _showTableModal = false;
+        if (_tableRows > 0 && _tableCols > 0)
+        {
+            CommandExecuter.InsertTable(_tableRows, _tableCols);
+        }
+    }
+
+    private void SetAlignment(string alignment)
+    {
+        CommandExecuter.AlignBlock(alignment);
+    }
+
+    private bool IsAlignActive(string alignment)
+    {
+        var sel = EditorState.Selection;
+        if (sel.Anchor == null) return alignment == "left";
+
+        var (start, _) = sel.GetNormalizedSelection();
+        var blockPath = start.Path.Take(1).ToArray();
+        if (blockPath.Length == 0) return alignment == "left";
+
+        var block = EditorState.GetNodeByPath(blockPath) as ElementNode;
+        if (block == null) return alignment == "left";
+
+        var align = block.Align ?? "left";
+        return align == alignment;
+    }
+
+    private async Task SetViewMode(string mode)
+    {
+        ViewMode = mode;
+        await OnViewModeChanged.InvokeAsync(mode);
+    }
+
+    private bool IsFormatActive(string format)
+    {
+        var sel = EditorState.Selection;
+        if (sel.Anchor == null) return false;
+
+        if (sel.IsCollapsed)
+        {
+            return EditorState.IsPendingFormatActive(format);
+        }
+
+        var (start, _) = sel.GetNormalizedSelection();
+        var node = EditorState.GetNodeByPath(start.Path) as TextNode;
+        if (node == null) return false;
+
+        return format.ToLower() switch
+        {
+            "bold" => node.Bold,
+            "italic" => node.Italic,
+            "underline" => node.Underline,
+            "strikethrough" => node.Strikethrough,
+            "subscript" => node.Subscript,
+            "superscript" => node.Superscript,
+            _ => false
+        };
+    }
+
+    private string GetBtnStyle(bool isActive = false)
+    {
+        var baseStyle = "border: none; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: all 0.2s;";
+        if (isActive)
+        {
+            return baseStyle + " background: #cbd5e1; color: #0f172a; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);";
+        }
+        return baseStyle + " background: transparent; hover: background: #f1f5f9;";
+    }
+
+    private string GetModeStyle(bool isActive)
+    {
+        var baseStyle = "border: none; border-radius: 4px; padding: 0.25rem 0.5rem; font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s;";
+        if (isActive)
+        {
+            return baseStyle + " background: #ffffff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+        }
+        return baseStyle + " background: transparent; color: #64748b;";
+    }
+}

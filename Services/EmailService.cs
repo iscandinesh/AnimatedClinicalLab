@@ -25,7 +25,7 @@ public class EmailService
         var dbSection = _configuration.GetSection("DB_Connection");
         var server = dbSection["server"] ?? "127.0.0.1";
         var port = dbSection["port"] ?? "5432";
-        var database = dbSection["database"] ?? "MasterTenantDB";
+        var database = dbSection["database"] ?? "alpha_web";
         var username = dbSection["username"] ?? "postgres";
         var password = dbSection["password"] ?? "";
 
@@ -160,14 +160,6 @@ public class EmailService
         string password = smtpSection["Password"] ?? string.Empty;
         string fromEmail = smtpSection["FromEmail"] ?? string.Empty;
 
-        // Check validation
-        if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-        {
-            var errorMsg = "SMTP is not configured in appsettings.json. Please configure SmtpSettings:Host, Username, and Password to send emails.";
-            _logger.LogError(errorMsg);
-            throw new InvalidOperationException(errorMsg);
-        }
-
         if (string.IsNullOrWhiteSpace(fromEmail))
         {
             fromEmail = username;
@@ -188,30 +180,9 @@ public class EmailService
             smtpProvider = "SendGrid";
         }
 
-        // Try to open a single PostgreSQL connection for transaction logging
-        NpgsqlConnection? conn = null;
-        try
-        {
-            string connStr = GetConnectionString();
-            conn = new NpgsqlConnection(connStr);
-            await conn.OpenAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to open PostgreSQL connection for mail transaction logging. Process will continue without logging.");
-        }
-
-        try
-        {
-            // Auto-create the table in DB if it doesn't exist
-            if (conn != null)
-            {
-                await EnsureTableCreatedAsync(conn);
-            }
-
-            // Prepare combined email subject and body
-            var emailSubject = $"New Inquiry: {subject}";
-            var emailHtmlBody = $@"
+        // Prepare combined email subject and body
+        var emailSubject = $"New Inquiry: {subject}";
+        var emailHtmlBody = $@"
 <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;"">
     <h2 style=""color: #2563eb; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;"">Inquiry Received</h2>
     <p>Dear {fullName},</p>
@@ -250,6 +221,48 @@ public class EmailService
     </p>
 </div>";
 
+        // 1. Database-First insertion
+        NpgsqlConnection? conn = null;
+        long txId = 0;
+        try
+        {
+            string connStr = GetConnectionString();
+            conn = new NpgsqlConnection(connStr);
+            await conn.OpenAsync();
+            await EnsureTableCreatedAsync(conn);
+
+            txId = await InsertMailTransactionAsync(
+                conn,
+                tenantCode: "1",
+                mailType: "Notification",
+                fromEmail: fromEmail,
+                toEmail: emailAddress,
+                ccEmail: fromEmail,
+                subject: emailSubject,
+                body: emailHtmlBody,
+                smtpProvider: smtpProvider,
+                createdBy: 1
+            );
+        }
+        catch (Exception dbEx)
+        {
+            _logger.LogError(dbEx, "Failed to connect to database or log mail transaction. Proceeding with SMTP attempt anyway.");
+        }
+
+        // 2. SMTP Attempt
+        try
+        {
+            if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                var errorMsg = "SMTP is not configured in appsettings.json. Please configure SmtpSettings.";
+                _logger.LogWarning(errorMsg);
+                if (conn != null && txId > 0)
+                {
+                    await UpdateMailTransactionStatusAsync(conn, txId, "Failed", errorMsg);
+                }
+                return;
+            }
+
             var mimeMessage = new MimeMessage();
             mimeMessage.From.Add(new MailboxAddress("Alpha Diagnostics Centre", fromEmail));
             mimeMessage.To.Add(new MailboxAddress(fullName, emailAddress));
@@ -259,7 +272,6 @@ public class EmailService
             var bodyBuilder = new BodyBuilder { HtmlBody = emailHtmlBody };
             mimeMessage.Body = bodyBuilder.ToMessageBody();
 
-            // Connect to SMTP and Send Email
             using var client = new SmtpClient();
 
             SecureSocketOptions options;
@@ -278,57 +290,25 @@ public class EmailService
 
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-            try
-            {
-                await client.ConnectAsync(host, port, options);
-                await client.AuthenticateAsync(username, password);
-            }
-            catch (MailKit.Security.AuthenticationException authEx)
-            {
-                var friendlyMsg = "SMTP Authentication unsuccessful. Your organization's Security Defaults or MFA policy is blocking basic SMTP AUTH logins. To resolve this: " +
-                                  "(1) Enable 'Authenticated SMTP' for the user account '" + username + "' in Microsoft 365 Admin Center under Active Users -> Manage Email Apps, or " +
-                                  "(2) Configure a different SMTP provider like Gmail (using App Passwords) or SendGrid in appsettings.json.";
-                _logger.LogError(authEx, friendlyMsg);
-                throw new InvalidOperationException(friendlyMsg, authEx);
-            }
+            await client.ConnectAsync(host, port, options);
+            await client.AuthenticateAsync(username, password);
+            await client.SendAsync(mimeMessage);
 
-            // Insert mail transaction record (To: client, CC: lab info)
-            long txId = 0;
-            if (conn != null)
+            if (conn != null && txId > 0)
             {
-                txId = await InsertMailTransactionAsync(
-                    conn,
-                    tenantCode: "1",
-                    mailType: "Notification",
-                    fromEmail: fromEmail,
-                    toEmail: emailAddress,
-                    ccEmail: fromEmail,
-                    subject: emailSubject,
-                    body: emailHtmlBody,
-                    smtpProvider: smtpProvider,
-                    createdBy: 1
-                );
-            }
-
-            try
-            {
-                await client.SendAsync(mimeMessage);
-                if (conn != null && txId > 0)
-                {
-                    await UpdateMailTransactionStatusAsync(conn, txId, "Sent");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to send email inquiry");
-                if (conn != null && txId > 0)
-                {
-                    await UpdateMailTransactionStatusAsync(conn, txId, "Failed", ex.Message);
-                }
-                throw;
+                await UpdateMailTransactionStatusAsync(conn, txId, "Sent");
             }
 
             await client.DisconnectAsync(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email inquiry through SMTP. The transaction will be marked as Failed in DB.");
+            if (conn != null && txId > 0)
+            {
+                await UpdateMailTransactionStatusAsync(conn, txId, "Failed", ex.Message);
+            }
+            // DO NOT THROW! The DB insertion is primary, and we want to fail gracefully.
         }
         finally
         {

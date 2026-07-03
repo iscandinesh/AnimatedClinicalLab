@@ -2,6 +2,7 @@
 @implements IDisposable
 @inject ThemeService ThemeState
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <div class="app-shell">
     <!-- Global Animated Background (Floating blobs, grid overlay, and particles) -->
@@ -35,128 +36,142 @@
         }
     </div>
 
-    <div class="app-layout">
-        <header>
-            <NavMenu />
-        </header>
+    @if (IsOnEditorPage)
+    {
+        <div class="app-layout">
+            <main class="main-content">
+                @Body
+            </main>
+        </div>
+    }
+    else
+    {
+        <div class="app-layout">
+            <header>
+                <NavMenu />
+            </header>
 
-        <main class="main-content">
-            @Body
-        </main>
+            <main class="main-content">
+                @Body
+            </main>
+        </div>
 
-    </div>
-
-    <footer class="app-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <!-- Column 1: Brand -->
-                <div class="footer-brand-col">
-                    <div class="mb-4 d-flex align-items-center gap-4">
-                        <img src="images/logo-full.png"
-                             alt="Alpha Diagnostics Centre"
-                             class="app-logo"
-                             style="height: 80px; width: auto;"
-                             width="836" height="312" />
-                        <img src="images/anniversary-logo-trans.png?v=3" alt="10 Years Quality" style="height: 68px; width: auto; object-fit: contain;" />
-                    </div>
-                    <p class="footer-brand-desc">
-                        Alpha Diagnostics Centre is a trusted diagnostic lab offering a wide range of tests and health check-ups with accurate results and caring service. We aim to make quality diagnostics simple, fast, and affordable for everyone.
-                    </p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="https://www.facebook.com/share/1EtQ8TbU7Z/" class="social-icon fb" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
-                        <a href="https://www.instagram.com/alpha.diagnostics.centre?igsh=bDIzcWVpMHV6eTNl" class="social-icon ig" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
-                        <a href="https://wa.me/918110899999" class="social-icon wa" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i></a>
-                        <a href="https://www.linkedin.com/company/alpha-diagnostics-centre/" class="social-icon ln" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
-                        <a href="https://www.youtube.com/&#64;alphadiagnosticcentre-u3q" class="social-icon yt" target="_blank" rel="noopener noreferrer"><i class="bi bi-youtube"></i></a>
-                    </div>
-                </div>
-                
-                <!-- Column 2: Quick Links -->
-                <div class="footer-links-col">
-                    <h6 class="footer-col-heading">Quick Links</h6>
-                    <div class="d-flex flex-column gap-3">
-                        <a href="" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Home</a>
-                        <a href="about" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> About Us</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Services</a>
-                        <a href="locations" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Locations</a>
-                        <a href="insights" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Insights</a>
-                        <a href="contact" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Contact</a>
-                    </div>
-                </div>
-
-                <!-- Column 3: Services -->
-                <div class="footer-links-col">
-                    <h6 class="footer-col-heading">Our Services</h6>
-                    <div class="d-flex flex-column gap-3">
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Biochemistry</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Hematology</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Immunology</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Microbiology</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> PCR / Molecular</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Histopathology</a>
-                    </div>
-                </div>
-
-                <!-- Column 4: Health Packages -->
-                <div class="footer-links-col">
-                    <h6 class="footer-col-heading">Health Packages</h6>
-                    <div class="d-flex flex-column gap-3">
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Basic Health Check-Up</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Master Health Checkup</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Executive Health Checkup</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Well Women Health Checkup</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Cardiac Package</a>
-                        <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Diabetic Package</a>
-                    </div>
-                </div>
-
-                <!-- Column 5: Contact -->
-                <div class="footer-contact-col">
-                    <h6 class="footer-col-heading">Contact Us</h6>
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-geo-alt footer-icon-accent mt-1"></i>
-                            <span class="footer-contact-text">31, Patel Street, Erode – 638 001.</span>
+        <footer class="app-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <!-- Column 1: Brand -->
+                    <div class="footer-brand-col">
+                        <div class="mb-4 d-flex align-items-center gap-4">
+                            <img src="images/logo-full.png"
+                                 alt="Alpha Diagnostics Centre"
+                                 class="app-logo"
+                                 style="height: 80px; width: auto;"
+                                 width="836" height="312" />
+                            <img src="images/anniversary-logo-trans.png?v=3" alt="10 Years Quality" style="height: 68px; width: auto; object-fit: contain;" />
                         </div>
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi bi-telephone footer-icon-accent mt-1"></i>
-                            <div>
-                                <div class="footer-contact-text">81108 99999</div>
-                                <div class="footer-contact-text">70944 90917</div>
+                        <p class="footer-brand-desc">
+                            Alpha Diagnostics Centre is a trusted diagnostic lab offering a wide range of tests and health check-ups with accurate results and caring service. We aim to make quality diagnostics simple, fast, and affordable for everyone.
+                        </p>
+                        <div class="d-flex gap-3 mt-4">
+                            <a href="https://www.facebook.com/share/1EtQ8TbU7Z/" class="social-icon fb" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+                            <a href="https://www.instagram.com/alpha.diagnostics.centre?igsh=bDIzcWVpMHV6eTNl" class="social-icon ig" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+                            <a href="https://wa.me/918110899999" class="social-icon wa" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i></a>
+                            <a href="https://www.linkedin.com/company/alpha-diagnostics-centre/" class="social-icon ln" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
+                            <a href="https://www.youtube.com/&#64;alphadiagnosticcentre-u3q" class="social-icon yt" target="_blank" rel="noopener noreferrer"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 2: Quick Links -->
+                    <div class="footer-links-col">
+                        <h6 class="footer-col-heading">Quick Links</h6>
+                        <div class="d-flex flex-column gap-3">
+                            <a href="" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Home</a>
+                            <a href="about" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> About Us</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Services</a>
+                            <a href="locations" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Locations</a>
+                            <a href="insights" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Insights</a>
+                            <a href="contact" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Contact</a>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Services -->
+                    <div class="footer-links-col">
+                        <h6 class="footer-col-heading">Our Services</h6>
+                        <div class="d-flex flex-column gap-3">
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Biochemistry</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Hematology</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Immunology</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Microbiology</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> PCR / Molecular</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Histopathology</a>
+                        </div>
+                    </div>
+
+                    <!-- Column 4: Health Packages -->
+                    <div class="footer-links-col">
+                        <h6 class="footer-col-heading">Health Packages</h6>
+                        <div class="d-flex flex-column gap-3">
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Basic Health Check-Up</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Master Health Checkup</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Executive Health Checkup</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Well Women Health Checkup</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Cardiac Package</a>
+                            <a href="services" class="footer-link"><i class="bi bi-chevron-right me-2 small"></i> Diabetic Package</a>
+                        </div>
+                    </div>
+
+                    <!-- Column 5: Contact -->
+                    <div class="footer-contact-col">
+                        <h6 class="footer-col-heading">Contact Us</h6>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex align-items-start gap-3">
+                                <i class="bi bi-geo-alt footer-icon-accent mt-1"></i>
+                                <span class="footer-contact-text">31, Patel Street, Erode – 638 001.</span>
+                            </div>
+                            <div class="d-flex align-items-start gap-3">
+                                <i class="bi bi-telephone footer-icon-accent mt-1"></i>
+                                <div>
+                                    <div class="footer-contact-text">81108 99999</div>
+                                    <div class="footer-contact-text">70944 90917</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-envelope footer-icon-accent"></i>
+                                <span class="footer-contact-text">suriya@alphadiagnosticscentre.com</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-globe footer-icon-accent"></i>
+                                <span class="footer-contact-text">www.alphadiagnosticscentre.com</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <i class="bi bi-patch-check-fill footer-badge-icon"></i>
+                                <span class="footer-contact-text fw-bold footer-badge-text">NABL, EQAS &amp; ICMR Approved</span>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-envelope footer-icon-accent"></i>
-                            <span class="footer-contact-text">suriya@alphadiagnosticscentre.com</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-globe footer-icon-accent"></i>
-                            <span class="footer-contact-text">www.alphadiagnosticscentre.com</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 mt-1">
-                            <i class="bi bi-patch-check-fill footer-badge-icon"></i>
-                            <span class="footer-contact-text fw-bold footer-badge-text">NABL, EQAS &amp; ICMR Approved</span>
-                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom-bar pt-4 mt-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <p class="footer-bottom-text mb-0 text-center text-md-start">
+                        © 2026 Alpha Diagnostics Centre. All rights reserved.
+                    </p>
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-start flex-wrap gap-2 gap-md-3 x-small footer-bottom-links">
+                        <span><i class="bi bi-shield-check me-1 footer-badge-icon"></i> NABL Accredited</span>
+                        <span class="d-none d-md-inline opacity-50">|</span>
+                        <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> EQAS Approved</span>
+                        <span class="d-none d-md-inline opacity-50">|</span>
+                        <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> ICMR Approved</span>
+                        <span class="d-none d-md-inline opacity-50">|</span>
+                        <span class="text-nowrap">Made with <i class="bi bi-heart-fill mx-1" style="color: #f472b6;"></i> care in Erode</span>
                     </div>
                 </div>
             </div>
+        </footer>
 
-            <div class="footer-bottom-bar pt-4 mt-2 d-flex justify-content-between align-items-center flex-wrap gap-3">
-                <p class="footer-bottom-text mb-0 text-center text-md-start">
-                    © 2026 Alpha Diagnostics Centre. All rights reserved.
-                </p>
-                <div class="d-flex align-items-center justify-content-center justify-content-md-start flex-wrap gap-2 gap-md-3 x-small footer-bottom-links">
-                    <span><i class="bi bi-shield-check me-1 footer-badge-icon"></i> NABL Accredited</span>
-                    <span class="d-none d-md-inline opacity-50">|</span>
-                    <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> EQAS Approved</span>
-                    <span class="d-none d-md-inline opacity-50">|</span>
-                    <span><i class="bi bi-patch-check me-1 footer-badge-icon"></i> ICMR Approved</span>
-                    <span class="d-none d-md-inline opacity-50">|</span>
-                    <span class="text-nowrap">Made with <i class="bi bi-heart-fill mx-1" style="color: #f472b6;"></i> care in Erode</span>
-                </div>
-            </div>
-        </div>
-    </footer>
+        <a href="editor" class="subtle-admin-bubble" title="Portal Access">
+            <i class="bi bi-star-fill star-bubble-icon"></i>
+        </a>
+    }
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
@@ -166,9 +181,26 @@
 </div>
 
 @code {
+    private bool IsOnEditorPage
+    {
+        get
+        {
+            try
+            {
+                var relativePath = Navigation.ToBaseRelativePath(Navigation.Uri).ToLowerInvariant();
+                return relativePath == "editor" || relativePath.StartsWith("editor/") || relativePath.StartsWith("editor?");
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+
     protected override void OnInitialized()
     {
         ThemeState.OnChange += OnThemeChange;
+        Navigation.LocationChanged += OnLocationChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -185,8 +217,14 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
         ThemeState.OnChange -= OnThemeChange;
+        Navigation.LocationChanged -= OnLocationChanged;
     }
 }

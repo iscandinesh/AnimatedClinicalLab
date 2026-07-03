@@ -1,0 +1,1609 @@
+@page "/editor"
+@using AlphaRazor.Components
+@rendermode InteractiveServer
+@inject BlogDbService BlogService
+@inject NavigationManager NavManager
+@inject IWebHostEnvironment Env
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Blog Composer & Marketing Portal</PageTitle>
+
+<div class="portal-root">
+    @if (!_isLoggedIn)
+    {
+        <!-- GLASSMORPHISM LOGIN PAGE -->
+        <div class="login-container">
+            <div class="mesh-bg">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+                <div class="orb orb-3"></div>
+            </div>
+
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="logo-icon">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <h2>Marketing Portal</h2>
+                    <p>Enter your credentials to manage clinic insights</p>
+                </div>
+
+                <div class="login-body">
+                    @if (!string.IsNullOrEmpty(_loginError))
+                    {
+                        <div class="error-alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>@_loginError</span>
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-person-fill"></i>
+                            <input id="username" type="text" placeholder="Enter username" @bind="_username" @bind:event="oninput" @onkeydown="HandleKeyDown" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock-fill"></i>
+                            <input id="password" type="password" placeholder="Enter password" @bind="_password" @bind:event="oninput" @onkeydown="HandleKeyDown" />
+                        </div>
+                    </div>
+
+                    <button class="btn-login" @onclick="AttemptLogin" disabled="@_isSubmitting">
+                        @if (_isSubmitting)
+                        {
+                            <span class="spinner"></span>
+                            <span>Authenticating...</span>
+                        }
+                        else
+                        {
+                            <span>Sign In</span>
+                            <i class="bi bi-arrow-right-short"></i>
+                        }
+                    </button>
+                </div>
+                
+                <div class="login-footer">
+                    <span>Alpha Diagnostics Admin System v2.0</span>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- CMS ADMIN DASHBOARD -->
+        <div class="dashboard-layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="brand">
+                        <i class="bi bi-journal-richtext text-primary"></i>
+                        <div>
+                            <h3>Insights CMS</h3>
+                            <span>Alpha Diagnostics</span>
+                        </div>
+                    </div>
+                    <button class="btn-logout" title="Sign Out" @onclick="Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="sidebar-actions">
+                    <button class="btn-new-post" @onclick="CreateNewPost">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>New Blog Post</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search blogs..." @bind="_searchText" @bind:event="oninput" />
+                </div>
+
+                <div class="sidebar-menu" id="blog-list-container">
+                    @{
+                        var blogsToShow = FilteredBlogs.ToList();
+                        int priority = 1;
+                    }
+                    @foreach (var blog in blogsToShow)
+                    {
+                        var blogId = blog.Id;
+                        var priorityNum = priority++;
+                        <div class="menu-item @(blog.Id == _activePost?.Id ? "active" : "") @(_dragOverBlogId == blog.Id ? "drag-over" : "")"
+                             draggable="true"
+                             @onclick="() => SelectBlog(blog)"
+                             @ondragstart="() => OnDragStart(blog)"
+                             @ondragover:preventDefault="true"
+                             @ondragover="() => OnDragOver(blog)"
+                             @ondrop="() => OnDrop(blog)"
+                             @ondragend="OnDragEnd">
+                            <div class="drag-handle" title="Drag to reorder">
+                                <i class="bi bi-grip-vertical"></i>
+                            </div>
+                            <div class="priority-badge" title="Priority #@priorityNum">#@priorityNum</div>
+                            <div class="menu-icon" style="background: linear-gradient(135deg, @(blog.GradientStart ?? "#4f46e5"), @(blog.GradientEnd ?? "#06b6d4"))">
+                                <i class="@(string.IsNullOrEmpty(blog.IconClass) ? "bi bi-file-earmark-text" : blog.IconClass)" style="color: @(blog.IconColor ?? "#ffffff")"></i>
+                            </div>
+                            <div class="menu-details">
+                                <span class="menu-title">@blog.Title</span>
+                                <div class="menu-meta">
+                                    <span class="menu-badge" style="background: @(GetCategoryColor(blog.Category))">@blog.CategoryBadge</span>
+                                    <span class="menu-date">@blog.Date</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (!FilteredBlogs.Any())
+                    {
+                        <div class="no-blogs">
+                            <i class="bi bi-folder-x"></i>
+                            <p>No blog posts found</p>
+                        </div>
+                    }
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="main-content">
+                @if (_activePost == null)
+                {
+                    <!-- WELCOME/ANALYTICS SCREEN -->
+                    <div class="welcome-screen">
+                        <div class="welcome-card">
+                            <div class="animated-icon">
+                                <i class="bi bi-speedometer2"></i>
+                            </div>
+                            <h1>Insights Management Portal</h1>
+                            <p>Select a blog post from the sidebar to begin editing, or create a brand new post to publish on the clinic website.</p>
+                            
+                            <div class="analytics-grid">
+                                <div class="stat-card">
+                                    <h3>@_blogs.Count</h3>
+                                    <span>Total Posts</span>
+                                </div>
+                                <div class="stat-card">
+                                    <h3>@_blogs.Count(b => b.IsFeatured)</h3>
+                                    <span>Featured Posts</span>
+                                </div>
+                                <div class="stat-card text-success">
+                                    <h3>Database Connected</h3>
+                                    <span>PostgreSQL Server</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- EDITOR DASHBOARD -->
+                    <div class="editor-header">
+                        <div class="title-section">
+                            <h2>@(_activePost.Id == 0 ? "Create New Blog Post" : "Edit Blog Post")</h2>
+                            <p>Customize metadata and write rich article contents</p>
+                        </div>
+                        <div class="actions-section">
+                            <button class="btn-delete" @onclick="ConfirmDelete" disabled="@(_activePost.Id == 0)">
+                                <i class="bi bi-trash3"></i>
+                                <span>Delete</span>
+                            </button>
+                            <button class="btn-save" @onclick="SaveChanges" disabled="@_isSaving">
+                                @if (_isSaving)
+                                {
+                                    <span class="spinner-sm"></span>
+                                    <span>Saving...</span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-cloud-arrow-up"></i>
+                                    <span>Save Changes</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(_errorMessage))
+                    {
+                        <div class="alert alert-danger mx-4 mt-3" role="alert">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            @_errorMessage
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(_successMessage))
+                    {
+                        <div class="alert alert-success mx-4 mt-3" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            @_successMessage
+                        </div>
+                    }
+
+                    <div class="editor-scroll-container">
+                        <!-- METADATA FORM -->
+                        <div class="metadata-section">
+                            <div class="metadata-grid">
+                                <!-- LEFT COLUMN -->
+                                <div class="meta-card">
+                                    <h4><i class="bi bi-file-earmark-richtext"></i> General Info</h4>
+                                    
+                                    <div class="form-group-db">
+                                        <label>Blog Title</label>
+                                        <input type="text" @bind="_activePost.Title" placeholder="e.g. Understanding Cardiac Risk" />
+                                    </div>
+                                    
+                                    <div class="form-group-db">
+                                        <label>Blog Subtitle</label>
+                                        <input type="text" @bind="_activePost.SubTitle" placeholder="e.g. Learn what markers you should be testing and how often." />
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Category (Path Key)</label>
+                                                <input type="text" @bind="_activePost.Category" placeholder="e.g. heart, diabetes" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Category Badge Label</label>
+                                                <input type="text" @bind="_activePost.CategoryBadge" placeholder="e.g. Cardiology" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group-db">
+                                        <label>Tags (Comma-separated)</label>
+                                        <input type="text" @bind="_activePost.Tags" placeholder="e.g. Heart Health, Prevention" />
+                                    </div>
+
+                                    <div class="row align-items-center mt-3">
+                                        <div class="col-6">
+                                            <div class="form-check form-switch custom-switch">
+                                                <input class="form-check-input" type="checkbox" id="featuredSwitch" @bind="_activePost.IsFeatured" />
+                                                <label class="form-check-label" for="featuredSwitch">Featured Article</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <span class="badge text-bg-secondary">ID: @(_activePost.Id == 0 ? "New" : _activePost.Id)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CENTER COLUMN: AUTHOR -->
+                                <div class="meta-card">
+                                    <h4><i class="bi bi-person-circle"></i> Author & Meta</h4>
+                                    
+                                    <div class="form-group-db">
+                                        <label>Author Name</label>
+                                        <input type="text" @bind="_activePost.AuthorName" placeholder="e.g. Dr. Rajan Kumar" />
+                                    </div>
+
+                                    <div class="form-group-db">
+                                        <label>Author Title / Specialty</label>
+                                        <input type="text" @bind="_activePost.AuthorTitle" placeholder="e.g. Cardiologist" />
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Author Initials / Avatar</label>
+                                                <input type="text" @bind="_activePost.AuthorAvatar" placeholder="e.g. DR" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Read Time</label>
+                                                <input type="text" @bind="_activePost.ReadTime" placeholder="e.g. 7 min read" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group-db">
+                                        <label>Publish Date Label</label>
+                                        <input type="text" @bind="_activePost.Date" placeholder="e.g. June 1, 2026" />
+                                    </div>
+                                </div>
+
+                                <!-- RIGHT COLUMN: CARD AESTHETICS -->
+                                <div class="meta-card">
+                                    <h4><i class="bi bi-palette"></i> Card Design & Visuals</h4>
+
+                                    <div class="form-group-db">
+                                        <label>Banner Image / Graphic</label>
+                                        <div class="image-upload-wrapper">
+                                            <input type="text" @bind="_activePost.ImagePath" placeholder="/BlogImages/1.jpg or URL" />
+                                            <label class="btn-upload" title="Upload Local Image File">
+                                                <i class="bi bi-upload"></i>
+                                                <InputFile OnChange="UploadBannerImage" accept="image/*" style="display:none;" />
+                                            </label>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(_activePost.ImagePath))
+                                        {
+                                            <div class="banner-preview">
+                                                <img src="@_activePost.ImagePath" alt="Banner Preview" />
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Icon Class (Bootstrap)</label>
+                                                <input type="text" @bind="_activePost.IconClass" placeholder="bi bi-heart-pulse" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Icon Color</label>
+                                                <div class="color-picker-group">
+                                                    <input type="color" @bind="_activePost.IconColor" />
+                                                    <input type="text" @bind="_activePost.IconColor" style="font-size: 0.8rem;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Gradient Start</label>
+                                                <div class="color-picker-group">
+                                                    <input type="color" @bind="_activePost.GradientStart" />
+                                                    <input type="text" @bind="_activePost.GradientStart" style="font-size: 0.8rem;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group-db">
+                                                <label>Gradient End</label>
+                                                <div class="color-picker-group">
+                                                    <input type="color" @bind="_activePost.GradientEnd" />
+                                                    <input type="text" @bind="_activePost.GradientEnd" style="font-size: 0.8rem;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- FALLBACK TEXT FIELDS (FOR SITES USING STRUCTURAL RENDERING) -->
+                            <div class="meta-card mt-3">
+                                <h4><i class="bi bi-card-text"></i> Dynamic Structured Sections (SEO / Fallback)</h4>
+                                <div class="form-group-db">
+                                    <label>Introductory Paragraph (Summary)</label>
+                                    <textarea @bind="_activeDetails.Introduction" placeholder="A short, catchy intro that sets the stage..." rows="3"></textarea>
+                                </div>
+                                <div class="form-group-db">
+                                    <label>Concluding Paragraph</label>
+                                    <textarea @bind="_activeDetails.Conclusion" placeholder="Summarize findings and call to action..." rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RICH TEXT EDITOR CANVAS -->
+                        <div class="editor-canvas-container">
+                            <h4 class="canvas-header"><i class="bi bi-pen-fill"></i> Rich Content Editor</h4>
+                            <RichTextEditor @ref="_editorRef" InitialHtml="@_activeDetails.ContentHtml" />
+                        </div>
+                    </div>
+                }
+            </main>
+        </div>
+    }
+</div>
+
+<!-- STYLES -->
+<style>
+    :root {
+        --glass-bg: rgba(15, 23, 42, 0.45);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-hover: rgba(255, 255, 255, 0.12);
+        --accent-primary: #3b82f6;
+        --accent-glow: rgba(59, 130, 246, 0.35);
+        --text-muted: #94a3b8;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #0b0f19;
+        color: #f1f5f9;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+    }
+
+    .portal-root {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        background: radial-gradient(circle at 50% 120%, #1e1b4b 0%, #09070f 80%);
+        overflow: hidden;
+    }
+
+    /* LOGIN PAGE */
+    .login-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .mesh-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.4;
+        mix-blend-mode: screen;
+        animation: float 25s infinite alternate ease-in-out;
+    }
+
+    .orb-1 {
+        width: 500px;
+        height: 500px;
+        background: #3b82f6;
+        top: 10%;
+        left: 15%;
+    }
+
+    .orb-2 {
+        width: 600px;
+        height: 600px;
+        background: #818cf8;
+        bottom: 10%;
+        right: 15%;
+        animation-delay: -5s;
+    }
+
+    .orb-3 {
+        width: 400px;
+        height: 400px;
+        background: #ec4899;
+        top: 40%;
+        left: 50%;
+        animation-delay: -10s;
+    }
+
+    .login-card {
+        width: 440px;
+        padding: 2.5rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(25px);
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        z-index: 10;
+        animation: cardEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .logo-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: white;
+        margin: 0 auto 1.2rem auto;
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    }
+
+    .login-header h2 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.75rem;
+        letter-spacing: -0.025em;
+    }
+
+    .login-header p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .error-alert {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        animation: shake 0.4s ease-in-out;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #cbd5e1;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-wrapper i {
+        position: absolute;
+        left: 1.2rem;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+
+    .input-wrapper input {
+        width: 100%;
+        padding: 0.9rem 1.2rem 0.9rem 3.2rem;
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .input-wrapper input:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 15px var(--accent-glow);
+        background: rgba(15, 23, 42, 0.75);
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 0.95rem;
+        background: linear-gradient(135deg, #3b82f6, #4f46e5);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #2563eb, #4338ca);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .btn-login:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    /* CMS DASHBOARD LAYOUT */
+    .dashboard-layout {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        overflow: hidden;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 320px;
+        background: rgba(11, 15, 25, 0.85);
+        border-right: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        z-index: 20;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .brand i {
+        font-size: 1.8rem;
+    }
+
+    .brand h3 {
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .brand span {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .btn-logout {
+        background: transparent;
+        border: 1px solid var(--glass-border);
+        color: var(--text-muted);
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .sidebar-actions {
+        padding: 1rem 1.5rem;
+    }
+
+    .btn-new-post {
+        width: 100%;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-new-post:hover {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .sidebar-search {
+        padding: 0 1.5rem 1rem 1.5rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar-search i {
+        position: absolute;
+        left: 2.2rem;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .sidebar-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.4rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        color: white;
+        font-size: 0.85rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-search input:focus {
+        border-color: var(--accent-primary);
+        background: rgba(15, 23, 42, 0.8);
+    }
+
+    .sidebar-menu {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 1rem 1rem 1rem;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.75rem 0.8rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        margin-bottom: 0.5rem;
+        border: 1px solid transparent;
+        position: relative;
+    }
+
+    .menu-item:hover {
+        background: var(--glass-hover);
+        border-color: var(--glass-border);
+    }
+
+    .menu-item.active {
+        background: rgba(59, 130, 246, 0.12);
+        border-color: rgba(59, 130, 246, 0.25);
+    }
+
+    .menu-item.drag-over {
+        background: rgba(99, 102, 241, 0.22);
+        border-color: rgba(99, 102, 241, 0.6);
+        border-style: dashed;
+        transform: scale(1.015);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.18);
+        cursor: grab;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+        padding: 0 1px;
+    }
+
+    .menu-item:hover .drag-handle {
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    .drag-handle:active { cursor: grabbing; }
+
+    .priority-badge {
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: rgba(148, 163, 184, 0.65);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+        padding: 0.1rem 0.28rem;
+        flex-shrink: 0;
+        min-width: 20px;
+        text-align: center;
+        letter-spacing: 0.02em;
+        font-family: 'Inter', monospace;
+    }
+
+    .menu-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .menu-details {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .menu-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #f8fafc;
+    }
+
+    .menu-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .menu-badge {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.1rem 0.4rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        color: white;
+    }
+
+    .menu-date {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+    }
+
+    .no-blogs {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+
+    .no-blogs i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: #0f172a;
+        overflow: hidden;
+    }
+
+    /* WELCOME SCREEN */
+    .welcome-screen {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .welcome-card {
+        text-align: center;
+        max-width: 600px;
+        padding: 3rem;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .animated-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent-primary);
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        animation: pulseGlow 3s infinite alternate;
+    }
+
+    .welcome-card h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-card p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--glass-border);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .stat-card h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .stat-card span {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    /* EDITOR INTERFACE */
+    .editor-header {
+        padding: 1.25rem 2rem;
+        background: rgba(15, 23, 42, 0.8);
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .title-section h2 {
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .title-section p {
+        margin: 0.25rem 0 0 0;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .actions-section {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #f87171;
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete:hover:not(:disabled) {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+    }
+
+    .btn-delete:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border: none;
+        color: white;
+        padding: 0.55rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-save:hover:not(:disabled) {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-save:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .editor-scroll-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* METADATA FORM STYLING */
+    .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .meta-card {
+        background: rgba(30, 41, 59, 0.4);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .meta-card h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #60a5fa;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.5rem;
+    }
+
+    .form-group-db {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .form-group-db label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #94a3b8;
+    }
+
+    .form-group-db input[type="text"],
+    .form-group-db textarea {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        padding: 0.55rem 0.75rem;
+        color: white;
+        font-size: 0.85rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .form-group-db input:focus,
+    .form-group-db textarea:focus {
+        border-color: var(--accent-primary);
+        background: rgba(15, 23, 42, 0.85);
+    }
+
+    /* IMAGE UPLOAD & PREVIEW */
+    .image-upload-wrapper {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-upload {
+        width: 38px;
+        height: 38px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #60a5fa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .btn-upload:hover {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: var(--accent-primary);
+    }
+
+    .banner-preview {
+        width: 100%;
+        height: 80px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--glass-border);
+        margin-top: 0.5rem;
+    }
+
+    .banner-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* COLOR PICKERS */
+    .color-picker-group {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .color-picker-group input[type="color"] {
+        -webkit-appearance: none;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        background: none;
+        padding: 0;
+    }
+
+    .color-picker-group input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    .color-picker-group input[type="color"]::-webkit-color-swatch {
+        border: 1px solid var(--glass-border);
+        border-radius: 6px;
+    }
+
+    /* CUSTOM SWITCH */
+    .custom-switch {
+        padding-left: 3rem;
+    }
+
+    .custom-switch .form-check-input {
+        width: 2.5rem;
+        height: 1.25rem;
+        margin-left: -3rem;
+        background-color: rgba(15, 23, 42, 0.6);
+        border-color: var(--glass-border);
+        cursor: pointer;
+    }
+
+    .custom-switch .form-check-input:checked {
+        background-color: var(--accent-primary);
+        border-color: var(--accent-primary);
+    }
+
+    /* EDITOR CANVAS */
+    .editor-canvas-container {
+        background: rgba(30, 41, 59, 0.25);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        padding: 1.5rem;
+    }
+
+    .canvas-header {
+        margin: 0 0 1.25rem 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #60a5fa;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.5rem;
+    }
+
+    /* SPINNERS */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+    }
+
+    .spinner-sm {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+    }
+
+    /* ANIMATIONS */
+    @@keyframes float {
+        0% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-30px) scale(1.1); }
+        100% { transform: translateY(0) scale(1); }
+    }
+
+    @@keyframes cardEnter {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @@keyframes pulseGlow {
+        from { box-shadow: 0 0 10px rgba(59, 130, 246, 0.1); }
+        to { box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); }
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @@keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        75% { transform: translateX(6px); }
+    }
+</style>
+
+@code {
+    private bool _isLoggedIn = false;
+    private string _username = "";
+    private string _password = "";
+    private string _loginError = "";
+    private bool _isSubmitting = false;
+
+    private List<BlogPost> _blogs = new();
+    private string _searchText = "";
+
+    private BlogPost? _activePost = null;
+    private BlogPostDetails _activeDetails = new();
+    private RichTextEditor? _editorRef;
+
+    private string _errorMessage = "";
+    private string _successMessage = "";
+    private bool _isSaving = false;
+
+    // Drag-and-drop reordering state
+    private BlogPost? _draggedBlog = null;
+    private int _dragOverBlogId = -1;
+
+    private IEnumerable<BlogPost> FilteredBlogs => 
+        string.IsNullOrWhiteSpace(_searchText) 
+            ? _blogs 
+            : _blogs.Where(b => b.Title.Contains(_searchText, StringComparison.OrdinalIgnoreCase) || 
+                                 b.CategoryBadge.Contains(_searchText, StringComparison.OrdinalIgnoreCase));
+
+    private void OnDragStart(BlogPost blog)
+    {
+        _draggedBlog = blog;
+    }
+
+    private void OnDragOver(BlogPost target)
+    {
+        if (_draggedBlog == null || _draggedBlog.Id == target.Id) return;
+        _dragOverBlogId = target.Id;
+    }
+
+    private async Task OnDrop(BlogPost target)
+    {
+        if (_draggedBlog == null || _draggedBlog.Id == target.Id)
+        {
+            _dragOverBlogId = -1;
+            _draggedBlog = null;
+            return;
+        }
+
+        // Re-order the in-memory list
+        var fromIndex = _blogs.IndexOf(_draggedBlog);
+        var toIndex = _blogs.IndexOf(target);
+        if (fromIndex < 0 || toIndex < 0) return;
+
+        _blogs.RemoveAt(fromIndex);
+        _blogs.Insert(toIndex, _draggedBlog);
+
+        // Update SortOrder on each item
+        for (int i = 0; i < _blogs.Count; i++)
+            _blogs[i].SortOrder = i + 1;
+
+        _draggedBlog = null;
+        _dragOverBlogId = -1;
+        StateHasChanged();
+
+        // Persist the new order to the DB
+        await BlogService.ReorderBlogsAsync(_blogs.Select(b => b.Id).ToList());
+    }
+
+    private void OnDragEnd()
+    {
+        _draggedBlog = null;
+        _dragOverBlogId = -1;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Try to load auth state from local variable (or could use ProtectedSessionStorage)
+        // For simplicity of this marketing dashboard, we maintain session in-memory or cookie.
+        // We will seed or check from DB.
+        await LoadBlogsListAsync();
+    }
+
+    private async Task LoadBlogsListAsync()
+    {
+        try
+        {
+            _blogs = await BlogService.GetBlogsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading blogs: {ex.Message}");
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            _ = AttemptLogin();
+        }
+    }
+
+    private async Task AttemptLogin()
+    {
+        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
+        {
+            _loginError = "Please fill in all fields.";
+            return;
+        }
+
+        _isSubmitting = true;
+        _loginError = "";
+        StateHasChanged();
+
+        try
+        {
+            bool isValid = await BlogService.ValidateLoginAsync(_username, _password);
+            if (isValid)
+            {
+                _isLoggedIn = true;
+                await LoadBlogsListAsync();
+            }
+            else
+            {
+                _loginError = "Invalid username or password.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _loginError = $"Login error: {ex.Message}";
+        }
+        finally
+        {
+            _isSubmitting = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Logout()
+    {
+        _isLoggedIn = false;
+        _username = "";
+        _password = "";
+        _activePost = null;
+        StateHasChanged();
+    }
+
+    private async Task SelectBlog(BlogPost blog)
+    {
+        _errorMessage = "";
+        _successMessage = "";
+        
+        // Deep clone post
+        _activePost = new BlogPost
+        {
+            Id = blog.Id,
+            Title = blog.Title,
+            SubTitle = blog.SubTitle,
+            Category = blog.Category,
+            CategoryBadge = blog.CategoryBadge,
+            Tags = blog.Tags,
+            AuthorName = blog.AuthorName,
+            AuthorTitle = blog.AuthorTitle,
+            AuthorAvatar = blog.AuthorAvatar,
+            Date = blog.Date,
+            ReadTime = blog.ReadTime,
+            ImagePath = blog.ImagePath,
+            IconClass = blog.IconClass,
+            IconColor = blog.IconColor,
+            GradientStart = blog.GradientStart,
+            GradientEnd = blog.GradientEnd,
+            IsFeatured = blog.IsFeatured
+        };
+
+        var details = await BlogService.GetBlogDetailsAsync(blog.Id);
+        _activeDetails = details ?? new BlogPostDetails { BlogId = blog.Id };
+
+        StateHasChanged();
+
+        // Pass HTML content to editor interop
+        if (_editorRef != null)
+        {
+            await _editorRef.SetHtmlContentAsync(_activeDetails.ContentHtml);
+        }
+    }
+
+    private void CreateNewPost()
+    {
+        _errorMessage = "";
+        _successMessage = "";
+        
+        _activePost = new BlogPost
+        {
+            Id = 0,
+            Date = DateTime.Now.ToString("MMMM d, yyyy"),
+            ReadTime = "5 min read",
+            IconClass = "bi bi-activity",
+            IconColor = "#a78bfa",
+            GradientStart = "#2a1a3a",
+            GradientEnd = "#1a0f2a",
+            ImagePath = "/BlogImages/1.jpg"
+        };
+        _activeDetails = new BlogPostDetails { BlogId = 0 };
+
+        StateHasChanged();
+
+        // Clear editor content
+        if (_editorRef != null)
+        {
+            _ = _editorRef.SetHtmlContentAsync("<p>Start typing your blog post content here...</p>");
+        }
+    }
+
+    private async Task UploadBannerImage(InputFileChangeEventArgs e)
+    {
+        _errorMessage = "";
+        _successMessage = "";
+        try
+        {
+            var file = e.File;
+            if (file != null)
+            {
+                using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+                using var memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+
+                if (_activePost != null)
+                {
+                    _activePost.ImageData = memoryStream.ToArray();
+                    _activePost.ImagePath = $"data:{file.ContentType};base64,{Convert.ToBase64String(_activePost.ImageData)}";
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Image upload failed: {ex.Message}";
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        if (_activePost == null) return;
+        
+        if (string.IsNullOrWhiteSpace(_activePost.Title))
+        {
+            _errorMessage = "Title is required.";
+            return;
+        }
+
+        _isSaving = true;
+        _errorMessage = "";
+        _successMessage = "";
+        StateHasChanged();
+
+        try
+        {
+            // Read rich HTML content from editor
+            if (_editorRef != null)
+            {
+                _activeDetails.ContentHtml = _editorRef.GetHtmlContent();
+            }
+
+            bool success;
+            if (_activePost.Id == 0)
+            {
+                int newId = await BlogService.CreateBlogAsync(_activePost, _activeDetails);
+                success = newId > 0;
+                if (success)
+                {
+                    _activePost.Id = newId;
+                    _activeDetails.BlogId = newId;
+                }
+            }
+            else
+            {
+                success = await BlogService.SaveBlogAsync(_activePost, _activeDetails);
+            }
+
+            if (success)
+            {
+                _successMessage = "Blog post saved successfully in database and synchronized!";
+                await LoadBlogsListAsync();
+            }
+            else
+            {
+                _errorMessage = "Failed to save blog post to PostgreSQL database.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Save error: {ex.Message}";
+        }
+        finally
+        {
+            _isSaving = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (_activePost == null || _activePost.Id == 0) return;
+
+        bool confirm = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{_activePost.Title}'?");
+        if (!confirm) return;
+
+        try
+        {
+            bool success = await BlogService.DeleteBlogAsync(_activePost.Id);
+            if (success)
+            {
+                _activePost = null;
+                _successMessage = "Blog post deleted successfully.";
+                await LoadBlogsListAsync();
+            }
+            else
+            {
+                _errorMessage = "Failed to delete blog post.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Delete error: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private string GetCategoryColor(string? category)
+    {
+        return (category?.ToLower()) switch
+        {
+            "heart" => "#ef4444",
+            "diabetes" => "#10b981",
+            "thyroid" => "#8b5cf6",
+            "women" => "#ec4899",
+            "nutrition" => "#f59e0b",
+            _ => "#64748b"
+        };
+    }
+}

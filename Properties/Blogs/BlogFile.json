@@ -1,0 +1,157 @@
+[
+  {
+    "id": 1,
+    "isFeatured": true,
+    "category": "heart",
+    "categoryBadge": "Cardiology",
+    "tags": ["Heart Health", "Prevention"],
+    "title": "Understanding Your Cardiac Risk: Why Early Testing Matters",
+    "description": "Heart disease remains one of the leading causes of premature death, yet most risk factors are identifiable years in advance through simple blood tests. Learn what markers you should be testing and how often.",
+    "authorName": "Dr. Rajan Kumar",
+    "authorTitle": "Cardiologist",
+    "authorAvatar": "DR",
+    "date": "June 1, 2026",
+    "readTime": "7 min read",
+    "imagePath": "/BlogImages/1.jpg",
+    "iconClass": "bi bi-heart-pulse",
+    "iconColor": "#60a5fa",
+    "gradientStart": "#1e3a5f",
+    "gradientEnd": "#0f2240",
+    "introduction": "Heart disease remains the leading cause of mortality worldwide. Yet, a large percentage of cardiovascular events can be prevented through early risk identification and management.",
+    "conclusion": "Early detection allows for lifestyle adjustments and medical interventions before permanent damage occurs. Talk to your doctor about which cardiac markers are most relevant to you.",
+    "detailedSections": [
+      {
+        "heading": "1. The Lipid Panel: Beyond Total Cholesterol",
+        "content": "A standard lipid panel measures HDL (good), LDL (bad), and triglycerides. Modern diagnostics also evaluate particle size and ApoB levels for a more accurate risk profile."
+      },
+      {
+        "heading": "2. hs-CRP: The Inflammation Marker",
+        "content": "High-sensitivity C-reactive protein measures low-grade systemic inflammation, which plays a major role in plaque build-up and arterial damage."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "isFeatured": false,
+    "category": "diabetes",
+    "categoryBadge": "Diabetes",
+    "tags": ["Blood Sugar", "HbA1c"],
+    "title": "What Your HbA1c Score Really Means for Your Long-Term Health",
+    "description": "HbA1c isn't just a number — it's a three-month window into your blood sugar patterns. Here's how to interpret it and what action to take.",
+    "authorName": "Dr. Sunita Priya",
+    "authorTitle": "Diabetologist",
+    "authorAvatar": "SP",
+    "date": "May 25, 2026",
+    "readTime": "5 min read",
+    "imagePath": "/BlogImages/2.jpg",
+    "iconClass": "bi bi-droplet-half",
+    "iconColor": "#34d399",
+    "gradientStart": "#1a3a2a",
+    "gradientEnd": "#0f2a1a",
+    "introduction": "Unlike daily finger-prick blood tests, HbA1c offers a long-term view of your glucose control. It measures the percentage of hemoglobin coated with sugar over the past 90 days.",
+    "conclusion": "Regular HbA1c testing is vital for both diagnosing prediabetes/diabetes and monitoring therapeutic effectiveness. Aim to keep your score in the healthy range through diet, exercise, and guidance.",
+    "detailedSections": [
+      {
+        "heading": "1. The Ranges Decoded",
+        "content": "A score below 5.7% is normal. 5.7% to 6.4% indicates prediabetes, while 6.5% or higher on two separate tests confirms diabetes."
+      },
+      {
+        "heading": "2. Factors Affecting HbA1c",
+        "content": "Anemia, pregnancy, and certain hemoglobin variants can alter results. Always discuss your score in context with your healthcare provider."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "isFeatured": false,
+    "category": "thyroid",
+    "categoryBadge": "Thyroid",
+    "tags": ["TSH", "Hormones"],
+    "title": "Thyroid Disorders: Silent Symptoms You Should Never Ignore",
+    "description": "Fatigue, weight changes, or mood swings? Your thyroid might be the cause. Discover the early signs and the tests that can reveal the truth.",
+    "authorName": "Dr. Anitha Meena",
+    "authorTitle": "Endocrinologist",
+    "authorAvatar": "AM",
+    "date": "May 18, 2026",
+    "readTime": "6 min read",
+    "imagePath": "/BlogImages/3.jpg",
+    "iconClass": "bi bi-activity",
+    "iconColor": "#a78bfa",
+    "gradientStart": "#2a1a3a",
+    "gradientEnd": "#1a0f2a",
+    "introduction": "The thyroid is a small gland with a massive job. It regulates metabolism, body temperature, energy production, and heart rate. When it malfunctions, symptoms can be diverse and subtle.",
+    "conclusion": "Thyroid issues are highly treatable once properly diagnosed. A simple blood test is the first step to regaining your energy and well-being.",
+    "detailedSections": [
+      {
+        "heading": "1. Hypothyroidism vs. Hyperthyroidism",
+        "content": "Hypothyroidism (underactive thyroid) slows things down, causing fatigue, weight gain, and dry skin. Hyperthyroidism (overactive thyroid) speeds them up, leading to anxiety, rapid heart rate, and weight loss."
+      },
+      {
+        "heading": "2. The Diagnostic Panel",
+        "content": "Tests include TSH (Thyroid Stimulating Hormone), Free T3, and Free T4. Checking for thyroid antibodies is also useful to rule out autoimmune conditions like Hashimoto's."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "isFeatured": false,
+    "category": "women",
+    "categoryBadge": "Women's Health",
+    "tags": ["Hormones", "PCOS"],
+    "title": "PCOS & Fertility: The Key Lab Tests Every Woman Should Know",
+    "description": "Polycystic ovary syndrome affects 1 in 10 women. Understanding your hormone panel can be the first step toward better management and family planning.",
+    "authorName": "Dr. Revathi Velu",
+    "authorTitle": "Gynecologist",
+    "authorAvatar": "RV",
+    "date": "May 10, 2026",
+    "readTime": "8 min read",
+    "imagePath": "/BlogImages/4.jpg",
+    "iconClass": "bi bi-gender-female",
+    "iconColor": "#f472b6",
+    "gradientStart": "#3a1a2a",
+    "gradientEnd": "#2a0f1a",
+    "introduction": "Polycystic Ovary Syndrome (PCOS) is a common hormonal disorder among women of reproductive age. It is characterized by irregular periods, excess androgen levels, and ovarian cysts.",
+    "conclusion": "PCOS is manageable, and fertility challenges can often be overcome with targeted therapies and lifestyle changes. Early hormone profiling is key to creating an effective plan.",
+    "detailedSections": [
+      {
+        "heading": "1. Core Hormonal Tests",
+        "content": "A comprehensive panel typically measures LH (Luteinizing Hormone), FSH (Follicle Stimulating Hormone), AMH (Anti-Müllerian Hormone), and Testosterone to assess ovulation and ovarian reserve."
+      },
+      {
+        "heading": "2. The Insulin Resistance Link",
+        "content": "Many women with PCOS have insulin resistance, which exacerbates symptoms. Testing fasting insulin and glucose helps guide dietary strategies."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "isFeatured": false,
+    "category": "nutrition",
+    "categoryBadge": "Nutrition",
+    "tags": ["Diet", "Vitamins"],
+    "title": "Vitamin D Deficiency: Why Most Indians Are at Risk & What to Do",
+    "description": "Despite abundant sunshine, vitamin D deficiency is epidemic in India. Understand why this happens, how to get tested, and how supplementation helps.",
+    "authorName": "Dr. Kavitha Natarajan",
+    "authorTitle": "Nutritionist",
+    "authorAvatar": "KN",
+    "date": "April 30, 2026",
+    "readTime": "5 min read",
+    "imagePath": "/BlogImages/vitamin-d.jpg",
+    "iconClass": "bi bi-apple",
+    "iconColor": "#4ade80",
+    "gradientStart": "#1a2a1a",
+    "gradientEnd": "#0f1f0f",
+    "introduction": "Vitamin D is unique because your body can synthesize it from sunlight. However, due to indoor lifestyles and dietary habits, deficiency has become extremely common in India.",
+    "conclusion": "Maintaining optimal Vitamin D levels is essential for bone density, mood regulation, and immune defense. Get checked annually and supplement under medical supervision if needed.",
+    "detailedSections": [
+      {
+        "heading": "1. Why Sun Exposure Isn't Always Enough",
+        "content": "Melanin in darker skin reduces the efficiency of Vitamin D synthesis. Additionally, pollution, sunscreen use, and spending peak hours indoors limit sun exposure."
+      },
+      {
+        "heading": "2. Symptoms of Low Vitamin D",
+        "content": "Chronic fatigue, bone/muscle pain, frequent infections, and mood swings are common indicators of deficiency."
+      }
+    ]
+  }
+]

@@ -1,0 +1,2107 @@
+@using AlphaRazor.EditorEngine.Models
+@using AlphaRazor.EditorEngine.Serialization
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div class="rte-container @(_fullscreenEnabled ? "fullscreen-editor" : "")" style="display: flex; flex-direction: column; width: 100%; flex-grow: 1; height: 100vh; overflow: hidden; font-family: 'Outfit', sans-serif;">
+    
+    <!-- Top Header Bar with Mode Selector -->
+    <div class="rte-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.5rem; background: #ffffff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            <span style="font-weight: 700; font-size: 1.1rem; color: #0f172a; letter-spacing: -0.02em;">Document Editor</span>
+        </div>
+        
+        <div class="rte-toolbar-group" style="display: flex; gap: 4px; background: #f1f5f9; padding: 3px; border-radius: 8px;">
+            <button type="button" class="rte-btn-mode @(_viewMode == "wysiwyg" ? "active" : "")" @onclick='() => HandleViewModeChanged("wysiwyg")'>
+                WYSIWYG
+            </button>
+            <button type="button" class="rte-btn-mode @(_viewMode == "html" ? "active" : "")" @onclick='() => HandleViewModeChanged("html")'>
+                HTML
+            </button>
+            <button type="button" class="rte-btn-mode @(_viewMode == "markdown" ? "active" : "")" @onclick='() => HandleViewModeChanged("markdown")'>
+                Markdown
+            </button>
+        </div>
+    </div>
+
+    <div class="rte-workspace" style="flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background-color: #f1f5f9; align-items: stretch; width: 100%;">
+        @if (_viewMode == "wysiwyg")
+        {
+            <!-- Ribbon Tabs -->
+            <div class="ribbon-tabs" style="display: flex; background: #f8fafc; border-bottom: 1px solid #cbd5e1; padding: 0 1.5rem; gap: 4px; z-index: 11; flex-shrink: 0; width: 100%;">
+                <button type="button" class="ribbon-tab-btn @(_activeTab == "home" ? "active" : "")" @onclick='() => _activeTab = "home"'>Home</button>
+                <button type="button" class="ribbon-tab-btn @(_activeTab == "insert" ? "active" : "")" @onclick='() => _activeTab = "insert"'>Insert</button>
+                <button type="button" class="ribbon-tab-btn @(_activeTab == "table" ? "active" : "")" @onclick='() => _activeTab = "table"'>Table Tools</button>
+                <button type="button" class="ribbon-tab-btn @(_activeTab == "view" ? "active" : "")" @onclick='() => _activeTab = "view"'>View & Slides</button>
+            </div>
+
+            <!-- Ribbon Content -->
+            <div class="ribbon-toolbar-content" style="background: #ffffff; border-bottom: 1px solid #cbd5e1; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.05); min-height: 72px; display: flex; align-items: stretch; padding: 6px 1.5rem; width: 100%; z-index: 10; overflow: visible; flex-shrink: 0;">
+                <div style="display: flex; align-items: stretch; gap: 8px; flex-grow: 1;">
+                    @if (_activeTab == "home")
+                    {
+                        <!-- Typography Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <select class="tiptap-select" style="width: 105px;" onchange="window.editorInterop.setHeading(this.value)">
+                                    <option value="p">Paragraph</option>
+                                    <option value="1">Heading 1</option>
+                                    <option value="2">Heading 2</option>
+                                    <option value="3">Heading 3</option>
+                                </select>
+                                <select class="tiptap-select" style="width: 110px;" onchange="window.editorInterop.setFont(this.value)">
+                                    <option value="sans-serif">Default Font</option>
+                                    <option value="serif">Serif</option>
+                                    <option value="monospace">Monospace</option>
+                                    <option value="arial">Arial</option>
+                                    <option value="courier-new">Courier New</option>
+                                    <option value="georgia">Georgia</option>
+                                    <option value="helvetica">Helvetica</option>
+                                    <option value="times-new-roman">Times New Roman</option>
+                                    <option value="verdana">Verdana</option>
+                                    <option value="inter">Inter</option>
+                                    <option value="outfit">Outfit</option>
+                                    <option value="roboto">Roboto</option>
+                                </select>
+                            </div>
+                            <span class="toolbar-group-label">Typography</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Font Styles Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="tiptap-btn" data-action="bold" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('bold')" title="Bold">
+                                    <b>B</b>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="italic" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('italic')" title="Italic">
+                                    <i>I</i>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="underline" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('underline')" title="Underline">
+                                    <u>U</u>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="strike" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('strike')" title="Strikethrough">
+                                    <s>S</s>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="subscript" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('subscript')" title="Subscript">
+                                    x<sub>2</sub>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="superscript" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('superscript')" title="Superscript">
+                                    x<sup>2</sup>
+                                </button>
+                                <div class="tiptap-dropdown">
+                                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Text Color">
+                                        <span style="color: #ef4444; font-weight: bold; border-bottom: 2px solid #ef4444;">A</span>
+                                    </button>
+                                    <div class="tiptap-dropdown-content">
+                                        @foreach (var c in _colorPalette)
+                                        {
+                                            <span class="color-dot" style="background: @c;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('color', '@c')"></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="tiptap-dropdown">
+                                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Highlight Color">
+                                        <span style="background: #fefce8; border: 1px solid #cbd5e1; padding: 1px 3px; border-radius: 2px; font-weight: bold;">H</span>
+                                    </button>
+                                    <div class="tiptap-dropdown-content">
+                                        @foreach (var c in _colorPalette)
+                                        {
+                                            <span class="color-dot" style="background: @c;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('highlight', '@c')"></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="toolbar-group-label">Font Styles</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Paragraph Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="tiptap-btn" data-action="align-left" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('align', 'left')" title="Align Left">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="align-center" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('align', 'center')" title="Align Center">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="align-right" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('align', 'right')" title="Align Right">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="align-justify" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('align', 'justify')" title="Justify">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="bulletList" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('bulletList')" title="Bullet List">
+                                    •≡
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="orderedList" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('orderedList')" title="Ordered List">
+                                    1≡
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="taskList" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('taskList')" title="To-do List">
+                                    ☑≡
+                                </button>
+                                <button type="button" class="tiptap-btn" data-action="blockquote" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('blockquote')" title="Blockquote">
+                                    “
+                                </button>
+                            </div>
+                            <span class="toolbar-group-label">Paragraph</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Font Size Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <select class="tiptap-select" style="width: 64px;" onchange="window.editorInterop.setFontSize(this.value)" title="Font Size">
+                                    <option value="">Size</option>
+                                    <option value="10px">10</option>
+                                    <option value="11px">11</option>
+                                    <option value="12px">12</option>
+                                    <option value="14px">14</option>
+                                    <option value="16px">16</option>
+                                    <option value="18px">18</option>
+                                    <option value="20px">20</option>
+                                    <option value="24px">24</option>
+                                    <option value="28px">28</option>
+                                    <option value="32px">32</option>
+                                    <option value="36px">36</option>
+                                    <option value="48px">48</option>
+                                </select>
+                            </div>
+                            <span class="toolbar-group-label">Font Size</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Line Height Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <select class="tiptap-select" style="width: 68px;" onchange="window.editorInterop.setLineHeight(this.value)" title="Line Height">
+                                    <option value="">Spacing</option>
+                                    <option value="1">Single</option>
+                                    <option value="1.15">1.15×</option>
+                                    <option value="1.5">1.5×</option>
+                                    <option value="1.8" selected>1.8×</option>
+                                    <option value="2">Double</option>
+                                    <option value="2.5">2.5×</option>
+                                </select>
+                            </div>
+                            <span class="toolbar-group-label">Line Height</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Undo/Redo + Actions Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('undo')" title="Undo (Ctrl+Z)">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('redo')" title="Redo (Ctrl+Y)">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13"/></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('link')" title="Insert / Edit Link">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('code')" title="Inline Code">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                </button>
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('clearFormatting')" title="Clear Formatting">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 20H6M8 4l8 12M12 4l-4 8M16 12l2 4"></path></svg>
+                                </button>
+                            </div>
+                            <span class="toolbar-group-label">History &amp; Actions</span>
+                        </div>
+                    }
+                    else if (_activeTab == "insert")
+                    {
+                        <!-- Image Dropdown -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <div class="tiptap-dropdown" tabindex="0">
+                                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Image Upload & Import">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                        <span style="font-size: 0.72rem; margin-left: 2px; font-weight: 600; color: #475569;">Image ▾</span>
+                                    </button>
+                                    <div class="tiptap-dropdown-content" style="min-width: 220px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background: #ffffff; z-index: 100; flex-direction: column; gap: 8px;">
+                                        <div style="font-size: 0.7rem; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 2px; border-bottom: 1px solid #f1f5f9; padding-bottom: 3px;">Image Source</div>
+                                        <input type="file" id="local-image-upload-toolbar" accept="image/*" onchange="window.editorInterop.uploadLocalImage(this)" style="display: none;" />
+                                        <button type="button" onclick="document.getElementById('local-image-upload-toolbar').click()" style="width: 100%; padding: 6px 10px; background: #ffffff; color: #2563eb; border: 1px dashed #2563eb; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#ffffff'">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                            Upload Image (Base64)
+                                        </button>
+                                        <button type="button" @onclick="OpenGoogleDriveDialog" style="width: 100%; padding: 6px 10px; background: #34a853; color: white; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.15s;" onmouseover="this.style.background='#2b8a43'" onmouseout="this.style.background='#34a853'">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                                            Google Drive
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="toolbar-group-label">Media</span>
+                        </div>
+
+                    <div class="tiptap-divider"></div>
+
+                    <!-- Embeds Group -->
+                    <div class="toolbar-group">
+                        <div class="toolbar-row">
+                            <!-- Table Dropdown -->
+                            <div class="tiptap-dropdown" tabindex="0" id="table-dropdown-root">
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Table Creator">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+                                    <span style="font-size: 0.72rem; margin-left: 2px; font-weight: 600; color: #475569;">Table ▾</span>
+                                </button>
+                                <div class="tiptap-dropdown-content table-panel" style="min-width: 320px; padding: 0; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 12px 28px rgba(0,0,0,0.12); background: #ffffff; z-index: 100; flex-direction: column; gap: 0;" onclick="event.stopPropagation()">
+                                    <div style="padding: 10px 14px 8px; border-bottom: 1px solid #f1f5f9;">
+                                        <div style="font-size: 0.72rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.06em;">Insert Table</div>
+                                    </div>
+                                    <div style="padding: 10px 14px;">
+                                        <div style="font-size: 0.68rem; color: #6b7280; margin-bottom: 6px;">
+                                            Hover to size, click to confirm: <span id="grid-label" style="font-weight:700; color:#2563eb;">3 × 3</span>
+                                        </div>
+                                        <div id="table-grid-picker" style="display: grid; grid-template-columns: repeat(8, 22px); gap: 2px; margin-bottom: 8px;" onmouseleave="window.tablePanel.resetGrid()"></div>
+                                        <button type="button" class="gdocs-btn gdocs-btn-primary" style="width:100%;" onmousedown="event.preventDefault()" onclick="window.tablePanel.insertTable()">
+                                            Insert <span id="grid-insert-label">3 × 3</span> Table
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertVideo')" title="Insert Video Embed">
+                                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><polygon points="12 8 18 12 12 16 12 8"></polygon></svg>
+                            </button>
+                            <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('horizontalRule')" title="Horizontal Line">—</button>
+                            <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('pageBreak')" title="Page Break">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                            </button>
+                        </div>
+                        <span class="toolbar-group-label">Elements</span>
+                    </div>
+
+                    <div class="tiptap-divider"></div>
+
+                    <!-- Placeholders & Emojis Group -->
+                    <div class="toolbar-group">
+                        <div class="toolbar-row">
+                            <div class="tiptap-dropdown">
+                               <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Insert Emoji">☺</button>
+                               <div class="tiptap-dropdown-content grid-layout" style="min-width: 140px; max-height: 120px; overflow-y: auto; grid-template-columns: repeat(5, 1fr); padding: 4px; gap: 2px; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #ffffff; z-index: 100;">
+                                   @foreach (var emoji in _emojiPalette)
+                                   {
+                                       <span class="emoji-item" style="font-size: 1rem; cursor: pointer; padding: 2px; text-align: center; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertText', '@emoji')">@emoji</span>
+                                   }
+                               </div>
+                            </div>
+                            <div class="tiptap-dropdown">
+                                <button type="button" class="tiptap-btn" style="font-weight: bold; font-family: monospace; font-size: 0.75rem;" onmousedown="event.preventDefault()" title="Merge Fields">{x}</button>
+                                <div class="tiptap-dropdown-content" style="min-width: 100px; flex-direction: column; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #ffffff; z-index: 100;">
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 4px 8px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertText', '{{patient}}')">Patient</span>
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 4px 8px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertText', '{{doctor}}')">Doctor</span>
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 4px 8px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertText', '{{date}}')">Date</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="toolbar-group-label">Fields & Emojis</span>
+                    </div>
+                    }
+                    else if (_activeTab == "table")
+                    {
+                        <!-- Rows & Columns Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addRowBefore')" title="Add Row Above">Row +↑</button>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addRowAfter')" title="Add Row Below">Row +↓</button>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('deleteRow')" title="Delete Row" style="color: #ef4444;">Row ×</button>
+                                <div class="tiptap-divider" style="background-color: #cbd5e1; height: 18px; margin: 0 4px;"></div>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addColumnBefore')" title="Add Column Left">Col +←</button>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addColumnAfter')" title="Add Column Right">Col +→</button>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('deleteColumn')" title="Delete Column" style="color: #ef4444;">Col ×</button>
+                            </div>
+                            <span class="toolbar-group-label">Table Operations</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Merge/Split Cells Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('mergeCells')" title="Merge Cells">Merge</button>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('splitCell')" title="Split Cell">Split</button>
+                                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('deleteTable')" title="Delete Table" style="background: #fef2f2; color: #ef4444; font-weight: bold; border-color: #fca5a5;">Delete Table</button>
+                            </div>
+                            <span class="toolbar-group-label">Cells Merge</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Border Style Settings -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row" style="gap: 8px;">
+                                <select id="ribbon-table-border-style" class="tiptap-select" style="width: 80px;" onchange="window.tablePanel.applyPreset(this.value, document.getElementById('ribbon-table-border-color').value, document.getElementById('ribbon-table-border-width').value)">
+                                    <option value="solid">Solid</option>
+                                    <option value="dashed">Dashed</option>
+                                    <option value="dotted">Dotted</option>
+                                    <option value="double">Double</option>
+                                    <option value="none">None</option>
+                                </select>
+                                <select id="ribbon-table-border-width" class="tiptap-select" style="width: 70px;" onchange="window.tablePanel.applyPreset(document.getElementById('ribbon-table-border-style').value, document.getElementById('ribbon-table-border-color').value, this.value)">
+                                    <option value="1px">1 px</option>
+                                    <option value="2px" selected>2 px</option>
+                                    <option value="3px">3 px</option>
+                                    <option value="5px">5 px</option>
+                                </select>
+                                <input type="color" id="ribbon-table-border-color" value="#94a3b8" style="width: 28px; height: 26px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; padding: 1px;" onchange="window.tablePanel.applyPreset(document.getElementById('ribbon-table-border-style').value, this.value, document.getElementById('ribbon-table-border-width').value)" />
+                            </div>
+                            <span class="toolbar-group-label">Borders Style</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Cell Background Color Picker -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <input type="color" id="ribbon-cell-bg" value="#ffffff" style="width: 28px; height: 26px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; padding: 1px;" />
+                                <button type="button" class="gdocs-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('setCellBackgroundColor', document.getElementById('ribbon-cell-bg').value)">Apply</button>
+                                <button type="button" class="gdocs-btn" style="color: #ef4444;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('setCellBackgroundColor', null)">✕</button>
+                            </div>
+                            <span class="toolbar-group-label">Cell Fill</span>
+                        </div>
+                    }
+                    else if (_activeTab == "view")
+                    {
+                        <!-- Zoom factor controls -->
+                        <div class="toolbar-group" style="min-width: 160px;">
+                            <div class="toolbar-row" style="gap: 8px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                <input type="range" min="0.5" max="2.0" step="0.05" value="@_zoomFactor" @oninput='(e) => SetZoomFactor(double.Parse(e.Value?.ToString() ?? "1.0"))' style="width: 70px; height: 4px; accent-color: #2563eb;" />
+                                <span style="font-size: 0.72rem; font-weight: 700; color: #1e293b; min-width: 32px;">@(Math.Round(_zoomFactor * 100))%</span>
+                            </div>
+                            <span class="toolbar-group-label">Canvas Zoom</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Zoom Quick Buttons -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="gdocs-btn" style="padding: 2px 6px;" @onclick="() => SetZoomFactor(0.75)">75%</button>
+                                <button type="button" class="gdocs-btn" style="padding: 2px 6px;" @onclick="() => SetZoomFactor(1.0)">100%</button>
+                                <button type="button" class="gdocs-btn" style="padding: 2px 6px;" @onclick="() => SetZoomFactor(1.5)">150%</button>
+                            </div>
+                            <span class="toolbar-group-label">Quick Zoom</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Canvas Options -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <button type="button" class="tiptap-btn @(_darkModeEnabled ? "active" : "")" @onclick="() => _darkModeEnabled = !_darkModeEnabled" title="Toggle Dark Mode Canvas">
+                                    🌙
+                                </button>
+                                <button type="button" class="tiptap-btn @(_readOnlyMode ? "active" : "")" @onclick="ToggleReadOnly" title="Toggle Read Only Mode">
+                                    📖
+                                </button>
+                                <button type="button" class="tiptap-btn @(_fullscreenEnabled ? "active" : "")" @onclick="() => _fullscreenEnabled = !_fullscreenEnabled" title="Toggle Fullscreen Editor">
+                                    ⛶
+                                </button>
+                            </div>
+                            <span class="toolbar-group-label">Canvas Mode</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
+                        <!-- Document Layout Settings -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row">
+                                <select class="tiptap-select" @bind="_paperWidth" style="width: 100px;">
+                                    <option value="850px">Portrait (A4)</option>
+                                    <option value="1100px">Landscape</option>
+                                </select>
+                            </div>
+                            <span class="toolbar-group-label">Page Layout</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Permanent Right controls (Pages indicator, Print, Word counts) -->
+                <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-left: 12px; border-left: 1px solid #cbd5e1;">
+                    <!-- Page Navigation -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #eef2ff; border-radius: 6px; border: 1px solid #c7d2fe; padding: 4px 8px;">
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <button type="button" class="tiptap-btn" style="color: #4f46e5; width: 22px; height: 22px; padding: 1px;" onmousedown="event.preventDefault()" onclick="window.editorInterop.goToPage('prev')" title="Previous Page">
+                                <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <span style="font-size: 0.7rem; font-weight: 700; color: #4f46e5; min-width: 55px; text-align: center; user-select: none;">
+                                Pg <span id="lbl-current-page">1</span> / <span id="lbl-total-pages">1</span>
+                            </span>
+                            <button type="button" class="tiptap-btn" style="color: #4f46e5; width: 22px; height: 22px; padding: 1px;" onmousedown="event.preventDefault()" onclick="window.editorInterop.goToPage('next')" title="Next Page">
+                                <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Print -->
+                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('print')" title="Print Document" style="border: 1px solid #cbd5e1; background: #ffffff;">
+                        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"></path></svg>
+                    </button>
+
+                    <!-- Stats Info -->
+                    <div style="display: flex; flex-direction: column; font-size: 0.65rem; color: #64748b; font-weight: 600; text-align: right;">
+                        <span>Words: <strong style="color: #1e293b;">@GetWordCount()</strong></span>
+                        <span>Chars: <strong style="color: #1e293b;">@GetCharacterCount()</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Operations Toolbar (Revealed dynamically when inside a table) -->
+            <div id="tiptap-table-tools" class="tiptap-table-toolbar" style="display: none; border-bottom: 1px solid #fecaca; background: #fff5f5; padding: 8px 14px; z-index: 9; flex-shrink: 0; align-items: center; gap: 8px; width: 100%;">
+                <span style="font-size: 0.72rem; font-weight: bold; color: #b91c1c; margin-right: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Table Tools:</span>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addRowBefore')" title="Add Row Before">Row +↑</button>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addRowAfter')" title="Add Row After">Row +↓</button>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('deleteRow')" title="Delete Row" style="color: #ef4444;">Row ×</button>
+                <div class="tiptap-divider" style="margin: 0 4px; background-color: #fca5a5;"></div>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addColumnBefore')" title="Add Column Before">Col +←</button>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('addColumnAfter')" title="Add Column After">Col +→</button>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('deleteColumn')" title="Delete Column" style="color: #ef4444;">Col ×</button>
+                <div class="tiptap-divider" style="margin: 0 4px; background-color: #fca5a5;"></div>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('mergeCells')" title="Merge Cells">Merge</button>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('splitCell')" title="Split Cell">Split</button>
+                <button type="button" class="table-tool-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('deleteTable')" title="Delete Table" style="background: #fef2f2; color: #ef4444; font-weight: bold; border-color: #fca5a5;">Delete Table</button>
+            </div>
+
+            <!-- Image Operations Toolbar (Revealed dynamically when an image is selected) -->
+            <div id="tiptap-image-tools" class="tiptap-table-toolbar" style="display: none; border-bottom: 1px solid #93c5fd; background: #eff6ff; padding: 0.5rem 1.5rem; z-index: 9; flex-shrink: 0; align-items: center; gap: 8px; width: 100%;">
+                <span style="font-size: 0.72rem; font-weight: bold; color: #1d4ed8; margin-right: 8px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">Image Tools:</span>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-align', 'left')" title="Align Left">Align Left</button>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-align', 'center')" title="Center">Center</button>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-align', 'right')" title="Align Right">Align Right</button>
+                <div class="tiptap-divider" style="margin: 0 8px; background-color: #93c5fd; height: 16px;"></div>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-resize', '25%')" title="Width 25%">25%</button>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-resize', '50%')" title="Width 50%">50%</button>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-resize', '75%')" title="Width 75%">75%</button>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-resize', '100%')" title="Width 100%">100%</button>
+                <div class="tiptap-divider" style="margin: 0 8px; background-color: #93c5fd; height: 16px;"></div>
+                <button type="button" class="table-tool-btn" style="color: #1d4ed8; border-color: #93c5fd;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-alt')" title="Set Alt Text">Alt Text</button>
+                <button type="button" class="table-tool-btn" style="background: #fef2f2; color: #ef4444; font-weight: bold; border-color: #fca5a5;" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('image-delete')" title="Delete Image">Delete Image</button>
+            </div>
+
+            <div style="flex-grow: 1; display: flex; overflow: hidden; width: 100%;">
+                <!-- Left Sidebar for Drag-and-Drop Templates -->
+                <div class="rte-sidebar" style="width: 250px; background: #ffffff; border-right: 1px solid #cbd5e1; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;">
+                    <div style="padding: 12px 16px; border-bottom: 1px solid #cbd5e1; font-weight: 700; font-size: 0.8rem; color: #1e293b; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
+                        <span>Clinical Templates</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                    </div>
+                    <div style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                        <p style="font-size: 0.7rem; color: #64748b; margin: 0 0 2px 0; line-height: 1.4;">Drag these widgets directly onto the document:</p>
+                        
+                        <!-- Template 1: Alert Callout -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<div style=&quot;padding: 16px; background-color: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 6px; margin: 1.5rem 0; color: #075985; font-family: Outfit, sans-serif;&quot;><p style=&quot;margin:0; font-weight:700; font-size: 1.1em;&quot;>ℹ️ Clinical Alert Callout</p><p style=&quot;margin:6px 0 0 0; font-size:0.95em; line-height:1.5;&quot;>Enter crucial diagnostic warnings, laboratory precautions, or custom notice text here.</p></div>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">ℹ️</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Clinical Alert Callout</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Notice Box (Info Blue)</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 2: Signature block -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<table style=&quot;width:100%; border:none; margin: 2.5rem 0; border-collapse: collapse;&quot;><tbody><tr><td style=&quot;width:50%; border:none; padding:10px;&quot;><p style=&quot;margin:0; font-size:1.1em;&quot;>____________________________</p><p style=&quot;margin:6px 0 0 0; font-weight:bold; color:#1e293b;&quot;>Authorized Pathologist</p><p style=&quot;margin:2px 0 0 0; font-size:0.85em; color:#64748b;&quot;>Registration No: MD-92381</p></td><td style=&quot;width:50%; border:none; padding:10px;&quot;><p style=&quot;margin:0; font-size:1.1em;&quot;>____________________________</p><p style=&quot;margin:6px 0 0 0; font-weight:bold; color:#1e293b;&quot;>Lab Director</p><p style=&quot;margin:2px 0 0 0; font-size:0.85em; color:#64748b;&quot;>Alpha Diagnostics Centre</p></td></tr></tbody></table>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">✍️</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Signature Block</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Double signature layout</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 3: Clinical Report Header -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<div style=&quot;border-bottom: 3px double #0f172a; padding-bottom: 12px; margin-bottom: 1.5rem; text-align: center; font-family: Outfit, sans-serif;&quot;><h1 style=&quot;margin:0; font-size:1.85rem; color:#1e3a8a; text-transform:uppercase; letter-spacing:0.04em;&quot;>Alpha Diagnostics Centre</h1><p style=&quot;margin:6px 0 0 0; font-size:0.88rem; color:#475569; font-weight:500;&quot;>100 Health Avenue, Medical Zone | Phone: (555) 019-2834 | Email: info@alphadiagnostics.com</p></div>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">🏥</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Clinic Report Header</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Double ruled report header</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 4: Patient Info grid -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<table style=&quot;width:100%; border:2px solid #cbd5e1; border-collapse:collapse; margin: 1.5rem 0; font-family: Outfit, sans-serif;&quot;><tbody><tr style=&quot;background:#f8fafc;&quot;><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-weight:bold; font-size:0.92em; color:#1e293b;&quot;>Patient Name:</td><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-size:0.92em;&quot;>{{patient}}</td><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-weight:bold; font-size:0.92em; color:#1e293b;&quot;>Date of Birth:</td><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-size:0.92em;&quot;>___/___/______</td></tr><tr><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-weight:bold; font-size:0.92em; color:#1e293b;&quot;>Referring Doctor:</td><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-size:0.92em;&quot;>{{doctor}}</td><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-weight:bold; font-size:0.92em; color:#1e293b;&quot;>Report Date:</td><td style=&quot;border:2px solid #cbd5e1; padding:10px; font-size:0.92em;&quot;>{{date}}</td></tr></tbody></table>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">📋</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Patient Details Table</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Clinical patient variables</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 5: 2-Column text block -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<table style=&quot;width:100%; border:none; margin: 1.5rem 0; border-collapse: collapse;&quot;><tbody><tr><td style=&quot;width:50%; border:none; padding:12px; vertical-align:top;&quot;><h3 style=&quot;margin:0 0 8px 0; color:#1e3a8a;&quot;>Findings & Observations</h3><p style=&quot;margin:0; font-size:0.95em; line-height:1.6;&quot;>Enter primary clinical lab findings, test outcomes, or observation details here.</p></td><td style=&quot;width:50%; border:none; padding:12px; border-left:1px solid #e2e8f0; vertical-align:top;&quot;><h3 style=&quot;margin:0 0 8px 0; color:#16a34a;&quot;>Recommendations</h3><p style=&quot;margin:0; font-size:0.95em; line-height:1.6;&quot;>Enter laboratory specialist guidelines, follow-up tests required, or dietary recommendations.</p></td></tr></tbody></table>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">🥞</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">2-Column Text Layout</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Findings vs Advice</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Left Document Canvas Scroll Container -->
+                <div class="rte-document-scroll" style="flex-grow: 1; overflow-y: auto; padding: 2.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; min-width: 0; box-sizing: border-box; height: 100%;">
+                    <div @key='"paper-sheet"' class="rte-paper-sheet @(_darkModeEnabled ? "dark-sheet" : "")" style="background: #ffffff; width: 100%; max-width: @(_paperWidth); min-height: 800px; box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.02); border: 1px solid #cbd5e1; border-radius: 4px; display: flex; flex-direction: column; overflow: visible; flex-shrink: 0; margin-bottom: 2rem; transition: max-width 0.25s ease-in-out; zoom: @(_zoomFactor.ToString(System.Globalization.CultureInfo.InvariantCulture));">
+                        <!-- Tiptap Editor Canvas container -->
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; min-height: 600px; background: #ffffff;">
+                            <div @key='"editor-canvas"' id="cke5-feature-rich-demo" style="flex-grow: 1; display: flex; flex-direction: column;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Simulated Google Drive File Picker Dialog -->
+            @if (_isGoogleDriveDialogOpen)
+            {
+                <div class="rte-modal-backdrop" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000;" @onclick="CloseGoogleDriveDialog">
+                    <div class="rte-modal" style="background: #ffffff; width: 90%; max-width: 650px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); display: flex; flex-direction: column; overflow: hidden; animation: modalFadeIn 0.2s ease-out;" @onclick:stopPropagation>
+                        
+                        <!-- Modal Header -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <svg width="24" height="24" viewBox="0 0 360 360" style="flex-shrink: 0;">
+                                    <path d="M124.6 226.5h198.8L224.6 54.5z" fill="#0066da"/>
+                                    <path d="M224.6 54.5L124.6 226.5l-62 108.5z" fill="#00ac47"/>
+                                    <path d="M124.6 226.5l62 108.5h198.8z" fill="#ffba00"/>
+                                    <path d="M124.6 226.5H24.6l100 174z" fill="#ea4335"/>
+                                </svg>
+                                <span style="font-weight: 700; font-size: 1.1rem; color: #1f2937;">Google Drive File Picker</span>
+                            </div>
+                            <button type="button" @onclick="CloseGoogleDriveDialog" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #9ca3af; transition: color 0.15s;" onmouseover="this.style.color='#4b5563'" onmouseout="this.style.color='#9ca3af'">&times;</button>
+                        </div>
+                        
+                        <!-- Modal Body -->
+                        <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                            
+                            <!-- Google Drive link input -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 600; color: #4b5563; display: block; margin-bottom: 6px;">Paste Google Drive Sharing Link</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" @bind="_googleDriveUrlInput" placeholder="https://drive.google.com/file/d/.../view" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem;" />
+                                    <button type="button" @onclick="ImportGoogleDriveLink" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">Import</button>
+                                </div>
+                                @if (!string.IsNullOrEmpty(_googleDriveError))
+                                {
+                                    <span style="color: #ef4444; font-size: 0.75rem; margin-top: 4px; display: block;">@_googleDriveError</span>
+                                }
+                            </div>
+                            
+                            <!-- File Browser -->
+                            <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <label style="font-size: 0.8rem; font-weight: 600; color: #4b5563; display: block;">My Drive (Simulated Documents & Charts)</label>
+                                    <button type="button" onclick="document.getElementById('dialog-local-upload').click()" style="background: transparent; border: 1px dashed #cbd5e1; color: #2563eb; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
+                                        Or Upload Local Image
+                                    </button>
+                                    <input type="file" id="dialog-local-upload" accept="image/*" onchange="window.editorInterop.uploadLocalImage(this); document.querySelector('.rte-modal-backdrop').click();" style="display: none;" />
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; max-height: 250px; overflow-y: auto; padding-right: 4px;">
+                                    @foreach (var img in _simulatedDriveImages)
+                                    {
+                                        <div class="drive-item" @onclick="() => SelectDriveImage(img)" style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.15s ease-out; background: #ffffff; text-align: center; display: flex; flex-direction: column; align-items: center; padding: 0.5rem;" onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.05)';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';">
+                                            <div style="width: 100%; height: 90px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; border-radius: 4px; overflow: hidden;">
+                                                <img src="@img.Url" alt="@img.Name" style="max-width: 100%; max-height: 100%; object-fit: cover;" />
+                                            </div>
+                                            <span style="font-size: 0.72rem; font-weight: 600; color: #374151; margin-top: 6px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">@img.Name</span>
+                                            <span style="font-size: 0.65rem; color: #9ca3af;">@img.Size</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div style="padding: 1rem 1.5rem; background: #fafafa; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end;">
+                            <button type="button" @onclick="CloseGoogleDriveDialog" style="padding: 8px 16px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: #475569; cursor: pointer;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <textarea class="rte-code-textarea"
+                      @bind="_rawText"
+                      style="width: 100%; max-width: 850px; min-height: 800px; padding: 2rem; outline: none; border: 1px solid #cbd5e1; border-radius: 6px; background: #0f172a; color: #38bdf8; font-family: 'Fira Code', 'Courier New', monospace; font-size: 0.95rem; line-height: 1.6; resize: vertical; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"
+                      placeholder="Enter raw source content here..."></textarea>
+        }
+    </div>
+</div>
+
+<style>
+    /* Make Quill fill the paper sheet */
+    #cke5-feature-rich-demo {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    #cke5-feature-rich-demo .ql-container {
+        border: none;
+        flex-grow: 1;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+    }
+
+    #cke5-feature-rich-demo .ql-editor {
+        min-height: 500px;
+        padding: 2rem 2.5rem;
+        line-height: 1.75;
+        color: #1e293b;
+    }
+
+    #cke5-feature-rich-demo .ql-editor.ql-blank::before {
+        color: #94a3b8;
+        font-style: normal;
+    }
+
+    /* Modern, compact toolbar overrides */
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow {
+        border: none !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        background: #f8fafc !important;
+        padding: 6px 12px !important;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 3px !important;
+        flex-shrink: 0;
+    }
+
+    /* Small/compact level toolbar buttons */
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button {
+        height: 26px !important;
+        width: 26px !important;
+        padding: 3px !important;
+        border-radius: 4px !important;
+        color: #475569 !important;
+        transition: all 0.15s ease !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button:hover {
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button.ql-active {
+        background: #e2e8f0 !important;
+        color: #2563eb !important;
+    }
+
+    /* Stroke & Fill overrides for custom states */
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-stroke {
+        stroke: #64748b !important;
+        stroke-width: 2px !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button.ql-active .ql-stroke,
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button.ql-active .ql-fill {
+        stroke: #2563eb !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button:hover .ql-stroke {
+        stroke: #0f172a !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-fill {
+        fill: #64748b !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button.ql-active .ql-fill {
+        fill: #2563eb !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow button:hover .ql-fill {
+        fill: #0f172a !important;
+    }
+
+    /* Modern Dropdown Picker elements */
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker {
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        height: 26px !important;
+        line-height: 26px !important;
+        color: #475569 !important;
+        margin-right: 4px !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker-label {
+        border: 1px solid transparent !important;
+        border-radius: 4px !important;
+        padding: 0 6px !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background: transparent !important;
+        transition: all 0.15s ease !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker-label:hover {
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker-label svg {
+        margin-left: 4px !important;
+        width: 10px !important;
+        height: 10px !important;
+    }
+
+    /* Set specific compact widths for font/size/header dropdowns */
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker.ql-header {
+        width: 85px !important;
+    }
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker.ql-font {
+        width: 95px !important;
+    }
+    #cke5-feature-rich-demo .ql-toolbar.ql-snow .ql-picker.ql-size {
+        width: 78px !important;
+    }
+
+    /* Dropdown Options popups style */
+    #cke5-feature-rich-demo .ql-snow .ql-picker-options {
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        border-radius: 8px !important;
+        padding: 6px !important;
+        background: #ffffff !important;
+        z-index: 100 !important;
+    }
+
+    #cke5-feature-rich-demo .ql-snow .ql-picker-options .ql-picker-item {
+        padding: 4px 8px !important;
+        border-radius: 4px !important;
+        transition: background 0.1s ease !important;
+    }
+
+    #cke5-feature-rich-demo .ql-snow .ql-picker-options .ql-picker-item:hover {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+    }
+
+    /* Color picker swatches popup */
+    #cke5-feature-rich-demo .ql-snow .ql-color-picker {
+        width: 28px !important;
+    }
+
+    #cke5-feature-rich-demo .ql-snow .ql-color-picker .ql-picker-label {
+        padding: 0 !important;
+        justify-content: center !important;
+    }
+
+    #cke5-feature-rich-demo .ql-snow .ql-color-picker .ql-picker-label svg {
+        pointer-events: none;
+        height: 0;
+    }
+
+    /* Custom Tiptap Toolbar Styles */
+    .tiptap-toolbar {
+        border-bottom: 1px solid #cbd5e1;
+        background: #f8fafc;
+        padding: 6px 12px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    .toolbar-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 10px;
+        border-right: 1px solid #e2e8f0;
+        min-height: 52px;
+    }
+
+    .toolbar-group:last-child {
+        border-right: none;
+    }
+
+    .toolbar-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-grow: 1;
+    }
+
+    .toolbar-group-label {
+        font-size: 0.6rem;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        user-select: none;
+        margin-top: 4px;
+        line-height: 1;
+    }
+
+    .tiptap-table-toolbar {
+        border-bottom: 1px solid #fecaca;
+        background: #fff5f5;
+        padding: 8px 14px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        animation: slideDown 0.15s ease-out;
+    }
+
+    @@keyframes slideDown {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tiptap-btn {
+        border: none;
+        background: transparent;
+        height: 28px;
+        width: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        color: #475569;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.15s ease;
+    }
+
+    .tiptap-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .tiptap-btn.active {
+        background: #cbd5e1;
+        color: #2563eb;
+        font-weight: bold;
+    }
+
+    .table-tool-btn {
+        border: 1px solid #fecaca;
+        background: #ffffff;
+        padding: 4px 10px;
+        border-radius: 4px;
+        color: #b91c1c;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 600;
+        transition: all 0.15s ease;
+    }
+
+    .table-tool-btn:hover {
+        background: #fee2e2;
+        border-color: #f87171;
+    }
+
+    .tiptap-select {
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        font-family: 'Outfit', sans-serif;
+        color: #475569;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .tiptap-select:hover {
+        border-color: #94a3b8;
+    }
+
+    .tiptap-divider {
+        width: 1px;
+        height: 18px;
+        background: #cbd5e1;
+        margin: 0 4px;
+    }
+
+    /* Color picker dropdown styling */
+    .tiptap-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tiptap-dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #ffffff;
+        min-width: 130px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 8px;
+        z-index: 101;
+        flex-wrap: wrap;
+        gap: 6px;
+        top: 30px;
+        left: 0;
+    }
+
+    .tiptap-dropdown:hover .tiptap-dropdown-content,
+    .tiptap-dropdown:focus-within .tiptap-dropdown-content {
+        display: flex;
+    }
+
+    .tiptap-dropdown:hover .tiptap-dropdown-content.grid-layout,
+    .tiptap-dropdown:focus-within .tiptap-dropdown-content.grid-layout {
+        display: grid;
+    }
+
+    .color-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,0,0,0.08);
+        cursor: pointer;
+        transition: transform 0.15s ease;
+    }
+
+    .color-dot:hover {
+        transform: scale(1.25);
+    }
+
+    /* Base ProseMirror editor styling */
+    .ProseMirror {
+        flex-grow: 1;
+        min-height: 550px;
+        padding: 32px;
+        outline: none;
+        font-family: 'Outfit', sans-serif;
+        color: #0f172a;
+        font-size: 1.25rem;
+        line-height: 1.8;
+    }
+
+    /* Modern Table Layout & Styles inside Tiptap Editor Canvas */
+    .ProseMirror table {
+        border-collapse: collapse !important;
+        table-layout: fixed;
+        width: 100%;
+        margin: var(--table-margin, 1.5rem auto) !important;
+        overflow: hidden;
+        border: var(--table-border-width, 2px) var(--table-border-style, solid) var(--table-border-color, #cbd5e1) !important;
+    }
+
+    .ProseMirror table.table-align-left {
+        --table-margin: 1.5rem auto 1.5rem 0;
+    }
+    .ProseMirror table.table-align-center {
+        --table-margin: 1.5rem auto;
+    }
+    .ProseMirror table.table-align-right {
+        --table-margin: 1.5rem 0 1.5rem auto;
+    }
+
+    .ProseMirror td, .ProseMirror th {
+        min-width: 1em;
+        border-width: var(--table-border-width, 2px) !important;
+        border-style: var(--table-border-style, solid) !important;
+        border-color: var(--table-border-color, #cbd5e1) !important;
+        padding: 12px 16px;
+        vertical-align: top;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    .ProseMirror th {
+        font-weight: 700;
+        background-color: #f1f5f9;
+        text-align: left;
+    }
+
+    /* Selected cell styling in Tiptap */
+    .ProseMirror .selectedCell:after {
+        background: rgba(37, 99, 235, 0.08);
+        content: "";
+        left: 0; right: 0; top: 0; bottom: 0;
+        pointer-events: none;
+        position: absolute;
+        z-index: 2;
+    }
+
+    /* Column resizer styling */
+    .ProseMirror .column-resize-handle {
+        position: absolute;
+        right: -2px;
+        top: 0;
+        bottom: -2px;
+        width: 4px;
+        background-color: #3b82f6;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 10;
+        cursor: col-resize;
+    }
+
+    .ProseMirror table:hover .column-resize-handle {
+        opacity: 0.3;
+    }
+
+    .ProseMirror .column-resize-handle:hover,
+    .ProseMirror table:hover .column-resize-handle.selected {
+        opacity: 1;
+        width: 6px;
+    }
+
+    /* Alignments */
+    .ProseMirror[data-align="left"] { text-align: left; }
+    .ProseMirror[data-align="center"] { text-align: center; }
+    .ProseMirror[data-align="right"] { text-align: right; }
+    .ProseMirror[data-align="justify"] { text-align: justify; }
+
+    /* Custom font classes styling */
+    .ProseMirror span[style*="font-family"] {
+        display: inline-block;
+    }
+
+    /* Subscript and Superscript styling */
+    .ProseMirror sub, .ProseMirror sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative;
+        vertical-align: baseline;
+    }
+    .ProseMirror sub {
+        bottom: -0.25em;
+    }
+    .ProseMirror sup {
+        top: -0.5em;
+    }
+
+    /* Blockquote styling */
+    .ProseMirror blockquote {
+        border-left: 4px solid #cbd5e1;
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: #475569;
+        font-style: italic;
+    }
+
+    /* Code Block styling */
+    .ProseMirror pre {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        font-family: monospace;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+    .ProseMirror pre code {
+        color: inherit;
+        padding: 0;
+        background: none;
+        font-size: 0.9rem;
+    }
+
+    /* Horizontal Rule styling */
+    .ProseMirror hr {
+        border: none;
+        border-top: 2px solid #e2e8f0;
+        margin: 2rem 0;
+    }
+
+    /* Task List / Checklist styling */
+    .ProseMirror ul[data-type="taskList"] {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0;
+    }
+    .ProseMirror li[data-type="taskItem"] {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .ProseMirror li[data-type="taskItem"] > label {
+        user-select: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        margin-top: 0.25rem;
+    }
+    .ProseMirror li[data-type="taskItem"] > label input[type="checkbox"] {
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        accent-color: #2563eb;
+        margin: 0;
+    }
+    .ProseMirror li[data-type="taskItem"] > div {
+        flex: 1;
+    }
+    .ProseMirror li[data-type="taskItem"][data-checked="true"] > div {
+        text-decoration: line-through;
+        color: #94a3b8;
+    }
+
+    /* Image styling & transitions */
+    .ProseMirror img {
+        transition: outline 0.15s ease, box-shadow 0.15s ease;
+        cursor: pointer;
+    }
+    .ProseMirror img.ProseMirror-selectednode {
+        outline: 3px solid #3b82f6;
+        box-shadow: 0 0 0 1px #ffffff, 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Visual page break styling */
+    .ProseMirror hr.page-break, .ProseMirror div.page-break {
+        border: none;
+        height: 16px;
+        background: #f1f5f9;
+        margin: 2rem -2.5rem;
+        position: relative;
+        border-top: 1px dashed #cbd5e1;
+        border-bottom: 1px dashed #cbd5e1;
+        cursor: default;
+        user-select: none;
+    }
+    /* ── Google Docs-style Table Panel CSS ─────────────────────────────────── */
+
+    /* Grid picker cells */
+    .grid-cell {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #e2e8f0;
+        border-radius: 3px;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: border-color 0.1s, background 0.1s;
+    }
+    .grid-cell:hover, .grid-cell-selected {
+        background: #dbeafe;
+        border-color: #2563eb;
+    }
+
+    /* Style preset mini-table buttons */
+    .table-preset-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 4px;
+        background: #ffffff;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+        font-size: 0.6rem;
+        color: #374151;
+        font-weight: 600;
+    }
+    .table-preset-btn:hover {
+        background: #f0f4ff;
+        transform: scale(1.04);
+    }
+    .preset-mini-table {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        width: 32px;
+        height: 24px;
+        gap: 1px;
+        border: var(--pw, 1px) solid var(--pc, #94a3b8);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .preset-mini-table > div {
+        background: #f8fafc;
+        border: var(--pw, 1px) solid var(--pc, #94a3b8);
+    }
+
+    /* Alignment toggle buttons */
+    .align-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .align-btn:hover { background: #f1f5f9; border-color: #94a3b8; }
+    .align-btn-active {
+        background: #eff6ff;
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+
+    /* Color swatches for border presets */
+    .color-swatch {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid rgba(0,0,0,0.08);
+        cursor: pointer;
+        display: inline-block;
+        transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .color-swatch:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 2px #2563eb44;
+    }
+
+    /* Google Docs-style labels, selects, and buttons */
+    .gdocs-label {
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        display: block;
+        margin-bottom: 3px;
+    }
+    .gdocs-select {
+        width: 100%;
+        padding: 3px 5px;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        font-size: 0.76rem;
+        height: 28px;
+        box-sizing: border-box;
+        color: #374151;
+        background: #ffffff;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+    .gdocs-select:focus { border-color: #2563eb; }
+
+    .gdocs-btn {
+        padding: 4px 10px;
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #374151;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+    }
+    .gdocs-btn:hover { background: #f9fafb; border-color: #9ca3af; }
+    .gdocs-btn-primary {
+        background: #2563eb;
+        color: #ffffff;
+        border-color: #2563eb;
+    }
+    .gdocs-btn-primary:hover { background: #1d4ed8; }
+
+    /* Table panel keeps dropdown open while interacting */
+    .tiptap-dropdown:focus-within .tiptap-dropdown-content.table-panel,
+    .tiptap-dropdown:hover .tiptap-dropdown-content.table-panel {
+        display: flex !important;
+        flex-direction: column;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    /* Ribbon Styles */
+    .ribbon-tab-btn {
+        border: none;
+        background: transparent;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.15s ease;
+    }
+    .ribbon-tab-btn:hover {
+        color: #0f172a;
+        background: #e2e8f0;
+    }
+    .ribbon-tab-btn.active {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+        font-weight: 700;
+    }
+
+    /* Fullscreen editor styling */
+    .rte-container.fullscreen-editor {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        background: #f1f5f9;
+    }
+
+    /* Dark Mode Canvas styling */
+    .rte-paper-sheet.dark-sheet {
+        background: #1e293b !important;
+        color: #f8fafc !important;
+        border-color: #334155 !important;
+    }
+    .rte-paper-sheet.dark-sheet .ProseMirror {
+        color: #f8fafc !important;
+    }
+    .rte-paper-sheet.dark-sheet .ProseMirror p,
+    .rte-paper-sheet.dark-sheet .ProseMirror h1,
+    .rte-paper-sheet.dark-sheet .ProseMirror h2,
+    .rte-paper-sheet.dark-sheet .ProseMirror h3,
+    .rte-paper-sheet.dark-sheet .ProseMirror li {
+        color: #f8fafc !important;
+    }
+
+    /* Draggable sidebar widgets hover */
+    .drag-widget {
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        user-select: none;
+    }
+    .drag-widget:hover {
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+        transform: translateY(-1px);
+        background: #eff6ff !important;
+        border-color: #3b82f6 !important;
+    }
+</style>
+
+
+
+@code {
+    private string _viewMode = "wysiwyg";
+    private string _rawText = "";
+    private string _currentHtml = "";
+    private string _paperWidth = "850px";
+
+    // Ribbon and Advanced controls variables
+    private string _activeTab = "home";
+    private double _zoomFactor = 1.0;
+    private bool _darkModeEnabled = false;
+    private bool _readOnlyMode = false;
+    private bool _fullscreenEnabled = false;
+
+    // Element & Media Manager Table Settings
+    private int _tableRows = 3;
+    private int _tableCols = 3;
+    private string _tableBorderColor = "#94a3b8";
+    private string _tableBorderWidth = "2px";
+    private string _tableBorderStyle = "solid";
+    private string _tableAlignment = "center";
+    private string _cellBgColor = "#ffffff";
+    private string _cellPadding = "12px 16px";
+    private readonly string[] _tableBorderPresetColors = new[]
+    {
+        "#94a3b8", "#3b82f6", "#10b981", "#ef4444", "#f59e0b", "#6366f1"
+    };
+
+    private async Task SetPresetTableBorderColor(string color)
+    {
+        _tableBorderColor = color;
+        await ApplyTableAttributes();
+    }
+
+    private async Task InsertTableDirectly()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "insertTableWithAttrs", new 
+        { 
+            rows = _tableRows, 
+            cols = _tableCols, 
+            borderColor = _tableBorderColor,
+            borderWidth = _tableBorderWidth,
+            borderStyle = _tableBorderStyle,
+            alignment = _tableAlignment
+        });
+    }
+
+    private async Task ApplyTableAttributes()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "setTableAttributes", new 
+        { 
+            borderColor = _tableBorderColor,
+            borderWidth = _tableBorderWidth,
+            borderStyle = _tableBorderStyle,
+            alignment = _tableAlignment
+        });
+    }
+
+    private async Task ApplyCellBackgroundColor()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "setCellBackgroundColor", _cellBgColor);
+    }
+
+    private async Task ClearCellBackgroundColor()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "setCellBackgroundColor", null);
+    }
+
+    private async Task ApplyCellPadding()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "setCellPadding", _cellPadding);
+    }
+
+    private async Task AddNewPage()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "pageBreak");
+    }
+
+    private async Task MergeTables()
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "mergeAdjacentTables");
+    }
+
+    // Google Drive Dialog State
+    private bool _isGoogleDriveDialogOpen = false;
+    private string _googleDriveUrlInput = "";
+    private string _googleDriveError = "";
+
+    private void OpenGoogleDriveDialog()
+    {
+        _googleDriveUrlInput = "";
+        _googleDriveError = "";
+        _isGoogleDriveDialogOpen = true;
+    }
+
+    private void CloseGoogleDriveDialog()
+    {
+        _isGoogleDriveDialogOpen = false;
+    }
+
+    private async Task OpenGoogleDriveLinkPrompt()
+    {
+        OpenGoogleDriveDialog();
+        await Task.CompletedTask;
+    }
+
+    private async Task ImportGoogleDriveLink()
+    {
+        if (string.IsNullOrWhiteSpace(_googleDriveUrlInput))
+        {
+            _googleDriveError = "Please enter a valid link.";
+            return;
+        }
+
+        var directUrl = ConvertGoogleDriveUrl(_googleDriveUrlInput);
+        if (string.IsNullOrEmpty(directUrl))
+        {
+            _googleDriveError = "Invalid Google Drive sharing URL format.";
+            return;
+        }
+
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "insertBase64Image", directUrl);
+        _isGoogleDriveDialogOpen = false;
+    }
+
+    private async Task SelectDriveImage(DriveImage image)
+    {
+        await JSRuntime.InvokeVoidAsync("editorInterop.execute", "insertBase64Image", image.Url);
+        _isGoogleDriveDialogOpen = false;
+    }
+
+    private string? ConvertGoogleDriveUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return null;
+        string fileId = "";
+        if (url.Contains("drive.google.com/file/d/"))
+        {
+            var parts = url.Split("drive.google.com/file/d/");
+            if (parts.Length > 1)
+            {
+                fileId = parts[1].Split('/')[0].Split('?')[0];
+            }
+        }
+        else if (url.Contains("drive.google.com/open?id="))
+        {
+            var parts = url.Split("drive.google.com/open?id=");
+            if (parts.Length > 1)
+            {
+                fileId = parts[1].Split('&')[0];
+            }
+        }
+        else if (url.Contains("docs.google.com/uc?id="))
+        {
+            return url;
+        }
+        else if (url.Contains("docs.google.com/uc?export=download&id="))
+        {
+            return url;
+        }
+        
+        if (!string.IsNullOrEmpty(fileId))
+        {
+            return $"https://docs.google.com/uc?export=download&id={fileId}";
+        }
+        return url;
+    }
+
+    private class DriveImage
+    {
+        public string Name { get; set; } = "";
+        public string Url { get; set; } = "";
+        public string Size { get; set; } = "";
+    }
+
+    private readonly List<DriveImage> _simulatedDriveImages = new()
+    {
+        new DriveImage { Name = "Labcare_Logo.png", Url = "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=300&q=80", Size = "45 KB" },
+        new DriveImage { Name = "Clinical_Report_Header.jpg", Url = "https://images.unsplash.com/photo-1504813184591-015556c5c50c?auto=format&fit=crop&w=300&q=80", Size = "120 KB" },
+        new DriveImage { Name = "Xray_Chest_PatientA.jpg", Url = "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=300&q=80", Size = "340 KB" },
+        new DriveImage { Name = "Lab_Autoclave_Chart.png", Url = "https://images.unsplash.com/photo-1579684389782-64d84b5e901a?auto=format&fit=crop&w=300&q=80", Size = "210 KB" },
+        new DriveImage { Name = "Medical_Infographic.png", Url = "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=300&q=80", Size = "520 KB" },
+        new DriveImage { Name = "ECG_Scan_Results.jpg", Url = "https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=300&q=80", Size = "180 KB" }
+    };
+
+    private readonly string[] _emojiPalette = new[]
+    {
+        "😀", "😄", "😂", "😊", "😍", "👍", "🙌", "🎉", "🔥", "✨",
+        "❤️", "💡", "⭐", "📝", "✔️"
+    };
+
+    private readonly string[] _colorPalette = new[]
+    {
+        "#000000", "#333333", "#666666", "#999999", "#cccccc", "#ffffff",
+        "#ef4444", "#f97316", "#f59e0b", "#10b981", "#06b6d4", "#3b82f6",
+        "#6366f1", "#8b5cf6", "#d946ef", "#ec4899", "#f43f5e", "#14b8a6"
+    };
+
+    [Parameter]
+    public string InitialHtml { get; set; } = "";
+
+    private string _previousInitialHtml = "";
+
+    private HtmlSerializer _htmlSerializer = null!;
+    private MarkdownSerializer _markdownSerializer = null!;
+    private DotNetObjectReference<RichTextEditor>? _objRef;
+    private bool _shouldInitCKEditor = false;
+
+    protected override void OnInitialized()
+    {
+        _htmlSerializer = new HtmlSerializer();
+        _markdownSerializer = new MarkdownSerializer();
+
+        // Load default content or initial content
+        if (!string.IsNullOrEmpty(InitialHtml))
+        {
+            _currentHtml = InitialHtml;
+            _previousInitialHtml = InitialHtml;
+        }
+        else
+        {
+            _currentHtml = "<h1>🚀 CKEditor 5 Rich Text Composer</h1>" +
+                           "<p>Welcome! This editor is powered by <strong>CKEditor 5</strong>, offering a premium and feature-rich editing experience.</p>" +
+                           "<h2>Core Features</h2>" +
+                           "<ul>" +
+                           "<li>Complete range of text styles (Bold, Italic, Underline, Strikethrough, Subscript, Superscript, Highlights, Colors)</li>" +
+                           "<li>Dynamic widgets (Tables, Images, Links, Bookmarks, Media Embeds)</li>" +
+                           "<li>Advanced paragraph styling, indentation, lists, alignment, and custom emoji support</li>" +
+                           "</ul>";
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (InitialHtml != _previousInitialHtml)
+        {
+            _previousInitialHtml = InitialHtml;
+            if (_currentHtml != InitialHtml)
+            {
+                _currentHtml = InitialHtml;
+                if (_viewMode == "wysiwyg" && JSRuntime != null)
+                {
+                    try
+                    {
+                        await JSRuntime.InvokeVoidAsync("editorInterop.setContent", InitialHtml);
+                    }
+                    catch { }
+                }
+                else
+                {
+                    _rawText = InitialHtml;
+                }
+                StateHasChanged();
+            }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            _shouldInitCKEditor = true;
+            StateHasChanged(); // trigger second render so the flag is picked up
+            return;
+        }
+
+        if (_shouldInitCKEditor && _viewMode == "wysiwyg")
+        {
+            _shouldInitCKEditor = false;
+            await JSRuntime.InvokeVoidAsync("editorInterop.initCKEditor", "#cke5-feature-rich-demo", _objRef, _currentHtml);
+        }
+    }
+
+    [JSInvokable]
+    public void OnEditorContentChanged(string html)
+    {
+        _currentHtml = html;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnZoomChanged(double zoom)
+    {
+        _zoomFactor = zoom;
+        StateHasChanged();
+    }
+
+    private async Task SetZoomFactor(double factor)
+    {
+        _zoomFactor = factor;
+        await JSRuntime.InvokeVoidAsync("editorInterop.setZoom", factor);
+    }
+
+    private async Task ToggleReadOnly()
+    {
+        _readOnlyMode = !_readOnlyMode;
+        await JSRuntime.InvokeVoidAsync("editorInterop.setEditable", !_readOnlyMode);
+    }
+
+    public async Task SetHtmlContentAsync(string html)
+    {
+        _currentHtml = html;
+        if (_viewMode == "wysiwyg")
+        {
+            await JSRuntime.InvokeVoidAsync("editorInterop.setContent", html);
+        }
+        else
+        {
+            _rawText = html;
+        }
+        StateHasChanged();
+    }
+
+    public string GetHtmlContent()
+    {
+        if (_viewMode == "wysiwyg")
+        {
+            return _currentHtml;
+        }
+        else if (_viewMode == "html")
+        {
+            return _rawText;
+        }
+        else // markdown
+        {
+            return ConvertMarkdownToHtml(_rawText);
+        }
+    }
+
+    private async Task HandleViewModeChanged(string newMode)
+    {
+        if (_viewMode == newMode) return;
+
+        // Transition from WYSIWYG to other modes
+        if (_viewMode == "wysiwyg")
+        {
+            if (newMode == "html")
+            {
+                _rawText = _currentHtml;
+            }
+            else if (newMode == "markdown")
+            {
+                _rawText = await ConvertHtmlToMarkdownAsync(_currentHtml);
+            }
+            await JSRuntime.InvokeVoidAsync("editorInterop.destroyCKEditor");
+        }
+        // Transition from HTML to other modes
+        else if (_viewMode == "html")
+        {
+            if (newMode == "wysiwyg")
+            {
+                _currentHtml = _rawText;
+                _shouldInitCKEditor = true;
+            }
+            else if (newMode == "markdown")
+            {
+                var astJson = await JSRuntime.InvokeAsync<string>("editorInterop.htmlToAst", _rawText);
+                var doc = System.Text.Json.JsonSerializer.Deserialize<ElementNode>(astJson);
+                _rawText = doc != null ? _markdownSerializer.Serialize(doc) : "";
+            }
+        }
+        // Transition from Markdown to other modes
+        else if (_viewMode == "markdown")
+        {
+            var html = ConvertMarkdownToHtml(_rawText);
+            if (newMode == "wysiwyg")
+            {
+                _currentHtml = html;
+                _shouldInitCKEditor = true;
+            }
+            else if (newMode == "html")
+            {
+                _rawText = html;
+            }
+        }
+
+        _viewMode = newMode;
+        StateHasChanged();
+    }
+
+    private async Task<string> ConvertHtmlToMarkdownAsync(string html)
+    {
+        try
+        {
+            var astJson = await JSRuntime.InvokeAsync<string>("editorInterop.htmlToAst", html);
+            var doc = System.Text.Json.JsonSerializer.Deserialize<ElementNode>(astJson);
+            if (doc != null)
+            {
+                return _markdownSerializer.Serialize(doc);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error converting HTML to Markdown: {ex.Message}");
+        }
+        return "";
+    }
+
+    private string ReplaceInlineMarkdown(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        
+        // Escape HTML first to prevent injection issues
+        var escaped = System.Net.WebUtility.HtmlEncode(text);
+
+        // Bold
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"\*\*([^*]+)\*\*", "<strong>$1</strong>");
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"__([^_]+)__", "<strong>$1</strong>");
+
+        // Italic
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"\*([^*]+)\*", "<em>$1</em>");
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"_([^_]+)_", "<em>$1</em>");
+
+        // Code
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"`([^`]+)`", "<code>$1</code>");
+
+        // Strikethrough
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"~~([^~]+)~~", "<s>$1</s>");
+
+        // Subscript and Superscript
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"~([^~]+)~", "<sub>$1</sub>");
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"\^([^^]+)\^", "<sup>$1</sup>");
+
+        // Images: ![alt](url)
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"!\[([^\]]*)\]\(([^)]+)\)", "<img src=\"$2\" alt=\"$1\" />");
+
+        // Links: [text](url)
+        escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"\[([^\]]+)\]\(([^)]+)\)", "<a href=\"$2\" target=\"_blank\">$1</a>");
+        
+        // Unescape tags we just added
+        escaped = escaped.Replace("&lt;strong&gt;", "<strong>").Replace("&lt;/strong&gt;", "</strong>")
+                         .Replace("&lt;em&gt;", "<em>").Replace("&lt;/em&gt;", "</em>")
+                         .Replace("&lt;code&gt;", "<code>").Replace("&lt;/code&gt;", "</code>")
+                         .Replace("&lt;s&gt;", "<s>").Replace("&lt;/s&gt;", "</s>")
+                         .Replace("&lt;sub&gt;", "<sub>").Replace("&lt;/sub&gt;", "</sub>")
+                         .Replace("&lt;sup&gt;", "<sup>").Replace("&lt;/sup&gt;", "</sup>")
+                         .Replace("&lt;img ", "<img ").Replace("/&gt;", "/>")
+                         .Replace("&lt;a ", "<a ").Replace("&lt;/a&gt;", "</a>");
+
+        return escaped;
+    }
+
+    private void CloseActiveBlock(System.Text.StringBuilder sb, ref string activeBlock, System.Collections.Generic.List<string> tableLines = null!)
+    {
+        if (string.IsNullOrEmpty(activeBlock)) return;
+
+        if (activeBlock == "ul") sb.Append("</ul>");
+        else if (activeBlock == "ol") sb.Append("</ol>");
+        else if (activeBlock == "taskList") sb.Append("</ul>");
+        else if (activeBlock == "blockquote") sb.Append("</blockquote>");
+        else if (activeBlock == "table" && tableLines != null && tableLines.Count > 0)
+        {
+            sb.Append("<table style=\"border-collapse: collapse; width: 100%; margin: 1.5rem 0;\"><tbody>");
+            for (int i = 0; i < tableLines.Count; i++)
+            {
+                var rowText = tableLines[i].Trim();
+                if (i == 1 && rowText.Contains("---"))
+                {
+                    continue; // Skip separator row
+                }
+                sb.Append("<tr style=\"border-bottom: 1px solid #e2e8f0;\">");
+                var cells = rowText.Split('|', StringSplitOptions.None);
+                int startIdx = 1;
+                int endIdx = cells.Length - 2;
+                if (cells.Length <= 2)
+                {
+                    startIdx = 0;
+                    endIdx = cells.Length - 1;
+                }
+                for (int c = startIdx; c <= endIdx; c++)
+                {
+                    var cellContent = cells[c].Trim();
+                    string cellTag = (i == 0) ? "th" : "td";
+                    string cellStyle = cellTag == "th" 
+                        ? "border: 2px solid #cbd5e1; padding: 12px 16px; font-weight: 700; background-color: #f1f5f9; text-align: left;" 
+                        : "border: 2px solid #cbd5e1; padding: 12px 16px; min-width: 60px; background: #ffffff;";
+                    sb.Append($"<{cellTag} style=\"{cellStyle}\">");
+                    sb.Append(ReplaceInlineMarkdown(cellContent));
+                    sb.Append($"</{cellTag}>");
+                }
+                sb.Append("</tr>");
+            }
+            sb.Append("</tbody></table>");
+        }
+        
+        activeBlock = "";
+    }
+
+    private string ConvertMarkdownToHtml(string md)
+    {
+        if (string.IsNullOrEmpty(md)) return "";
+        var lines = md.Split('\n');
+        var sb = new System.Text.StringBuilder();
+        
+        string activeBlock = ""; // "ul", "ol", "taskList", "blockquote", "code-block", "table"
+        var codeBlockContent = new System.Text.StringBuilder();
+        var tableLines = new System.Collections.Generic.List<string>();
+
+        foreach (var rawLine in lines)
+        {
+            var line = rawLine;
+            // Handle carriage return
+            if (line.EndsWith("\r")) line = line.Substring(0, line.Length - 1);
+            var trimmed = line.Trim();
+
+            // Table Row Handling
+            if (trimmed.StartsWith("|"))
+            {
+                if (activeBlock != "table")
+                {
+                    CloseActiveBlock(sb, ref activeBlock, tableLines);
+                    activeBlock = "table";
+                    tableLines.Clear();
+                }
+                tableLines.Add(trimmed);
+                continue;
+            }
+
+            // Code block handling
+            if (trimmed.StartsWith("```"))
+            {
+                if (activeBlock == "code-block")
+                {
+                    sb.Append($"<pre><code>{System.Net.WebUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd())}</code></pre>");
+                    codeBlockContent.Clear();
+                    activeBlock = "";
+                }
+                else
+                {
+                    CloseActiveBlock(sb, ref activeBlock, tableLines);
+                    activeBlock = "code-block";
+                }
+                continue;
+            }
+
+            if (activeBlock == "code-block")
+            {
+                codeBlockContent.AppendLine(line);
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(trimmed))
+            {
+                CloseActiveBlock(sb, ref activeBlock, tableLines);
+                continue;
+            }
+
+            // Page Break
+            if (trimmed == "<!-- page-break -->")
+            {
+                CloseActiveBlock(sb, ref activeBlock, tableLines);
+                sb.Append("<hr class=\"page-break\" style=\"border-top: 2px dashed #3b82f6; margin: 2rem 0; position: relative; text-align: center; page-break-after: always; height: 0;\" />");
+                continue;
+            }
+
+            // Video: @[video](url)
+            var videoMatch = System.Text.RegularExpressions.Regex.Match(trimmed, @"^@\[video\]\(([^)]+)\)$");
+            if (videoMatch.Success)
+            {
+                CloseActiveBlock(sb, ref activeBlock, tableLines);
+                var url = videoMatch.Groups[1].Value;
+                if (url.Contains("youtube.com") || url.Contains("youtu.be") || url.Contains("vimeo.com") || url.Contains("player.vimeo.com"))
+                {
+                    string embedUrl = url;
+                    if (url.Contains("youtube.com/watch?v="))
+                    {
+                        var videoId = url.Split("v=")[1].Split('&')[0];
+                        embedUrl = $"https://www.youtube.com/embed/{videoId}";
+                    }
+                    else if (url.Contains("youtu.be/"))
+                    {
+                        var videoId = url.Split("youtu.be/")[1].Split('?')[0];
+                        embedUrl = $"https://www.youtube.com/embed/{videoId}";
+                    }
+                    sb.Append($"<div class=\"video-wrapper\" style=\"position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 1.5rem 0;\"><iframe src=\"{embedUrl}\" width=\"100%\" style=\"position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;\" allowfullscreen=\"true\" frameborder=\"0\"></iframe></div>");
+                }
+                else
+                {
+                    sb.Append($"<video src=\"{url}\" controls=\"true\" style=\"max-width: 100%; margin: 1.5rem 0; display: block; border-radius: 8px;\" width=\"100%\"></video>");
+                }
+                continue;
+            }
+
+            // Horizontal Rule
+            if (trimmed == "---" || trimmed == "***" || trimmed == "___")
+            {
+                CloseActiveBlock(sb, ref activeBlock, tableLines);
+                sb.Append("<hr />");
+                continue;
+            }
+
+            // Headings
+            if (trimmed.StartsWith("#"))
+            {
+                CloseActiveBlock(sb, ref activeBlock, tableLines);
+                int level = 0;
+                while (level < trimmed.Length && trimmed[level] == '#') level++;
+                if (level >= 1 && level <= 6 && level < trimmed.Length && trimmed[level] == ' ')
+                {
+                    var content = trimmed.Substring(level + 1).Trim();
+                    sb.Append($"<h{level}>{ReplaceInlineMarkdown(content)}</h{level}>");
+                    continue;
+                }
+            }
+
+            // Blockquote
+            if (trimmed.StartsWith(">"))
+            {
+                if (activeBlock != "blockquote")
+                {
+                    CloseActiveBlock(sb, ref activeBlock, tableLines);
+                    sb.Append("<blockquote>");
+                    activeBlock = "blockquote";
+                }
+                var content = trimmed.Substring(1).Trim();
+                sb.Append($"<p>{ReplaceInlineMarkdown(content)}</p>");
+                continue;
+            }
+
+            // Task List Item: starts with "- [ ] " or "- [x] " or "* [ ] " or "* [x] "
+            var isTaskItem = (trimmed.StartsWith("- [ ] ") || trimmed.StartsWith("- [x] ") ||
+                              trimmed.StartsWith("* [ ] ") || trimmed.StartsWith("* [x] "));
+            if (isTaskItem)
+            {
+                if (activeBlock != "taskList")
+                {
+                    CloseActiveBlock(sb, ref activeBlock, tableLines);
+                    sb.Append("<ul data-type=\"taskList\">");
+                    activeBlock = "taskList";
+                }
+                bool isChecked = trimmed.Contains("[x]");
+                var content = trimmed.Substring(6).Trim();
+                sb.Append($"<li data-type=\"taskItem\" data-checked=\"{(isChecked ? "true" : "false")}\">");
+                sb.Append($"<label><input type=\"checkbox\" {(isChecked ? "checked" : "")} /><span></span></label>");
+                sb.Append($"<div>{ReplaceInlineMarkdown(content)}</div>");
+                sb.Append("</li>");
+                continue;
+            }
+
+            // Bullet List Item: starts with "- " or "* "
+            if (trimmed.StartsWith("- ") || trimmed.StartsWith("* "))
+            {
+                if (activeBlock != "ul")
+                {
+                    CloseActiveBlock(sb, ref activeBlock, tableLines);
+                    sb.Append("<ul>");
+                    activeBlock = "ul";
+                }
+                var content = trimmed.Substring(2).Trim();
+                sb.Append($"<li>{ReplaceInlineMarkdown(content)}</li>");
+                continue;
+            }
+
+            // Numbered List Item: starts with "1. " or "1) " (or any digits)
+            var numberedMatch = System.Text.RegularExpressions.Regex.Match(trimmed, @"^(\d+)[.)]\s+(.*)$");
+            if (numberedMatch.Success)
+            {
+                if (activeBlock != "ol")
+                {
+                    CloseActiveBlock(sb, ref activeBlock, tableLines);
+                    sb.Append("<ol>");
+                    activeBlock = "ol";
+                }
+                var content = numberedMatch.Groups[2].Value.Trim();
+                sb.Append($"<li>{ReplaceInlineMarkdown(content)}</li>");
+                continue;
+            }
+
+            // Plain Paragraph
+            CloseActiveBlock(sb, ref activeBlock, tableLines);
+            sb.Append($"<p>{ReplaceInlineMarkdown(trimmed)}</p>");
+        }
+
+        CloseActiveBlock(sb, ref activeBlock, tableLines);
+        return sb.ToString();
+    }
+
+    private string StripHtmlTags(string html)
+    {
+        if (string.IsNullOrEmpty(html)) return "";
+        var charArray = new char[html.Length];
+        int index = 0;
+        bool inTag = false;
+        for (int i = 0; i < html.Length; i++)
+        {
+            char c = html[i];
+            if (c == '<')
+            {
+                inTag = true;
+                continue;
+            }
+            if (c == '>')
+            {
+                inTag = false;
+                continue;
+            }
+            if (!inTag)
+            {
+                charArray[index++] = c;
+            }
+        }
+        return new string(charArray, 0, index);
+    }
+
+    private int GetCharacterCount()
+    {
+        return StripHtmlTags(_currentHtml).Length;
+    }
+
+    private int GetWordCount()
+    {
+        var text = StripHtmlTags(_currentHtml);
+        if (string.IsNullOrWhiteSpace(text)) return 0;
+        return text.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+    }
+
+
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
+    }
+}
