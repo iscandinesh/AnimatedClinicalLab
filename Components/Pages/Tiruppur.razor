@@ -24,7 +24,9 @@
     .tiruppur-hero {
         position: relative;
         background: #090c15 !important;
-        min-height: 650px;
+        min-height: 520px;
+        padding-top: 165px !important;
+        padding-bottom: 115px !important;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -47,7 +49,19 @@
         pointer-events: none;
         animation: heroBackgroundZoom 10s ease-in-out infinite alternate;
     }
+    @@media (max-width: 992px) {
+        .tiruppur-hero {
+            min-height: 440px;
+            padding-top: 130px !important;
+            padding-bottom: 90px !important;
+        }
+    }
     @@media (max-width: 768px) {
+        .tiruppur-hero {
+            min-height: 360px;
+            padding-top: 110px !important;
+            padding-bottom: 70px !important;
+        }
         .tiruppur-hero::before {
             opacity: 0.85;
         }
@@ -55,12 +69,13 @@
     
     @@keyframes heroBackgroundZoom {
         0% {
-            transform: scale(1);
+            transform: scale(1.02);
         }
         100% {
-            transform: scale(1.12);
+            transform: scale(1.08);
         }
     }
+
     
     /* Event Slider Styles */
     .carousel-control-btn:hover {
@@ -506,7 +521,7 @@
 </style>
 
 <!-- Hero Section -->
-<section class="page-header tiruppur-hero py-5 position-relative" style="padding-top: 180px !important; padding-bottom: 120px !important;">
+<section class="page-header tiruppur-hero py-5 position-relative">
     <!-- Aesthetic Background Layers -->
     <div class="mesh-bg"></div>
     <div class="hero-grid-bg"></div>
