@@ -1868,3 +1868,28 @@ if (document.readyState === 'loading') {
         }
     };
 })();
+
+window.downloadTextFile = function(filename, content) {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
+window.generatePdfFromHtml = function(elementId, filename) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    const opt = {
+        margin:       10,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().from(element).set(opt).save();
+};

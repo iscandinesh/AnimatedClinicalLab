@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AlphaRazor.Services;
@@ -317,5 +318,171 @@ public class EmailService
                 await conn.DisposeAsync();
             }
         }
+    }
+
+    public async Task<List<MailTransaction>> GetMailTransactionsAsync()
+    {
+        var list = new List<MailTransaction>();
+        try
+        {
+            string connStr = GetConnectionString();
+            using var conn = new NpgsqlConnection(connStr);
+            await conn.OpenAsync();
+            await EnsureTableCreatedAsync(conn);
+
+            // Fetch only non-deleted transactions
+            string selectSql = @"
+                SELECT mt_code, tenant_code, mail_type, reference_table, reference_code, 
+                       from_email, to_email, cc_email, bcc_email, subject, body, 
+                       attachment_name, attachment_path, smtp_provider, status, 
+                       error_message, sent_datetime, retry_count, created_by, 
+                       created_date, modified_by, modified_date, deleted
+                FROM mail_transaction
+                WHERE deleted = FALSE OR deleted IS NULL
+                ORDER BY created_date DESC;";
+
+            using var cmd = new NpgsqlCommand(selectSql, conn);
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var tx = new MailTransaction
+                {
+                    MtCode = reader.GetInt64(0),
+                    TenantCode = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                    MailType = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                    ReferenceTable = reader.IsDBNull(3) ? "" : reader.GetString(3),
+                    ReferenceCode = reader.IsDBNull(4) ? 0 : reader.GetInt64(4),
+                    FromEmail = reader.IsDBNull(5) ? "" : reader.GetString(5),
+                    ToEmail = reader.IsDBNull(6) ? "" : reader.GetString(6),
+                    CcEmail = reader.IsDBNull(7) ? "" : reader.GetString(7),
+                    BccEmail = reader.IsDBNull(8) ? "" : reader.GetString(8),
+                    Subject = reader.IsDBNull(9) ? "" : reader.GetString(9),
+                    Body = reader.IsDBNull(10) ? "" : reader.GetString(10),
+                    AttachmentName = reader.IsDBNull(11) ? "" : reader.GetString(11),
+                    AttachmentPath = reader.IsDBNull(12) ? "" : reader.GetString(12),
+                    SmtpProvider = reader.IsDBNull(13) ? "" : reader.GetString(13),
+                    Status = reader.IsDBNull(14) ? "" : reader.GetString(14),
+                    ErrorMessage = reader.IsDBNull(15) ? "" : reader.GetString(15),
+                    SentDatetime = reader.IsDBNull(16) ? null : reader.GetDateTime(16).AddHours(5).AddMinutes(30),
+                    RetryCount = reader.IsDBNull(17) ? 0 : reader.GetInt32(17),
+                    CreatedBy = reader.IsDBNull(18) ? 0 : reader.GetInt32(18),
+                    CreatedDate = reader.GetDateTime(19).AddHours(5).AddMinutes(30),
+                    ModifiedBy = reader.IsDBNull(20) ? 0 : reader.GetInt32(20),
+                    ModifiedDate = reader.IsDBNull(21) ? null : reader.GetDateTime(21).AddHours(5).AddMinutes(30),
+                    Deleted = reader.IsDBNull(22) ? false : reader.GetBoolean(22)
+                };
+
+                // Parse the client details from HTML body
+                var parsed = MailTransaction.ParseBody(tx.Body);
+                tx.ClientName = parsed.Name;
+                tx.ClientContact = parsed.Contact;
+                tx.ClientMessage = parsed.Message;
+
+                list.Add(tx);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to retrieve mail transactions from DB");
+        }
+        return list;
+    }
+
+    public async Task<bool> DeleteMailTransactionAsync(long mtCode)
+    {
+        try
+        {
+            string connStr = GetConnectionString();
+            using var conn = new NpgsqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // We do a soft delete
+            string deleteSql = @"
+                UPDATE mail_transaction
+                SET deleted = TRUE,
+                    modified_date = CURRENT_TIMESTAMP
+                WHERE mt_code = @mt_code;";
+
+            using var cmd = new NpgsqlCommand(deleteSql, conn);
+            cmd.Parameters.AddWithValue("mt_code", mtCode);
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete mail transaction mt_code {mtCode}", mtCode);
+            return false;
+        }
+    }
+}
+
+public class MailTransaction
+{
+    public long MtCode { get; set; }
+    public string TenantCode { get; set; } = "";
+    public string MailType { get; set; } = "";
+    public string ReferenceTable { get; set; } = "";
+    public long ReferenceCode { get; set; }
+    public string FromEmail { get; set; } = "";
+    public string ToEmail { get; set; } = "";
+    public string CcEmail { get; set; } = "";
+    public string BccEmail { get; set; } = "";
+    public string Subject { get; set; } = "";
+    public string Body { get; set; } = "";
+    public string AttachmentName { get; set; } = "";
+    public string AttachmentPath { get; set; } = "";
+    public string SmtpProvider { get; set; } = "";
+    public string Status { get; set; } = "";
+    public string ErrorMessage { get; set; } = "";
+    public DateTime? SentDatetime { get; set; }
+    public int RetryCount { get; set; }
+    public int CreatedBy { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public int ModifiedBy { get; set; }
+    public DateTime? ModifiedDate { get; set; }
+    public bool Deleted { get; set; }
+
+    // Parsed fields
+    public string ClientName { get; set; } = "";
+    public string ClientContact { get; set; } = "";
+    public string ClientMessage { get; set; } = "";
+
+    public static (string Name, string Contact, string Message) ParseBody(string body)
+    {
+        if (string.IsNullOrEmpty(body)) return ("", "", "");
+
+        string name = "";
+        string contact = "";
+        string message = "";
+
+        try
+        {
+            // Extract Full Name
+            var nameMatch = System.Text.RegularExpressions.Regex.Match(body, @"Full\s+Name:.*?<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (nameMatch.Success)
+            {
+                name = nameMatch.Groups[1].Value.Trim();
+            }
+
+            // Extract Phone Number
+            var contactMatch = System.Text.RegularExpressions.Regex.Match(body, @"Phone\s+Number:.*?<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (contactMatch.Success)
+            {
+                contact = contactMatch.Groups[1].Value.Trim();
+            }
+
+            // Extract Message
+            var messageMatch = System.Text.RegularExpressions.Regex.Match(body, @"Message:.*?<\/h4>\s*<p[^>]*>([\s\S]*?)<\/p>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (messageMatch.Success)
+            {
+                message = messageMatch.Groups[1].Value.Trim();
+            }
+        }
+        catch
+        {
+            // Ignore parsing errors and return empty/partial strings
+        }
+
+        return (name, contact, message);
     }
 }
