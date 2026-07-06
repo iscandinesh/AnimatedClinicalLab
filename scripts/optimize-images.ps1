@@ -105,8 +105,9 @@ $banners = @(
 
 Write-Host "--- Optimizing Photographic Banners ---" -ForegroundColor Cyan
 foreach ($banner in $banners) {
-    Optimize-Image -inPath "$baseDir\$banner.png" -outPath "$baseDir\$banner.jpg" -maxSize 1200 -format "jpg"
+    Optimize-Image -inPath "$baseDir\$banner.png" -outPath "$baseDir\$banner.jpg" -maxSize 2048 -format "jpg"
 }
+
 
 # 2. Resize transparent badges and logo overlays (Keep PNG format for transparency)
 Write-Host "--- Resizing Transparent Badges and Partner Logos ---" -ForegroundColor Cyan
