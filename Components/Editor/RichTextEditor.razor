@@ -38,7 +38,7 @@
 
             <!-- Ribbon Content -->
             <div class="ribbon-toolbar-content" style="background: #ffffff; border-bottom: 1px solid #cbd5e1; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.05); min-height: 72px; display: flex; align-items: stretch; padding: 6px 1.5rem; width: 100%; z-index: 10; overflow: visible; flex-shrink: 0;">
-                <div style="display: flex; align-items: stretch; gap: 8px; flex-grow: 1;">
+                <div style="display: flex; align-items: stretch; gap: 8px; flex-grow: 1; flex-wrap: wrap;">
                     @if (_activeTab == "home")
                     {
                         <!-- Typography Group -->
@@ -196,6 +196,122 @@
 
                         <div class="tiptap-divider"></div>
 
+                        <!-- Widgets Group in Home Tab -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row" style="gap: 6px;">
+                                <!-- Insert FAQ -->
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertFAQ')" title="Insert FAQ Block" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 4px; padding: 4px 10px;">
+                                    <span style="font-size: 0.9rem;">🙋‍♀️</span>
+                                    <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">FAQ</span>
+                                </button>
+ 
+                                <!-- Callout Dropdown -->
+                                <div class="tiptap-dropdown" tabindex="0">
+                                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Insert Callout Box" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 4px; padding: 4px 10px;">
+                                        <span style="font-size: 0.9rem;">💬</span>
+                                        <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">Callout ▾</span>
+                                    </button>
+                                    <div class="tiptap-dropdown-content" style="min-width: 140px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #ffffff; z-index: 100; flex-direction: column; gap: 2px;">
+                                        <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'info')">
+                                            <span>ℹ️</span> Info Notice
+                                        </span>
+                                        <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'warning')">
+                                            <span>⚠️</span> Warning Alert
+                                        </span>
+                                        <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'success')">
+                                            <span>✅</span> Success Check
+                                        </span>
+                                        <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'tip')">
+                                            <span>💡</span> Expert Tip
+                                        </span>
+                                    </div>
+                                </div>
+ 
+                                <!-- Insert Call Action Widget -->
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCTA')" title="Insert Call Action Widget" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 4px; padding: 4px 10px;">
+                                    <span style="font-size: 0.9rem;">📞</span>
+                                    <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">Call Action</span>
+                                </button>
+                            </div>
+                            <span class="toolbar-group-label">Insert Widgets</span>
+                        </div>
+ 
+                                         <!-- CTA Widget Styles Group -->
+                        <div class="toolbar-group">
+                            <div class="toolbar-row" style="gap: 6px;">
+                                <!-- CTA Widget Background (Solid + Gradient presets + Custom picker) -->
+                                <div class="tiptap-dropdown" tabindex="0">
+                                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Widget Background Color" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 6px; padding: 4px 10px;">
+                                        <span style="display: inline-block; width: 14px; height: 14px; border-radius: 4px; background: #3b82f6; border: 1px solid #cbd5e1; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);"></span>
+                                        <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">Widget Bg ▾</span>
+                                    </button>
+                                    <div class="tiptap-dropdown-content" style="min-width: 220px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background: #ffffff; z-index: 100; flex-direction: column; gap: 8px;">
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">Solid Presets</div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                            @foreach (var c in _colorPalette)
+                                            {
+                                                <span class="color-dot" style="background: @c; width: 18px; height: 18px; border-radius: 4px; cursor: pointer; display: inline-block;" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor('@c')"></span>
+                                            }
+                                            <span class="color-dot" style="background: transparent; border: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: bold; width: 18px; height: 18px;" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor(null)">❌</span>
+                                        </div>
+                                        
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-top: 4px;">Gradient Presets</div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                            <span class="color-dot" style="background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 4px; width: 18px; height: 18px; cursor: pointer; display: inline-block;" title="Sunset" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor('linear-gradient(135deg, #f59e0b, #ef4444)')"></span>
+                                            <span class="color-dot" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border-radius: 4px; width: 18px; height: 18px; cursor: pointer; display: inline-block;" title="Ocean" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor('linear-gradient(135deg, #06b6d4, #3b82f6)')"></span>
+                                            <span class="color-dot" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 4px; width: 18px; height: 18px; cursor: pointer; display: inline-block;" title="Emerald" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor('linear-gradient(135deg, #10b981, #059669)')"></span>
+                                            <span class="color-dot" style="background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 4px; width: 18px; height: 18px; cursor: pointer; display: inline-block;" title="Royal" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor('linear-gradient(135deg, #6366f1, #a855f7)')"></span>
+                                            <span class="color-dot" style="background: linear-gradient(135deg, #475569, #1e293b); border-radius: 4px; width: 18px; height: 18px; cursor: pointer; display: inline-block;" title="Steel" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAContainerColor('linear-gradient(135deg, #475569, #1e293b)')"></span>
+                                        </div>
+
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; border-top: 1px solid #f1f5f9; padding-top: 6px; margin-top: 4px;">Custom Color</div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="color" id="custom-cta-bg-color" value="#f0f9ff" style="width: 32px; height: 24px; padding: 0; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" onchange="window.editorInterop.setCTAContainerColor(this.value)" />
+                                            <span style="font-size: 0.7rem; color: #64748b; font-weight: 500;">Choose Custom Color</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CTA Button Background (presets + Custom picker) -->
+                                <div class="tiptap-dropdown" tabindex="0">
+                                    <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Button Background Color" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 6px; padding: 4px 10px;">
+                                        <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #ef4444; border: 1px solid #cbd5e1; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);"></span>
+                                        <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">Button Bg ▾</span>
+                                    </button>
+                                    <div class="tiptap-dropdown-content" style="min-width: 180px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background: #ffffff; z-index: 100; flex-direction: column; gap: 8px;">
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">Presets</div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                            @foreach (var c in _colorPalette)
+                                            {
+                                                <span class="color-dot" style="background: @c; width: 18px; height: 18px; border-radius: 4px; cursor: pointer; display: inline-block;" onmousedown="event.preventDefault()" onclick="window.editorInterop.setCTAButtonColor('@c', null)"></span>
+                                            }
+                                        </div>
+                                        
+                                        <div style="font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; border-top: 1px solid #f1f5f9; padding-top: 6px; margin-top: 4px;">Custom Color</div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <input type="color" id="custom-cta-btn-color" value="#2563eb" style="width: 32px; height: 24px; padding: 0; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" onchange="window.editorInterop.setCTAButtonColor(this.value, null)" />
+                                            <span style="font-size: 0.7rem; color: #64748b; font-weight: 500;">Choose Custom Color</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CTA Corner Radius Select Dropdown -->
+                                <select class="tiptap-select" style="width: 80px; height: 28px; font-size: 0.72rem; font-weight: 600; padding: 2px 6px;" onchange="window.editorInterop.setCTACornerRadius(this.value)" title="Widget Corner Radius">
+                                    <option value="12px" selected>Corner ▾</option>
+                                    <option value="0px">Sharp</option>
+                                    <option value="4px">4px</option>
+                                    <option value="8px">8px</option>
+                                    <option value="12px">12px (Default)</option>
+                                    <option value="16px">16px</option>
+                                    <option value="20px">20px</option>
+                                    <option value="30px">30px</option>
+                                </select>
+                            </div>
+                            <span class="toolbar-group-label">Call Action Styles</span>
+                        </div>
+
+                        <div class="tiptap-divider"></div>
+
                         <!-- Undo/Redo + Actions Group -->
                         <div class="toolbar-group">
                             <div class="toolbar-row">
@@ -307,6 +423,52 @@
                             </div>
                         </div>
                         <span class="toolbar-group-label">Fields & Emojis</span>
+                    </div>
+
+                    <div class="tiptap-divider"></div>
+
+                    <!-- Blocks & Utilities Group -->
+                    <div class="toolbar-group">
+                        <div class="toolbar-row" style="gap: 6px;">
+                            <!-- Insert FAQ -->
+                            <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertFAQ')" title="Insert FAQ Block" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 4px; padding: 4px 10px;">
+                                <span style="font-size: 0.9rem;">🙋‍♀️</span>
+                                <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">FAQ</span>
+                            </button>
+
+                            <!-- Callout Dropdown -->
+                            <div class="tiptap-dropdown" tabindex="0">
+                                <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" title="Insert Callout Box" style="width: auto !important; height: 28px; display: flex; align-items: center; gap: 4px; padding: 4px 10px;">
+                                    <span style="font-size: 0.9rem;">💬</span>
+                                    <span style="font-size: 0.72rem; font-weight: 600; color: #475569;">Callout ▾</span>
+                                </button>
+                                <div class="tiptap-dropdown-content" style="min-width: 140px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #ffffff; z-index: 100; flex-direction: column; gap: 2px;">
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'info')">
+                                        <span>ℹ️</span> Info Notice
+                                    </span>
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'warning')">
+                                        <span>⚠️</span> Warning Alert
+                                    </span>
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'success')">
+                                        <span>✅</span> Success Check
+                                    </span>
+                                    <span class="dropdown-item" style="cursor: pointer; padding: 6px 10px; font-size: 0.72rem; transition: background 0.15s; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #334155 !important; font-weight: 600 !important;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('insertCallout', 'tip')">
+                                        <span>💡</span> Expert Tip
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Code Block -->
+                            <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('code-block')" title="Toggle Code Block">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            </button>
+
+                            <!-- Blockquote -->
+                            <button type="button" class="tiptap-btn" onmousedown="event.preventDefault()" onclick="window.editorInterop.execute('blockquote')" title="Toggle Blockquote">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            </button>
+                        </div>
+                        <span class="toolbar-group-label">Blocks & Utilities</span>
                     </div>
                     }
                     else if (_activeTab == "table")
@@ -543,6 +705,51 @@
                             <div style="display: flex; flex-direction: column; text-align: left;">
                                 <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">2-Column Text Layout</span>
                                 <span style="font-size: 0.64rem; color: #64748b;">Findings vs Advice</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 6: FAQ Section -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<div class=&quot;faq-section&quot;><h3>Frequently Asked Questions (FAQ)</h3><details class=&quot;faq-item&quot; open><summary class=&quot;faq-question&quot;>Q: What is the turnaround time for standard laboratory reports?</summary><div class=&quot;faq-answer&quot;><p>A: Most routine tests are processed within 4 to 12 hours. Specialized molecular or histopathology studies may take 24 to 48 hours.</p></div></details><details class=&quot;faq-item&quot; open><summary class=&quot;faq-question&quot;>Q: Do I need to fast before my scheduled blood draw?</summary><div class=&quot;faq-answer&quot;><p>A: Fasting for 10-12 hours is recommended for fasting blood glucose, lipid profiles, and comprehensive metabolic panels. Please drink plain water to stay hydrated.</p></div></details><div class=&quot;faq-actions&quot; contenteditable=&quot;false&quot; style=&quot;margin-top: 1rem; display: flex; justify-content: flex-end;&quot;><button type=&quot;button&quot; class=&quot;faq-add-btn&quot; onclick=&quot;window.editorInterop.addFaqItem(this)&quot; style=&quot;background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;&quot;>+ Add Question</button></div></div><p></p>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">🙋‍♀️</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">FAQ Section Widget</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Draggable Q&A block</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 7: Clinic Hours & Contacts Widget -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<div style=&quot;padding: 16px; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; margin: 1.5rem 0; color: #f1f5f9;&quot;><h4 style=&quot;margin: 0 0 10px 0; color: #3b82f6; font-size: 1.1rem;&quot;>🕒 Lab Operating Hours</h4><p style=&quot;margin: 0; font-size: 0.9rem; line-height: 1.5;&quot;>Monday - Friday: 07:00 AM - 08:00 PM</p><p style=&quot;margin: 4px 0 0 0; font-size: 0.9rem; line-height: 1.5;&quot;>Saturday: 08:00 AM - 04:00 PM</p><p style=&quot;margin: 4px 0 0 0; font-size: 0.9rem; line-height: 1.5;&quot;>Sunday: Closed (Emergency Only)</p><p style=&quot;margin: 12px 0 0 0; font-size: 0.85rem; color: #94a3b8; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px;&quot;>📞 Hotline: 1800-ALPHA-LABS</p></div>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">🕒</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Clinic Operating Hours</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Schedule & Contacts</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 8: Lab Test Pricing Table -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<table style=&quot;width: 100%; border-collapse: collapse; margin: 1.5rem 0; border: 1px solid #cbd5e1;&quot;><thead><tr style=&quot;background: #f1f5f9;&quot;><th style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: left;&quot;>Test Name</th><th style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: center;&quot;>Code</th><th style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: right;&quot;>Price</th></tr></thead><tbody><tr><td style=&quot;border: 1px solid #cbd5e1; padding: 10px;&quot;>Complete Blood Count (CBC)</td><td style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: center; font-family: monospace;&quot;>CBC-01</td><td style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: right; font-weight: bold;&quot;>$45.00</td></tr><tr><td style=&quot;border: 1px solid #cbd5e1; padding: 10px;&quot;>Lipid Profile Panel</td><td style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: center; font-family: monospace;&quot;>LPD-04</td><td style=&quot;border: 1px solid #cbd5e1; padding: 10px; text-align: right; font-weight: bold;&quot;>$65.00</td></tr></tbody></table>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">💲</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Lab Test Pricing Table</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Pricing list widget</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 9: Reference Ranges Card -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<div style=&quot;padding: 16px; background-color: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 8px; margin: 1.5rem 0; color: #166534;&quot;><p style=&quot;margin: 0; font-weight: bold;&quot;>📋 Reference Range Table</p><table style=&quot;width: 100%; border: none; margin-top: 10px; border-collapse: collapse;&quot;><thead><tr style=&quot;border-bottom: 1px solid #bdf0c4;&quot;><th style=&quot;text-align: left; padding: 6px 0;&quot;>Analyte</th><th style=&quot;text-align: right; padding: 6px 0;&quot;>Reference Interval</th></tr></thead><tbody><tr><td style=&quot;padding: 6px 0;&quot;>Hemoglobin (Adult Male)</td><td style=&quot;text-align: right; padding: 6px 0; font-weight: bold;&quot;>13.8 – 17.2 g/dL</td></tr><tr><td style=&quot;padding: 6px 0;&quot;>Serum Potassium</td><td style=&quot;text-align: right; padding: 6px 0; font-weight: bold;&quot;>3.5 – 5.1 mEq/L</td></tr></tbody></table></div>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">📊</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Reference Ranges</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Clinical analyte intervals</span>
+                            </div>
+                        </div>
+
+                        <!-- Template 10: Call Action Button -->
+                        <div class="drag-widget" draggable="true" ondragstart="event.dataTransfer.setData('text/html', '<div class=&quot;cta-container&quot;><span class=&quot;cta-text&quot;>Do you have any queries? Contact our helpdesk:</span><a href=&quot;/contact&quot; class=&quot;cta-button&quot;>Contact Us</a></div><p></p>')" style="padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: grab; display: flex; gap: 8px; align-items: center; transition: all 0.2s;">
+                            <span style="font-size: 1.2rem;">📞</span>
+                            <div style="display: flex; flex-direction: column; text-align: left;">
+                                <span style="font-size: 0.76rem; font-weight: 600; color: #1e293b;">Call Action Button</span>
+                                <span style="font-size: 0.64rem; color: #64748b;">Interactive telephone / link widget</span>
                             </div>
                         </div>
                     </div>
@@ -1173,6 +1380,221 @@
         cursor: default;
         user-select: none;
     }
+
+    /* ProseMirror FAQ Block & Callouts Styling */
+    .ProseMirror .faq-section {
+        margin: 2rem 0;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+    .ProseMirror .faq-section h3 {
+        margin-top: 0;
+        color: #1e3a8a;
+        border-bottom: 2px solid #3b82f6;
+        padding-bottom: 6px;
+        margin-bottom: 1.25rem;
+        font-size: 1.3rem;
+    }
+    .ProseMirror .faq-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    .ProseMirror .faq-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .ProseMirror .faq-question {
+        padding: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        cursor: pointer;
+        user-select: none;
+        outline: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        list-style: none;
+    }
+    .ProseMirror .faq-question::-webkit-details-marker {
+        display: none;
+    }
+    .ProseMirror .faq-question::after {
+        content: '▼';
+        font-size: 0.75rem;
+        color: #64748b;
+        transition: transform 0.2s ease;
+    }
+    .ProseMirror .faq-item[open] .faq-question::after {
+        transform: rotate(180deg);
+        color: #2563eb;
+    }
+    .ProseMirror .faq-answer {
+        padding: 0 1rem 1rem 1rem;
+        color: #475569;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        border-top: 1px solid #e2e8f0;
+        background: #fafafa;
+    }
+
+    /* Force details contents to always be visible and editable inside the editor canvas */
+    .ProseMirror details > :not(summary) {
+        display: block !important;
+    }
+    .ProseMirror details::details-content {
+        display: block !important;
+    }
+
+    /* FAQ Actions / Add Button styling */
+    .ProseMirror .faq-actions {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .ProseMirror .faq-add-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .ProseMirror .faq-add-btn:hover {
+        background: #1d4ed8;
+    }
+
+    /* CTA Button Widget styling */
+    .ProseMirror .cta-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin: 2rem 0;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .ProseMirror .cta-text {
+        font-weight: 600;
+        color: #0369a1;
+        font-size: 1rem;
+        flex-grow: 1;
+        text-align: left;
+    }
+    .ProseMirror .cta-button {
+        display: inline-block;
+        padding: 10px 24px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #ffffff !important;
+        text-decoration: none !important;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-family: 'Outfit', sans-serif;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .ProseMirror .cta-button:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
+    }
+    .ProseMirror .cta-button:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+
+    /* CTA Container resizer handles styling */
+    .ProseMirror .cta-container {
+        position: relative !important;
+    }
+    .ProseMirror .cta-resizer {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #2563eb;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+        user-select: none;
+    }
+    .ProseMirror .cta-resizer-r {
+        top: 50%;
+        right: -5px;
+        transform: translateY(-50%);
+        cursor: col-resize;
+    }
+    .ProseMirror .cta-resizer-l {
+        top: 50%;
+        left: -5px;
+        transform: translateY(-50%);
+        cursor: col-resize;
+    }
+    .ProseMirror .cta-resizer-br {
+        bottom: -5px;
+        right: -5px;
+        cursor: se-resize;
+    }
+
+    .ProseMirror .callout-box {
+        padding: 1.25rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        border-left-width: 4px;
+        border-left-style: solid;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .ProseMirror .callout-box.info {
+        background-color: #f0f9ff;
+        border-left-color: #0284c7;
+        color: #075985;
+        border-top: 1px solid #e0f2fe;
+        border-right: 1px solid #e0f2fe;
+        border-bottom: 1px solid #e0f2fe;
+    }
+    .ProseMirror .callout-box.warning {
+        background-color: #fffbeb;
+        border-left-color: #d97706;
+        color: #78350f;
+        border-top: 1px solid #fef3c7;
+        border-right: 1px solid #fef3c7;
+        border-bottom: 1px solid #fef3c7;
+    }
+    .ProseMirror .callout-box.success {
+        background-color: #f0fdf4;
+        border-left-color: #16a34a;
+        color: #166534;
+        border-top: 1px solid #dcfce7;
+        border-right: 1px solid #dcfce7;
+        border-bottom: 1px solid #dcfce7;
+    }
+    .ProseMirror .callout-box.tip {
+        background-color: #faf5ff;
+        border-left-color: #9333ea;
+        color: #581c87;
+        border-top: 1px solid #f3e8ff;
+        border-right: 1px solid #f3e8ff;
+        border-bottom: 1px solid #f3e8ff;
+    }
+    .ProseMirror .callout-box p {
+        margin: 0;
+    }
     /* ── Google Docs-style Table Panel CSS ─────────────────────────────────── */
 
     /* Grid picker cells */
@@ -1351,6 +1773,40 @@
         background: #f1f5f9;
     }
 
+    /* Top-right View Mode Segment Control */
+    .rte-header-bar .rte-toolbar-group {
+        display: flex !important;
+        gap: 2px !important;
+        background: #f1f5f9 !important;
+        padding: 3px !important;
+        border-radius: 8px !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    .rte-header-bar .rte-btn-mode {
+        border: none !important;
+        background: transparent !important;
+        padding: 5px 14px !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+        border-radius: 6px !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+    .rte-header-bar .rte-btn-mode:hover {
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+    .rte-header-bar .rte-btn-mode.active {
+        background: #ffffff !important;
+        color: #2563eb !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+    }
+
     /* Dark Mode Canvas styling */
     .rte-paper-sheet.dark-sheet {
         background: #1e293b !important;
@@ -1366,6 +1822,21 @@
     .rte-paper-sheet.dark-sheet .ProseMirror h3,
     .rte-paper-sheet.dark-sheet .ProseMirror li {
         color: #f8fafc !important;
+    }
+    .rte-paper-sheet.dark-sheet .ProseMirror .cta-container:not([data-background-color]) {
+        background: rgba(30, 41, 59, 0.8) !important;
+        border-color: #334155 !important;
+    }
+    .rte-paper-sheet.dark-sheet .ProseMirror .cta-text {
+        color: #93c5fd !important;
+    }
+    .rte-paper-sheet.dark-sheet .ProseMirror .cta-button:not([data-background-color]) {
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3), 0 2px 4px -1px rgba(59, 130, 246, 0.15) !important;
+    }
+    .rte-paper-sheet.dark-sheet .ProseMirror .cta-button:not([data-background-color]):hover {
+        background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4), 0 4px 6px -2px rgba(59, 130, 246, 0.2) !important;
     }
 
     /* Draggable sidebar widgets hover */

@@ -517,9 +517,129 @@ if (document.readyState === 'loading') {
     //  Public API
     // ═══════════════════════════════════════════════════════════════════════════
     window.editorInterop = {
+        cleanCTAHTML: function (html) {
+            if (!html) return html;
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // 1. Remove empty cta-button elements
+                const buttons = doc.querySelectorAll('a.cta-button');
+                buttons.forEach(btn => {
+                    if (!btn.textContent.trim()) {
+                        btn.remove();
+                    }
+                });
+
+                // 2. Ensure each cta-container has only ONE cta-button
+                const containers = doc.querySelectorAll('.cta-container');
+                containers.forEach(container => {
+                    const btns = container.querySelectorAll('.cta-button');
+                    if (btns.length > 1) {
+                        // Keep only the first non-empty button, remove others
+                        for (let i = 1; i < btns.length; i++) {
+                            btns[i].remove();
+                        }
+                    }
+                });
+
+                return doc.body.innerHTML;
+            } catch (e) {
+                console.error('[cleanCTAHTML] Error:', e);
+                return html;
+            }
+        },
 
         currentPageIndex: 0,
         totalPagesCount: 1,
+
+        insertWidget: function (type) {
+            if (!window.tiptapInstance) return;
+            const editor = window.tiptapInstance;
+            editor.commands.focus();
+            
+            switch (type) {
+                case 'paragraph':
+                    editor.chain().focus().insertContent('<p>New Paragraph text.</p>').run();
+                    break;
+                case 'h1':
+                    editor.chain().focus().insertContent('<h1>Heading 1</h1>').run();
+                    break;
+                case 'h2':
+                    editor.chain().focus().insertContent('<h2>Heading 2</h2>').run();
+                    break;
+                case 'h3':
+                    editor.chain().focus().insertContent('<h3>Heading 3</h3>').run();
+                    break;
+                case 'quote':
+                    editor.chain().focus().insertContent('<blockquote>“This is a blockquote.”</blockquote>').run();
+                    break;
+                case 'divider':
+                    editor.chain().focus().setHorizontalRule().run();
+                    break;
+                case 'patientCardWidget':
+                    editor.chain().focus().insertContent('<div class="patient-card-widget" data-patient-name="John Doe" data-patient-age="45" data-patient-gender="Male" data-uhid="UHID-982341" data-blood-group="O+" data-doctor-name="Dr. Sarah Jenkins" data-department="Cardiology" data-visit-date="2026-07-07"></div><p></p>').run();
+                    break;
+                case 'vitalsWidget':
+                    editor.chain().focus().insertContent('<div class="vitals-widget" data-bp="120/80" data-pulse="72" data-respiration="16" data-temperature="98.6" data-weight="70" data-height="170" data-bmi="24.2" data-spo2="98"></div><p></p>').run();
+                    break;
+                case 'prescriptionWidget':
+                    editor.chain().focus().insertContent('<div class="prescription-widget" data-medicines=\'[{"name":"Tab. Paracetamol 650mg","morning":"1","afternoon":"1","night":"1","days":"5","notes":"Take after meals"}]\'></div><p></p>').run();
+                    break;
+                case 'labReportWidget':
+                    editor.chain().focus().insertContent('<div class="lab-report-widget" data-tests=\'[{"name":"Hemoglobin (Hb)","result":"14.2","reference":"13.0 - 17.0","unit":"g/dL","status":"Normal"}]\'></div><p></p>').run();
+                    break;
+                case 'diagnosisWidget':
+                    editor.chain().focus().insertContent('<div class="diagnosis-widget" data-primary-diagnosis="Essential Hypertension" data-secondary-diagnosis="Type 2 Diabetes" data-icd-code="I10" data-clinical-notes="Patient reported mild headache."></div><p></p>').run();
+                    break;
+                case 'callout':
+                    editor.chain().focus().insertContent('<div class="callout-box info"><p><strong>ℹ️ Info Notice</strong></p><p>Enter clinical info details.</p></div><p></p>').run();
+                    break;
+                case 'cta':
+                    editor.chain().focus().insertContent('<div class="cta-container"><span class="cta-text">Do you have any queries? Contact our helpdesk:</span><a href="/contact" class="cta-button">Contact Us</a></div><p></p>').run();
+                    break;
+                case 'table':
+                    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+                    break;
+                case 'image':
+                    window.editorInterop.execute('insertImage');
+                    break;
+                case 'video':
+                    window.editorInterop.execute('insertVideo');
+                    break;
+                case 'pageBreak':
+                    editor.chain().focus().insertContent({ type: 'pageBreak' }).run();
+                    break;
+                default:
+                    console.warn('Unknown widget type: ' + type);
+            }
+        },
+
+        updateSelectedNodeAttrs: function (attrsJson) {
+            if (!window.tiptapInstance) return;
+            const editor = window.tiptapInstance;
+            const { selection } = editor.state;
+            const attrs = JSON.parse(attrsJson);
+            
+            if (selection.node) {
+                editor.view.dispatch(
+                    editor.state.tr.setNodeMarkup(selection.from, undefined, {
+                        ...selection.node.attrs,
+                        ...attrs
+                    })
+                );
+            } else {
+                const { $from } = selection;
+                const parentPos = $from.before();
+                const parentNode = $from.parent;
+                editor.view.dispatch(
+                    editor.state.tr.setNodeMarkup(parentPos, undefined, {
+                        ...parentNode.attrs,
+                        ...attrs
+                    })
+                );
+            }
+        },
 
         isSelectionInTable: function (editor) {
             if (!editor) return false;
@@ -530,6 +650,180 @@ if (document.readyState === 'loading') {
                 }
             }
             return false;
+        },
+
+        addFaqItem: function (buttonElement) {
+            if (!window.tiptapInstance) return;
+            const editor = window.tiptapInstance;
+            const actionsEl = buttonElement.closest('.faq-actions');
+            if (actionsEl) {
+                const pos = editor.view.posAtDOM(actionsEl);
+                if (pos !== undefined && pos !== null) {
+                    try {
+                        const newFaqItem = {
+                            type: 'faqItem',
+                            attrs: { open: 'true' },
+                            content: [
+                                {
+                                    type: 'faqQuestion',
+                                    content: [{ type: 'text', text: 'Q: New Question?' }]
+                                },
+                                {
+                                    type: 'faqAnswer',
+                                    content: [
+                                        {
+                                            type: 'paragraph',
+                                            content: [{ type: 'text', text: 'A: Enter answer here.' }]
+                                        }
+                                    ]
+                                }
+                            ]
+                        };
+                        editor.chain().focus().insertContentAt(pos, newFaqItem).run();
+                        logDiag('FAQ item inserted as JSON schema node.');
+                    } catch (e) {
+                        editor.chain().focus().insertContentAt(pos, `<details class="faq-item" open><summary class="faq-question">Q: New Question?</summary><div class="faq-answer"><p>A: Enter answer here.</p></div></details>`).run();
+                        logDiag('FAQ item inserted via fallback HTML: ' + e.message);
+                    }
+                }
+            }
+        },
+
+        setCTAContainerColor: function (color) {
+            if (!window.tiptapInstance) return;
+            const editor = window.tiptapInstance;
+            const { state } = editor;
+            const { selection } = state;
+            
+            let widgetPos = -1;
+            const $from = selection.$from;
+            if ($from) {
+                for (let d = $from.depth; d >= 0; d--) {
+                    const node = $from.node(d);
+                    if (node && node.type.name === 'ctaWidget') {
+                        widgetPos = $from.before(d);
+                        break;
+                    }
+                }
+            }
+            
+            if (widgetPos === -1) {
+                state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+                    if (node.type.name === 'ctaWidget') {
+                        widgetPos = pos;
+                        return false;
+                    }
+                });
+            }
+            
+            if (widgetPos > -1) {
+                const node = state.doc.nodeAt(widgetPos);
+                editor.view.dispatch(
+                    state.tr.setNodeMarkup(widgetPos, undefined, {
+                        ...node.attrs,
+                        backgroundColor: color
+                    })
+                );
+            } else {
+                alert('Please place your cursor inside a Call Action Widget to change its color.');
+            }
+        },
+        setCTACornerRadius: function (radius) {
+            if (!window.tiptapInstance) return;
+            const editor = window.tiptapInstance;
+            const { state } = editor;
+            const { selection } = state;
+            
+            let widgetPos = -1;
+            const $from = selection.$from;
+            if ($from) {
+                for (let d = $from.depth; d >= 0; d--) {
+                    const node = $from.node(d);
+                    if (node && node.type.name === 'ctaWidget') {
+                        widgetPos = $from.before(d);
+                        break;
+                    }
+                }
+            }
+            
+            if (widgetPos === -1) {
+                state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+                    if (node.type.name === 'ctaWidget') {
+                        widgetPos = pos;
+                        return false;
+                    }
+                });
+            }
+            
+            if (widgetPos > -1) {
+                const node = state.doc.nodeAt(widgetPos);
+                editor.view.dispatch(
+                    state.tr.setNodeMarkup(widgetPos, undefined, {
+                        ...node.attrs,
+                        borderRadius: radius
+                    })
+                );
+            } else {
+                alert('Please place your cursor inside a Call Action Widget to change its corner radius.');
+            }
+        },
+
+        setCTAButtonColor: function (bgColor, fgColor) {
+            if (!window.tiptapInstance) return;
+            const editor = window.tiptapInstance;
+            const { state } = editor;
+            const { selection } = state;
+            
+            let buttonPos = -1;
+            const $from = selection.$from;
+            if ($from) {
+                for (let d = $from.depth; d >= 0; d--) {
+                    const node = $from.node(d);
+                    if (node && node.type.name === 'ctaWidget') {
+                        node.forEach((child, offset) => {
+                            if (child.type.name === 'ctaButton') {
+                                buttonPos = $from.start(d) + offset;
+                            }
+                        });
+                        break;
+                    } else if (node && node.type.name === 'ctaButton') {
+                        buttonPos = $from.before(d);
+                        break;
+                    }
+                }
+            }
+            
+            if (buttonPos === -1) {
+                state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+                    if (node.type.name === 'ctaButton') {
+                        buttonPos = pos;
+                        return false;
+                    }
+                });
+            }
+            
+            if (buttonPos > -1) {
+                const node = state.doc.nodeAt(buttonPos);
+                const attrs = { ...node.attrs };
+                if (bgColor !== undefined && bgColor !== null) {
+                    attrs.backgroundColor = bgColor;
+                    if (fgColor === null || fgColor === undefined) {
+                        if (bgColor.startsWith('#')) {
+                            const r = parseInt(bgColor.slice(1, 3), 16);
+                            const g = parseInt(bgColor.slice(3, 5), 16);
+                            const b = parseInt(bgColor.slice(5, 7), 16);
+                            const yiq = ((r*299)+(g*587)+(b*114))/1000;
+                            attrs.textColor = (yiq >= 128) ? '#1e293b' : '#ffffff';
+                        }
+                    }
+                }
+                if (fgColor !== undefined && fgColor !== null) attrs.textColor = fgColor;
+                editor.view.dispatch(
+                    state.tr.setNodeMarkup(buttonPos, undefined, attrs)
+                );
+            } else {
+                alert('Please place your cursor inside the Call Action Widget or Button to change its color.');
+            }
         },
 
         // Apply a preset border style to the currently focused table
@@ -1042,6 +1336,503 @@ if (document.readyState === 'loading') {
                 }
             });
 
+            // Custom FAQ extensions to support details/summary block elements
+            const FAQSection = _Node.create({
+                name: 'faqSection',
+                group: 'block',
+                content: 'block+',
+                selectable: true,
+                draggable: true,
+                parseHTML() {
+                    return [{ tag: 'div.faq-section' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['div', { class: 'faq-section' }, 0];
+                }
+            });
+
+            const FAQItem = _Node.create({
+                name: 'faqItem',
+                group: 'block',
+                content: 'faqQuestion faqAnswer',
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        open: {
+                            default: 'true',
+                            parseHTML: element => 'true',
+                            renderHTML: attributes => ({ open: 'true' })
+                        }
+                    };
+                },
+                parseHTML() {
+                    return [{ tag: 'details.faq-item' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['details', mergeAttributes(HTMLAttributes, { class: 'faq-item', open: 'true' }), 0];
+                }
+            });
+
+            const CTAWidget = _Node.create({
+                name: 'ctaWidget',
+                group: 'block',
+                content: 'ctaText ctaButton',
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        backgroundColor: {
+                            default: null,
+                            parseHTML: element => element.style.background || element.style.backgroundColor || element.getAttribute('data-background-color') || null
+                        },
+                        width: {
+                            default: '100%',
+                            parseHTML: element => element.style.width || element.getAttribute('data-width') || '100%'
+                        },
+                        borderRadius: {
+                            default: '12px',
+                            parseHTML: element => element.style.borderRadius || element.getAttribute('data-border-radius') || '12px'
+                        }
+                    };
+                },
+                parseHTML() {
+                    return [{ tag: 'div.cta-container' }];
+                },
+                renderHTML({ node, HTMLAttributes }) {
+                    const { backgroundColor, width, borderRadius } = node.attrs;
+                    let style = '';
+                    if (backgroundColor) {
+                        if (backgroundColor.includes('gradient')) {
+                            style += `background: ${backgroundColor}; border: none;`;
+                        } else {
+                            style += `background-color: ${backgroundColor}; border-color: ${backgroundColor};`;
+                        }
+                    }
+                    if (width) style += `width: ${width};`;
+                    if (borderRadius) style += `border-radius: ${borderRadius};`;
+                    return ['div', mergeAttributes(HTMLAttributes, { 
+                        class: 'cta-container',
+                        style,
+                        'data-background-color': backgroundColor,
+                        'data-width': width,
+                        'data-border-radius': borderRadius
+                    }), 0];
+                }
+            });
+
+            const CTAText = _Node.create({
+                name: 'ctaText',
+                content: 'inline*',
+                parseHTML() {
+                    return [{ tag: 'span.cta-text' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['span', { class: 'cta-text' }, 0];
+                }
+            });
+
+            const CTAButton = _Node.create({
+                name: 'ctaButton',
+                content: 'text*',
+                marks: '',
+                addAttributes() {
+                    return {
+                        href: {
+                            default: '#',
+                            parseHTML: element => element.getAttribute('href') || '#',
+                            renderHTML: attributes => ({ href: attributes.href })
+                        },
+                        backgroundColor: {
+                            default: null,
+                            parseHTML: element => element.style.backgroundColor || element.getAttribute('data-background-color') || null
+                        },
+                        textColor: {
+                            default: null,
+                            parseHTML: element => element.style.color || element.getAttribute('data-text-color') || null
+                        }
+                    };
+                },
+                parseHTML() {
+                    return [{ tag: 'a.cta-button' }];
+                },
+                renderHTML({ node, HTMLAttributes }) {
+                    const { href, backgroundColor, textColor } = node.attrs;
+                    let style = '';
+                    if (backgroundColor) style += `background: ${backgroundColor};`;
+                    if (textColor) style += `color: ${textColor} !important;`;
+                    return ['a', mergeAttributes(HTMLAttributes, { 
+                        class: 'cta-button',
+                        href,
+                        style,
+                        'data-background-color': backgroundColor,
+                        'data-text-color': textColor
+                    }), 0];
+                }
+            });
+
+            const FAQQuestion = _Node.create({
+                name: 'faqQuestion',
+                content: 'inline*',
+                parseHTML() {
+                    return [{ tag: 'summary.faq-question' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['summary', { class: 'faq-question' }, 0];
+                }
+            });
+
+            const FAQAnswer = _Node.create({
+                name: 'faqAnswer',
+                content: 'block+',
+                parseHTML() {
+                    return [{ tag: 'div.faq-answer' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['div', { class: 'faq-answer' }, 0];
+                }
+            });
+
+            const FAQActions = _Node.create({
+                name: 'faqActions',
+                group: 'block',
+                selectable: false,
+                draggable: false,
+                parseHTML() {
+                    return [{ tag: 'div.faq-actions' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['div', { 
+                        class: 'faq-actions', 
+                        contenteditable: 'false',
+                        style: 'margin-top: 1rem; display: flex; justify-content: flex-end;'
+                    }, ['button', {
+                        type: 'button',
+                        class: 'faq-add-btn',
+                        style: 'background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;'
+                    }, '+ Add Question']];
+                }
+            });
+
+            const CalloutBox = _Node.create({
+                name: 'calloutBox',
+                group: 'block',
+                content: 'block+',
+                addAttributes() {
+                    return {
+                        type: {
+                            default: 'info',
+                            parseHTML: element => {
+                                if (element.classList.contains('warning')) return 'warning';
+                                if (element.classList.contains('success')) return 'success';
+                                if (element.classList.contains('tip')) return 'tip';
+                                return 'info';
+                            }
+                        }
+                    };
+                },
+                parseHTML() {
+                    return [{ tag: 'div.callout-box' }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    const type = HTMLAttributes.type || 'info';
+                    return ['div', { class: `callout-box ${type}` }, 0];
+                }
+            });
+
+            const PatientCardWidget = _Node.create({
+                name: 'patientCardWidget',
+                group: 'block',
+                atom: true,
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        patientName: { default: 'John Doe' },
+                        patientAge: { default: '45' },
+                        patientGender: { default: 'Male' },
+                        uhid: { default: 'UHID-982341' },
+                        bloodGroup: { default: 'O+' },
+                        doctorName: { default: 'Dr. Sarah Jenkins' },
+                        department: { default: 'Cardiology' },
+                        visitDate: { default: '2026-07-07' }
+                    };
+                },
+                parseHTML() {
+                    return [{
+                        tag: 'div.patient-card-widget',
+                        getAttrs: dom => ({
+                            patientName: dom.getAttribute('data-patient-name') || 'John Doe',
+                            patientAge: dom.getAttribute('data-patient-age') || '45',
+                            patientGender: dom.getAttribute('data-patient-gender') || 'Male',
+                            uhid: dom.getAttribute('data-uhid') || 'UHID-982341',
+                            bloodGroup: dom.getAttribute('data-blood-group') || 'O+',
+                            doctorName: dom.getAttribute('data-doctor-name') || 'Dr. Sarah Jenkins',
+                            department: dom.getAttribute('data-department') || 'Cardiology',
+                            visitDate: dom.getAttribute('data-visit-date') || '2026-07-07'
+                        })
+                    }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['div', {
+                        class: 'patient-card-widget clinical-widget-card',
+                        'data-patient-name': HTMLAttributes.patientName,
+                        'data-patient-age': HTMLAttributes.patientAge,
+                        'data-patient-gender': HTMLAttributes.patientGender,
+                        'data-uhid': HTMLAttributes.uhid,
+                        'data-blood-group': HTMLAttributes.bloodGroup,
+                        'data-doctor-name': HTMLAttributes.doctorName,
+                        'data-department': HTMLAttributes.department,
+                        'data-visit-date': HTMLAttributes.visitDate
+                    }, [
+                        ['div', { class: 'widget-header' }, 'Patient Identification Card'],
+                        ['div', { class: 'widget-grid' },
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'Patient Name:'], ['span', { class: 'cell-value' }, HTMLAttributes.patientName]],
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'Age / Gender:'], ['span', { class: 'cell-value' }, `${HTMLAttributes.patientAge} / ${HTMLAttributes.patientGender}`]],
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'UHID:'], ['span', { class: 'cell-value' }, HTMLAttributes.uhid]],
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'Blood Group:'], ['span', { class: 'cell-value' }, HTMLAttributes.bloodGroup]],
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'Consulting Doctor:'], ['span', { class: 'cell-value' }, HTMLAttributes.doctorName]],
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'Department:'], ['span', { class: 'cell-value' }, HTMLAttributes.department]],
+                            ['div', { class: 'grid-cell' }, ['span', { class: 'cell-label' }, 'Visit Date:'], ['span', { class: 'cell-value' }, HTMLAttributes.visitDate]]
+                        ]
+                    ]];
+                }
+            });
+
+            const VitalsWidget = _Node.create({
+                name: 'vitalsWidget',
+                group: 'block',
+                atom: true,
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        bp: { default: '120/80' },
+                        pulse: { default: '72' },
+                        respiration: { default: '16' },
+                        temperature: { default: '98.6' },
+                        weight: { default: '70' },
+                        height: { default: '170' },
+                        bmi: { default: '24.2' },
+                        spo2: { default: '98' }
+                    };
+                },
+                parseHTML() {
+                    return [{
+                        tag: 'div.vitals-widget',
+                        getAttrs: dom => ({
+                            bp: dom.getAttribute('data-bp') || '120/80',
+                            pulse: dom.getAttribute('data-pulse') || '72',
+                            respiration: dom.getAttribute('data-respiration') || '16',
+                            temperature: dom.getAttribute('data-temperature') || '98.6',
+                            weight: dom.getAttribute('data-weight') || '70',
+                            height: dom.getAttribute('data-height') || '170',
+                            bmi: dom.getAttribute('data-bmi') || '24.2',
+                            spo2: dom.getAttribute('data-spo2') || '98'
+                        })
+                    }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['div', {
+                        class: 'vitals-widget clinical-widget-card',
+                        'data-bp': HTMLAttributes.bp,
+                        'data-pulse': HTMLAttributes.pulse,
+                        'data-respiration': HTMLAttributes.respiration,
+                        'data-temperature': HTMLAttributes.temperature,
+                        'data-weight': HTMLAttributes.weight,
+                        'data-height': HTMLAttributes.height,
+                        'data-bmi': HTMLAttributes.bmi,
+                        'data-spo2': HTMLAttributes.spo2
+                    }, [
+                        ['div', { class: 'widget-header' }, 'Patient Vitals & Measurements'],
+                        ['div', { class: 'vitals-grid' },
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '❤️'], ['span', { class: 'vital-label' }, 'BP:'], ['span', { class: 'vital-value' }, HTMLAttributes.bp]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '💓'], ['span', { class: 'vital-label' }, 'Pulse:'], ['span', { class: 'vital-value' }, `${HTMLAttributes.pulse} bpm`]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '🫁'], ['span', { class: 'vital-label' }, 'Respiration:'], ['span', { class: 'vital-value' }, `${HTMLAttributes.respiration} /min`]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '🌡️'], ['span', { class: 'vital-label' }, 'Temp:'], ['span', { class: 'vital-value' }, `${HTMLAttributes.temperature} °F`]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '⚖️'], ['span', { class: 'vital-label' }, 'Weight:'], ['span', { class: 'vital-value' }, `${HTMLAttributes.weight} kg`]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '📏'], ['span', { class: 'vital-label' }, 'Height:'], ['span', { class: 'vital-value' }, `${HTMLAttributes.height} cm`]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '📊'], ['span', { class: 'vital-label' }, 'BMI:'], ['span', { class: 'vital-value' }, HTMLAttributes.bmi]],
+                            ['div', { class: 'vital-item' }, ['span', { class: 'vital-icon' }, '🩸'], ['span', { class: 'vital-label' }, 'SpO₂:'], ['span', { class: 'vital-value' }, `${HTMLAttributes.spo2} %`]]
+                        ]
+                    ]];
+                }
+            });
+
+            const PrescriptionWidget = _Node.create({
+                name: 'prescriptionWidget',
+                group: 'block',
+                atom: true,
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        medicines: {
+                            default: JSON.stringify([
+                                { name: 'Tab. Paracetamol 650mg', morning: '1', afternoon: '1', night: '1', days: '5', notes: 'Take after meals' },
+                                { name: 'Syp. Cough Relief 10ml', morning: '1', afternoon: '0', night: '1', days: '3', notes: 'For dry cough' }
+                            ])
+                        }
+                    };
+                },
+                parseHTML() {
+                    return [{
+                        tag: 'div.prescription-widget',
+                        getAttrs: dom => ({
+                            medicines: dom.getAttribute('data-medicines') || '[]'
+                        })
+                    }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    let meds = [];
+                    try {
+                        meds = JSON.parse(HTMLAttributes.medicines);
+                    } catch (e) {
+                        meds = [];
+                    }
+                    const rows = meds.map(m => [
+                        'tr', {},
+                        ['td', {}, m.name || ''],
+                        ['td', { style: 'text-align: center;' }, m.morning || '0'],
+                        ['td', { style: 'text-align: center;' }, m.afternoon || '0'],
+                        ['td', { style: 'text-align: center;' }, m.night || '0'],
+                        ['td', { style: 'text-align: center;' }, m.days || '0'],
+                        ['td', {}, m.notes || '']
+                    ]);
+                    
+                    return ['div', {
+                        class: 'prescription-widget clinical-widget-card',
+                        'data-medicines': HTMLAttributes.medicines
+                    }, [
+                        ['div', { class: 'widget-header' }, 'Rx - Prescription Details'],
+                        ['table', { class: 'prescription-table' },
+                            ['thead', {},
+                                ['tr', {},
+                                    ['th', {}, 'Medicine Name'],
+                                    ['th', { style: 'text-align: center; width: 60px;' }, 'Morning'],
+                                    ['th', { style: 'text-align: center; width: 60px;' }, 'Afternoon'],
+                                    ['th', { style: 'text-align: center; width: 60px;' }, 'Night'],
+                                    ['th', { style: 'text-align: center; width: 60px;' }, 'Days'],
+                                    ['th', {}, 'Notes / Instructions']
+                                ]
+                            ],
+                            ['tbody', {}, ...rows]
+                        ]
+                    ]];
+                }
+            });
+
+            const LabReportWidget = _Node.create({
+                name: 'labReportWidget',
+                group: 'block',
+                atom: true,
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        tests: {
+                            default: JSON.stringify([
+                                { name: 'Hemoglobin (Hb)', result: '14.2', reference: '13.0 - 17.0', unit: 'g/dL', status: 'Normal' },
+                                { name: 'Fasting Blood Sugar', result: '112', reference: '70 - 100', unit: 'mg/dL', status: 'High' }
+                            ])
+                        }
+                    };
+                },
+                parseHTML() {
+                    return [{
+                        tag: 'div.lab-report-widget',
+                        getAttrs: dom => ({
+                            tests: dom.getAttribute('data-tests') || '[]'
+                        })
+                    }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    let tests = [];
+                    try {
+                        tests = JSON.parse(HTMLAttributes.tests);
+                    } catch (e) {
+                        tests = [];
+                    }
+                    const rows = tests.map(t => {
+                        const statusClass = (t.status || 'Normal').toLowerCase();
+                        return [
+                            'tr', {},
+                            ['td', { style: 'font-weight: 600;' }, t.name || ''],
+                            ['td', { style: 'font-weight: 700;' }, t.result || ''],
+                            ['td', {}, t.reference || ''],
+                            ['td', {}, t.unit || ''],
+                            ['td', {}, ['span', { class: `status-badge ${statusClass}` }, t.status || 'Normal']]
+                        ];
+                    });
+                    
+                    return ['div', {
+                        class: 'lab-report-widget clinical-widget-card',
+                        'data-tests': HTMLAttributes.tests
+                    }, [
+                        ['div', { class: 'widget-header' }, 'Clinical Investigation Laboratory Report'],
+                        ['table', { class: 'lab-report-table' },
+                            ['thead', {},
+                                ['tr', {},
+                                    ['th', {}, 'Test Parameter'],
+                                    ['th', {}, 'Observed Result'],
+                                    ['th', {}, 'Reference Interval'],
+                                    ['th', {}, 'Unit'],
+                                    ['th', {}, 'Status']
+                                ]
+                            ],
+                            ['tbody', {}, ...rows]
+                        ]
+                    ]];
+                }
+            });
+
+            const DiagnosisWidget = _Node.create({
+                name: 'diagnosisWidget',
+                group: 'block',
+                atom: true,
+                selectable: true,
+                draggable: true,
+                addAttributes() {
+                    return {
+                        primaryDiagnosis: { default: 'Essential Hypertension' },
+                        secondaryDiagnosis: { default: 'Type 2 Diabetes Mellitus' },
+                        icdCode: { default: 'I10 / E11' },
+                        clinicalNotes: { default: 'Patient reports mild headache. Advised low sodium diet.' }
+                    };
+                },
+                parseHTML() {
+                    return [{
+                        tag: 'div.diagnosis-widget',
+                        getAttrs: dom => ({
+                            primaryDiagnosis: dom.getAttribute('data-primary-diagnosis') || 'Essential Hypertension',
+                            secondaryDiagnosis: dom.getAttribute('data-secondary-diagnosis') || 'Type 2 Diabetes Mellitus',
+                            icdCode: dom.getAttribute('data-icd-code') || 'I10 / E11',
+                            clinicalNotes: dom.getAttribute('data-clinical-notes') || 'Patient reports mild headache. Advised low sodium diet.'
+                        })
+                    }];
+                },
+                renderHTML({ HTMLAttributes }) {
+                    return ['div', {
+                        class: 'diagnosis-widget clinical-widget-card',
+                        'data-primary-diagnosis': HTMLAttributes.primaryDiagnosis,
+                        'data-secondary-diagnosis': HTMLAttributes.secondaryDiagnosis,
+                        'data-icd-code': HTMLAttributes.icdCode,
+                        'data-clinical-notes': HTMLAttributes.clinicalNotes
+                    }, [
+                        ['div', { class: 'widget-header' }, 'Diagnosis & Clinical Impression Summary'],
+                        ['div', { class: 'diagnosis-body' },
+                            ['div', { class: 'diag-row' }, ['span', { class: 'diag-label' }, 'Primary Diagnosis:'], ['span', { class: 'diag-val primary' }, HTMLAttributes.primaryDiagnosis]],
+                            ['div', { class: 'diag-row' }, ['span', { class: 'diag-label' }, 'Secondary Diagnosis:'], ['span', { class: 'diag-val' }, HTMLAttributes.secondaryDiagnosis]],
+                            ['div', { class: 'diag-row' }, ['span', { class: 'diag-label' }, 'ICD-10 Code Reference:'], ['span', { class: 'diag-code' }, HTMLAttributes.icdCode]],
+                            ['div', { class: 'diag-notes-container' },
+                                ['span', { class: 'diag-notes-label' }, 'Clinical Progression Notes:'],
+                                ['p', { class: 'diag-notes-content' }, HTMLAttributes.clinicalNotes]
+                            ]
+                        ]
+                    ]];
+                }
+            });
+
             // Custom Table extension to support border color, style, width, alignment
             const CustomTable = m.Table.extend({
                 addAttributes() {
@@ -1143,8 +1934,281 @@ if (document.readyState === 'loading') {
                 }
             });
 
+            // Slash command variables and functions
+            let slashMenuActive = false;
+            let slashMenuEl = null;
+            let queryText = '';
+            let triggerPos = null;
+            let filteredCommands = [];
+            let activeCommandIndex = 0;
+
+            const allCommands = [
+                { title: 'Patient Card', type: 'patientCardWidget', icon: '📇', desc: 'Patient demographics card' },
+                { title: 'Vitals', type: 'vitalsWidget', icon: '❤️', desc: 'Blood pressure, pulse, temp, BMI' },
+                { title: 'Prescription', type: 'prescriptionWidget', icon: '💊', desc: 'Medicine Rx details table' },
+                { title: 'Lab Report', type: 'labReportWidget', icon: '🧪', desc: 'Laboratory parameters table' },
+                { title: 'Diagnosis', type: 'diagnosisWidget', icon: '🩺', desc: 'Primary & secondary impression' },
+                { title: 'Callout', type: 'callout', icon: 'ℹ️', desc: 'Clinical info/alert notice box' },
+                { title: 'Table', type: 'table', icon: '📅', desc: 'Insert a standard data table' },
+                { title: 'Paragraph', type: 'paragraph', icon: '✍️', desc: 'Standard paragraph body text' },
+                { title: 'Heading 1', type: 'h1', icon: 'H1', desc: 'Main section heading' },
+                { title: 'Heading 2', type: 'h2', icon: 'H2', desc: 'Subsection heading' },
+                { title: 'Heading 3', type: 'h3', icon: 'H3', desc: 'Minor subsection heading' },
+                { title: 'Divider', type: 'divider', icon: '➖', desc: 'Horizontal line break' },
+                { title: 'Call Action', type: 'cta', icon: '📞', desc: 'Button with action/link' }
+            ];
+
+            function showSlashMenu(editor) {
+                if (slashMenuActive) return;
+                
+                triggerPos = editor.state.selection.from - 1; // position of /
+                
+                slashMenuEl = document.createElement('div');
+                slashMenuEl.className = 'tiptap-slash-menu';
+                slashMenuEl.style.position = 'absolute';
+                slashMenuEl.style.zIndex = '99999';
+                slashMenuEl.style.background = '#ffffff';
+                slashMenuEl.style.border = '1px solid #cbd5e1';
+                slashMenuEl.style.borderRadius = '6px';
+                slashMenuEl.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)';
+                slashMenuEl.style.padding = '4px';
+                slashMenuEl.style.width = '220px';
+                
+                // Position it relative to cursor
+                const coords = editor.view.coordsAtPos(editor.state.selection.from);
+                if (coords) {
+                    slashMenuEl.style.left = `${coords.left + window.scrollX}px`;
+                    slashMenuEl.style.top = `${coords.bottom + window.scrollY + 5}px`;
+                }
+                
+                document.body.appendChild(slashMenuEl);
+                slashMenuActive = true;
+                queryText = '';
+                filteredCommands = [...allCommands];
+                activeCommandIndex = 0;
+                renderSlashMenuItems();
+            }
+
+            function executeCommand(cmd) {
+                const currentPos = editor.state.selection.from;
+                editor.chain().focus()
+                    .deleteRange({ from: triggerPos, to: currentPos })
+                    .run();
+
+                window.editorInterop.insertWidget(cmd.type);
+            }
+
+            function updateQuery() {
+                const currentPos = editor.state.selection.from;
+                if (currentPos <= triggerPos) {
+                    hideSlashMenu();
+                    return;
+                }
+                const text = editor.state.doc.textBetween(triggerPos + 1, currentPos);
+                queryText = text.toLowerCase();
+                
+                filteredCommands = allCommands.filter(c => 
+                    c.title.toLowerCase().includes(queryText) || 
+                    c.desc.toLowerCase().includes(queryText)
+                );
+                
+                activeCommandIndex = 0;
+                renderSlashMenuItems();
+            }
+
+            function renderSlashMenuItems() {
+                if (!slashMenuEl) return;
+                slashMenuEl.innerHTML = '';
+                
+                if (filteredCommands.length === 0) {
+                    slashMenuEl.innerHTML = '<div class="slash-menu-empty" style="padding: 8px 12px; font-size: 0.8rem; color: #64748b;">No matching blocks found</div>';
+                    return;
+                }
+                
+                filteredCommands.forEach((cmd, idx) => {
+                    const item = document.createElement('div');
+                    item.className = `slash-menu-item ${idx === activeCommandIndex ? 'active' : ''}`;
+                    item.style.display = 'flex';
+                    item.style.alignItems = 'center';
+                    item.style.gap = '8px';
+                    item.style.padding = '6px 12px';
+                    item.style.cursor = 'pointer';
+                    item.style.borderRadius = '4px';
+                    if (idx === activeCommandIndex) {
+                        item.style.background = '#eff6ff';
+                        item.style.color = '#1d4ed8';
+                    } else {
+                        item.style.background = 'transparent';
+                        item.style.color = '#1e293b';
+                    }
+                    
+                    item.innerHTML = `
+                        <span class="slash-menu-icon" style="font-size: 1.1rem;">${cmd.icon}</span>
+                        <div class="slash-menu-details" style="display: flex; flex-direction: column;">
+                            <span class="slash-menu-title" style="font-weight: 600; font-size: 0.8rem;">${cmd.title}</span>
+                            <span class="slash-menu-desc" style="font-size: 0.65rem; color: #64748b;">${cmd.desc}</span>
+                        </div>
+                    `;
+                    
+                    item.addEventListener('click', () => {
+                        executeCommand(cmd);
+                        hideSlashMenu();
+                    });
+                    
+                    slashMenuEl.appendChild(item);
+                });
+            }
+
+            function hideSlashMenu() {
+                if (slashMenuEl) {
+                    slashMenuEl.remove();
+                    slashMenuEl = null;
+                }
+                slashMenuActive = false;
+            }
+
+            const handleSlashKeydown = (e) => {
+                if (!slashMenuActive) return false;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeCommandIndex = (activeCommandIndex + 1) % filteredCommands.length;
+                    renderSlashMenuItems();
+                    return true;
+                }
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeCommandIndex = (activeCommandIndex - 1 + filteredCommands.length) % filteredCommands.length;
+                    renderSlashMenuItems();
+                    return true;
+                }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    executeCommand(filteredCommands[activeCommandIndex]);
+                    hideSlashMenu();
+                    return true;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    hideSlashMenu();
+                    return true;
+                }
+                if (e.key === 'Backspace') {
+                    const currentPos = editor.state.selection.from;
+                    if (currentPos <= triggerPos + 1) {
+                        hideSlashMenu();
+                    } else {
+                        setTimeout(updateQuery, 10);
+                    }
+                    return false;
+                }
+                
+                if (e.key.length === 1) {
+                    setTimeout(updateQuery, 10);
+                }
+                return false;
+            };
+
+            // Bubble Menu variables and functions
+            let bubbleMenuEl = null;
+            let bubbleMenuVisible = false;
+
+            function updateBubbleMenu(editor) {
+                const { selection } = editor.state;
+                if (selection.empty || !editor.isFocused) {
+                    hideBubbleMenu();
+                    return;
+                }
+
+                const { from, to } = selection;
+                const startCoords = editor.view.coordsAtPos(from);
+                const endCoords = editor.view.coordsAtPos(to);
+
+                if (!bubbleMenuEl) {
+                    bubbleMenuEl = document.createElement('div');
+                    bubbleMenuEl.className = 'tiptap-bubble-menu';
+                    bubbleMenuEl.style.position = 'absolute';
+                    bubbleMenuEl.style.zIndex = '9999';
+                    bubbleMenuEl.style.background = 'rgba(255, 255, 255, 0.85)';
+                    bubbleMenuEl.style.backdropFilter = 'blur(8px)';
+                    bubbleMenuEl.style.border = '1px solid rgba(226, 232, 240, 0.8)';
+                    bubbleMenuEl.style.borderRadius = '8px';
+                    bubbleMenuEl.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+                    bubbleMenuEl.style.padding = '4px';
+                    bubbleMenuEl.style.display = 'flex';
+                    bubbleMenuEl.style.gap = '4px';
+
+                    bubbleMenuEl.innerHTML = `
+                        <button type="button" class="bubble-btn bold-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem;" title="Bold">B</button>
+                        <button type="button" class="bubble-btn italic-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-style: italic; font-size: 0.85rem;" title="Italic">I</button>
+                        <button type="button" class="bubble-btn underline-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; text-decoration: underline; font-size: 0.85rem;" title="Underline">U</button>
+                        <button type="button" class="bubble-btn strike-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; text-decoration: line-through; font-size: 0.85rem;" title="S">S</button>
+                        <div style="width: 1px; background: #e2e8f0; margin: 4px 2px;"></div>
+                        <button type="button" class="bubble-btn highlight-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;" title="Highlight">✨</button>
+                        <button type="button" class="bubble-btn color-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;" title="Text Color">🎨</button>
+                        <button type="button" class="bubble-btn link-btn" style="border: none; background: transparent; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;" title="Add Link">🔗</button>
+                        <button type="button" class="bubble-btn ai-btn" style="border: none; background: #eff6ff; color: #1d4ed8; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700;" title="AI Assistant">🤖 AI</button>
+                    `;
+                    
+                    bubbleMenuEl.querySelector('.bold-btn').addEventListener('click', () => { editor.chain().focus().toggleBold().run(); });
+                    bubbleMenuEl.querySelector('.italic-btn').addEventListener('click', () => { editor.chain().focus().toggleItalic().run(); });
+                    bubbleMenuEl.querySelector('.underline-btn').addEventListener('click', () => { editor.chain().focus().toggleUnderline().run(); });
+                    bubbleMenuEl.querySelector('.strike-btn').addEventListener('click', () => { editor.chain().focus().toggleStrike().run(); });
+                    bubbleMenuEl.querySelector('.highlight-btn').addEventListener('click', () => { 
+                        const color = prompt('Highlight color:', '#fef08a');
+                        if (color) editor.chain().focus().toggleHighlight({ color }).run();
+                    });
+                    bubbleMenuEl.querySelector('.color-btn').addEventListener('click', () => { 
+                        const color = prompt('Text color:', '#ef4444');
+                        if (color) editor.chain().focus().setColor(color).run();
+                    });
+                    bubbleMenuEl.querySelector('.link-btn').addEventListener('click', () => { 
+                        const current = editor.getAttributes('link').href || '';
+                        const href = prompt('Link URL:', current);
+                        if (href) editor.chain().focus().setLink({ href }).run();
+                        else if (href === '') editor.chain().focus().unsetLink().run();
+                    });
+                    bubbleMenuEl.querySelector('.ai-btn').addEventListener('click', () => { 
+                        if (window.quillDotNet) {
+                            window.quillDotNet.invokeMethodAsync('OnAIRewriteRequested', editor.state.doc.textBetween(from, to));
+                        }
+                    });
+
+                    document.body.appendChild(bubbleMenuEl);
+                }
+
+                bubbleMenuVisible = true;
+                bubbleMenuEl.style.display = 'flex';
+                
+                if (startCoords && endCoords) {
+                    const left = (startCoords.left + endCoords.right) / 2;
+                    const top = startCoords.top - 45;
+                    bubbleMenuEl.style.left = `${Math.max(10, left - bubbleMenuEl.offsetWidth / 2) + window.scrollX}px`;
+                    bubbleMenuEl.style.top = `${top + window.scrollY}px`;
+                }
+            }
+
+            function hideBubbleMenu() {
+                if (bubbleMenuEl) {
+                    bubbleMenuEl.style.display = 'none';
+                }
+                bubbleMenuVisible = false;
+            }
+
             const editor = new m.Editor({
                 element: container,
+                editorProps: {
+                    handleKeyDown(view, event) {
+                        if (slashMenuActive) {
+                            const handled = handleSlashKeydown(event);
+                            if (handled) return true;
+                        }
+                        if (event.key === '/') {
+                            setTimeout(() => showSlashMenu(editor), 10);
+                        }
+                        return false;
+                    }
+                },
                 extensions: [
                     m.StarterKit,
                     m.Underline,
@@ -1152,6 +2216,20 @@ if (document.readyState === 'loading') {
                     CustomImage,
                     CustomVideo,
                     PageBreak,
+                    FAQSection,
+                    FAQItem,
+                    FAQQuestion,
+                    FAQAnswer,
+                    FAQActions,
+                    CTAWidget,
+                    CTAText,
+                    CTAButton,
+                    CalloutBox,
+                    PatientCardWidget,
+                    VitalsWidget,
+                    PrescriptionWidget,
+                    LabReportWidget,
+                    DiagnosisWidget,
                     m.Highlight.configure({ multicolor: true }),
                     m.Color,
                     m.TextStyle,
@@ -1166,13 +2244,14 @@ if (document.readyState === 'loading') {
                     m.TaskList,
                     m.TaskItem.configure({ nested: true })
                 ],
-                content: initialValue || '<p></p>',
+                content: window.editorInterop.cleanCTAHTML(initialValue) || '<p></p>',
                 onUpdate: ({ editor }) => {
-                    const html = editor.getHTML();
+                    const html = window.editorInterop.cleanCTAHTML(editor.getHTML());
                     dotNetHelper.invokeMethodAsync('OnEditorContentChanged', html);
                     window.editorInterop.updateActiveStates(editor);
                     window.editorInterop.updateCurrentPageFromSelection(editor);
                     window.editorInterop.syncAllTablesStyles(editor);
+                    updateBubbleMenu(editor);
                     
                     if (window._splitTimeout) clearTimeout(window._splitTimeout);
                     window._splitTimeout = setTimeout(() => {
@@ -1185,6 +2264,30 @@ if (document.readyState === 'loading') {
                     window.editorInterop.updateActiveStates(editor);
                     window.editorInterop.updateCurrentPageFromSelection(editor);
                     window.editorInterop.syncAllTablesStyles(editor);
+                    updateBubbleMenu(editor);
+                    
+                    // Report active node selection to Blazor Properties Inspector
+                    if (window.quillDotNet) {
+                        const { selection } = editor.state;
+                        let nodeName = 'paragraph';
+                        let attrs = {};
+                        
+                        if (selection.node) {
+                            nodeName = selection.node.type.name;
+                            attrs = selection.node.attrs;
+                        } else {
+                            const $from = selection.$from;
+                            if ($from) {
+                                const parent = $from.parent;
+                                if (parent) {
+                                    nodeName = parent.type.name;
+                                    attrs = parent.attrs;
+                                }
+                            }
+                        }
+                        
+                        window.quillDotNet.invokeMethodAsync('OnNodeSelectionChanged', nodeName, JSON.stringify(attrs));
+                    }
                 }
             });
 
@@ -1197,6 +2300,175 @@ if (document.readyState === 'loading') {
                     editor.commands.focus();
                 }
             });
+
+            // Handle CTA resizing dragging
+            container.addEventListener('mousedown', (e) => {
+                const resizer = e.target.closest('.cta-resizer');
+                if (!resizer) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const ctaContainer = resizer.closest('.cta-container');
+                if (!ctaContainer) return;
+
+                const isRight = resizer.classList.contains('cta-resizer-r') || resizer.classList.contains('cta-resizer-br');
+                const startX = e.clientX;
+                const startWidth = ctaContainer.getBoundingClientRect().width;
+                const parentWidth = ctaContainer.parentElement.getBoundingClientRect().width;
+
+                const onMouseMove = (moveEvent) => {
+                    let deltaX = moveEvent.clientX - startX;
+                    if (!isRight) {
+                        deltaX = -deltaX;
+                    }
+                    let newWidth = startWidth + deltaX * 2;
+                    if (isRight) {
+                        newWidth = startWidth + deltaX;
+                    }
+
+                    const widthPercent = Math.max(10, Math.min(100, (newWidth / parentWidth) * 100));
+                    ctaContainer.style.width = `${widthPercent}%`;
+                };
+
+                const onMouseUp = () => {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+
+                    // Save the new width attribute to Tiptap node!
+                    const pos = editor.view.posAtDOM(ctaContainer);
+                    if (pos !== undefined && pos !== null) {
+                        let widgetPos = -1;
+                        let widgetNode = null;
+                        const $pos = editor.state.doc.resolve(pos);
+                        for (let d = $pos.depth; d >= 0; d--) {
+                            const node = $pos.node(d);
+                            if (node && node.type.name === 'ctaWidget') {
+                                widgetPos = $pos.before(d);
+                                widgetNode = node;
+                                break;
+                            }
+                        }
+                        if (widgetPos === -1) {
+                            editor.state.doc.nodesBetween(Math.max(0, pos - 5), Math.min(editor.state.doc.content.size, pos + 5), (node, nodePos) => {
+                                if (node.type.name === 'ctaWidget') {
+                                    widgetPos = nodePos;
+                                    widgetNode = node;
+                                    return false;
+                                }
+                            });
+                        }
+                        if (widgetPos > -1 && widgetNode) {
+                            editor.view.dispatch(
+                                editor.state.tr.setNodeMarkup(widgetPos, undefined, {
+                                    ...widgetNode.attrs,
+                                    width: ctaContainer.style.width
+                                })
+                            );
+                        }
+                    }
+                };
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            // Document-wide click listener to clean up resize handles when clicking away
+            const cleanUpResizers = (evt) => {
+                if (!container.contains(evt.target)) {
+                    container.querySelectorAll('.cta-resizer').forEach(r => r.remove());
+                }
+            };
+            document.removeEventListener('click', window._cleanUpCTAValues);
+            window._cleanUpCTAValues = cleanUpResizers;
+            document.addEventListener('click', cleanUpResizers);
+
+            // Capture clicks to handle custom interactive editor widgets (FAQ additions, summaries, CTA buttons, resize handles initialization)
+            container.addEventListener('click', (e) => {
+                // Initialize CTA Resize Handles if clicked
+                const cta = e.target.closest('.cta-container');
+                container.querySelectorAll('.cta-container').forEach(el => {
+                    if (el !== cta) {
+                        el.querySelectorAll('.cta-resizer').forEach(r => r.remove());
+                    }
+                });
+
+                if (cta && !e.target.closest('.cta-resizer')) {
+                    if (!cta.querySelector('.cta-resizer')) {
+                        const r = document.createElement('div');
+                        r.className = 'cta-resizer cta-resizer-r';
+                        r.setAttribute('contenteditable', 'false');
+
+                        const l = document.createElement('div');
+                        l.className = 'cta-resizer cta-resizer-l';
+                        l.setAttribute('contenteditable', 'false');
+
+                        const br = document.createElement('div');
+                        br.className = 'cta-resizer cta-resizer-br';
+                        br.setAttribute('contenteditable', 'false');
+
+                        cta.appendChild(r);
+                        cta.appendChild(l);
+                        cta.appendChild(br);
+                    }
+                }
+
+                const addBtn = e.target.closest('.faq-add-btn');
+                if (addBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.editorInterop.addFaqItem(addBtn);
+                    return;
+                }
+
+                const ctaBtn = e.target.closest('.cta-button');
+                if (ctaBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const currentHref = ctaBtn.getAttribute('href') || '#';
+                    const newUrl = prompt('Enter button link URL (e.g., tel:8110899999, /contact, or URL):', currentHref);
+                    if (newUrl !== null) {
+                        let buttonPos = -1;
+                        let buttonNode = null;
+                        
+                        editor.state.doc.descendants((node, pos) => {
+                            if (node.type.name === 'ctaButton') {
+                                const dom = editor.view.nodeDOM(pos);
+                                if (dom === ctaBtn || dom?.contains(ctaBtn) || ctaBtn.contains(dom)) {
+                                    buttonPos = pos;
+                                    buttonNode = node;
+                                    return false; // Stop iteration
+                                }
+                            }
+                        });
+
+                        if (buttonPos > -1 && buttonNode) {
+                            editor.view.dispatch(
+                                editor.state.tr.setNodeMarkup(buttonPos, undefined, {
+                                    ...buttonNode.attrs,
+                                    href: newUrl
+                                })
+                            );
+                            // Ensure DOM attribute is updated instantly for instant interactivity
+                            ctaBtn.setAttribute('href', newUrl);
+                        }
+                    }
+                    return;
+                }
+
+                const summary = e.target.closest('.faq-question');
+                if (summary) {
+                    // Let the default click happen so text can be focused/edited
+                    // But ensure the details tag stays open
+                    const details = summary.parentElement;
+                    if (details && details.tagName === 'DETAILS') {
+                        setTimeout(() => {
+                            details.setAttribute('open', 'true');
+                            details.open = true;
+                        }, 0);
+                    }
+                }
+            }, true); // Use capture phase!
 
             // ── Ctrl + Mousewheel Zoom on workspace ──
             const workspace = document.querySelector('.rte-document-scroll');
@@ -1484,6 +2756,54 @@ if (document.readyState === 'loading') {
                     break;
                 case 'print':
                     window.print();
+                    break;
+                case 'insertFAQ':
+                    const faqHtml = `<div class="faq-section">
+                        <h3>Frequently Asked Questions (FAQ)</h3>
+                        <details class="faq-item" open>
+                            <summary class="faq-question">Q: What is the turnaround time for standard laboratory reports?</summary>
+                            <div class="faq-answer">
+                                <p>A: Most routine tests are processed within 4 to 12 hours. Specialized molecular or histopathology studies may take 24 to 48 hours.</p>
+                            </div>
+                        </details>
+                        <details class="faq-item" open>
+                            <summary class="faq-question">Q: Do I need to fast before my scheduled blood draw?</summary>
+                            <div class="faq-answer">
+                                <p>A: Fasting for 10-12 hours is recommended for fasting blood glucose, lipid profiles, and comprehensive metabolic panels. Please drink plain water to stay hydrated.</p>
+                            </div>
+                        </details>
+                        <div class="faq-actions"></div>
+                    </div><p></p>`;
+                    editor.chain().focus().insertContent(faqHtml).run();
+                    break;
+                case 'insertCallout':
+                    let calloutHtml = '';
+                    if (value === 'info') {
+                        calloutHtml = `<div class="callout-box info">
+                            <p><strong>ℹ️ Info Notice</strong></p>
+                            <p>Please ensure all patient information matches the requisition form before submitting the clinical sample.</p>
+                        </div><p></p>`;
+                    } else if (value === 'warning') {
+                        calloutHtml = `<div class="callout-box warning">
+                            <p><strong>⚠️ Clinical Warning</strong></p>
+                            <p>Critical value thresholds: Hemoglobin < 7.0 g/dL or Potassium > 6.0 mEq/L require immediate specialist alert notification.</p>
+                        </div><p></p>`;
+                    } else if (value === 'success') {
+                        calloutHtml = `<div class="callout-box success">
+                            <p><strong>✅ Quality Assurance Verified</strong></p>
+                            <p>All control runs are within normal standard deviation limits. NABL calibration check completed successfully.</p>
+                        </div><p></p>`;
+                    } else if (value === 'tip') {
+                        calloutHtml = `<div class="callout-box tip">
+                            <p><strong>💡 Lab Tip</strong></p>
+                            <p>Pre-analytical errors can be minimized by gently inverting EDTA anticoagulant tubes 8-10 times immediately after collection.</p>
+                        </div><p></p>`;
+                    }
+                    editor.chain().focus().insertContent(calloutHtml).run();
+                    break;
+                case 'insertCTA':
+                    const ctaHtml = `<div class="cta-container"><span class="cta-text">Do you have any queries? Contact our helpdesk:</span><a href="/contact" class="cta-button">Contact Us</a></div><p></p>`;
+                    editor.chain().focus().insertContent(ctaHtml).run();
                     break;
             }
         },
@@ -1841,7 +3161,7 @@ if (document.readyState === 'loading') {
         setContent:      function (html)          {
             logDiag('[setContent] Setting editor content...');
             if (window.tiptapInstance) {
-                window.tiptapInstance.commands.setContent(html || '<p></p>');
+                window.tiptapInstance.commands.setContent(window.editorInterop.cleanCTAHTML(html) || '<p></p>');
                 setTimeout(() => window.editorInterop.syncAllTablesStyles(window.tiptapInstance), 20);
             }
         },

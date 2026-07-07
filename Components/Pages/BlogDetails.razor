@@ -38,6 +38,17 @@ else
         <div class="mesh-bg" style="opacity: 0.15;"></div>
         <div class="hero-grid-bg"></div>
 
+        <!-- Local Background Bubbles for Blog Details -->
+        <div class="bubble-container animate-bubbles" style="position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;">
+            <div class="bubble" style="left: 10%; width: 40px; height: 40px; animation-delay: 0s; animation-duration: 12s;"></div>
+            <div class="bubble" style="left: 25%; width: 60px; height: 60px; animation-delay: 2s; animation-duration: 15s;"></div>
+            <div class="bubble" style="left: 40%; width: 30px; height: 30px; animation-delay: 4s; animation-duration: 10s;"></div>
+            <div class="bubble" style="left: 55%; width: 50px; height: 50px; animation-delay: 1s; animation-duration: 14s;"></div>
+            <div class="bubble" style="left: 70%; width: 70px; height: 70px; animation-delay: 3s; animation-duration: 18s;"></div>
+            <div class="bubble" style="left: 85%; width: 45px; height: 45px; animation-delay: 5s; animation-duration: 13s;"></div>
+            <div class="bubble" style="left: 95%; width: 35px; height: 35px; animation-delay: 7s; animation-duration: 11s;"></div>
+        </div>
+
         <div class="container position-relative z-2">
             <!-- Back Button -->
             <a href="insights" class="btn-helium btn-helium-secondary py-2 px-4 mb-4 d-inline-block text-decoration-none">
@@ -269,6 +280,14 @@ else
         color: #475569 !important;
         border-left-color: #2563eb !important;
     }
+    .light-theme .blog-rich-content .cta-button {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3), 0 2px 4px -1px rgba(37, 99, 235, 0.15) !important;
+    }
+    .light-theme .blog-rich-content .cta-button:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4), 0 4px 6px -2px rgba(37, 99, 235, 0.2) !important;
+    }
     .light-theme .social-icon-btn {
         background: rgba(15, 23, 42, 0.05) !important;
         border: 1px solid rgba(15, 23, 42, 0.08) !important;
@@ -412,6 +431,183 @@ else
         color: #f472b6;
         font-family: 'Fira Code', monospace;
     }
+
+    /* FAQ Section */
+    .blog-rich-content .faq-section {
+        margin: 2.5rem 0;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1.75rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .blog-rich-content .faq-section h3 {
+        margin-top: 0;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        color: #60a5fa;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .blog-rich-content .faq-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .blog-rich-content .faq-item[open] {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .blog-rich-content .faq-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .blog-rich-content .faq-question {
+        padding: 1.25rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        cursor: pointer;
+        user-select: none;
+        outline: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        list-style: none;
+    }
+
+    .blog-rich-content .faq-question::-webkit-details-marker {
+        display: none;
+    }
+
+    .blog-rich-content .faq-question::after {
+        content: '▼';
+        font-size: 0.8rem;
+        color: #60a5fa;
+        transition: transform 0.3s ease;
+    }
+
+    .blog-rich-content .faq-item[open] .faq-question::after {
+        transform: rotate(180deg);
+        color: #3b82f6;
+    }
+
+    .blog-rich-content .faq-answer {
+        padding: 0 1.25rem 1.25rem 1.25rem;
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .blog-rich-content .faq-actions {
+        display: none !important;
+    }
+
+    /* Callout Boxes */
+    .blog-rich-content .callout-box {
+        padding: 1.25rem 1.5rem;
+        border-radius: 12px;
+        margin: 2rem 0;
+        border-left-width: 4px;
+        border-left-style: solid;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .blog-rich-content .callout-box.info {
+        background-color: rgba(2, 132, 199, 0.1);
+        border-left-color: #0284c7;
+        color: #bae6fd;
+        border: 1px solid rgba(2, 132, 199, 0.15);
+        border-left-width: 4px;
+    }
+    
+    .blog-rich-content .callout-box.warning {
+        background-color: rgba(217, 119, 6, 0.1);
+        border-left-color: #d97706;
+        color: #fef3c7;
+        border: 1px solid rgba(217, 119, 6, 0.15);
+        border-left-width: 4px;
+    }
+    
+    .blog-rich-content .callout-box.success {
+        background-color: rgba(22, 163, 74, 0.1);
+        border-left-color: #16a34a;
+        color: #bbf7d0;
+        border: 1px solid rgba(22, 163, 74, 0.15);
+        border-left-width: 4px;
+    }
+    
+    .blog-rich-content .callout-box.tip {
+        background-color: rgba(147, 51, 234, 0.1);
+        border-left-color: #9333ea;
+        color: #f3e8ff;
+        border: 1px solid rgba(147, 51, 234, 0.15);
+        border-left-width: 4px;
+    }
+
+    .blog-rich-content .callout-box p {
+        margin: 0;
+    }
+
+    /* CTA Button Widget base styling */
+    .blog-rich-content .cta-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin: 2.5rem 0;
+        gap: 1rem;
+        flex-wrap: wrap;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .blog-rich-content .cta-text {
+        font-weight: 600;
+        color: #93c5fd;
+        font-size: 1rem;
+        flex-grow: 1;
+        text-align: left;
+    }
+    .blog-rich-content .cta-button {
+        display: inline-block;
+        padding: 10px 24px;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff !important;
+        text-decoration: none !important;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-family: 'Outfit', sans-serif;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3), 0 2px 4px -1px rgba(59, 130, 246, 0.15);
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .blog-rich-content .cta-button:hover {
+        background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4), 0 4px 6px -2px rgba(59, 130, 246, 0.2);
+    }
+    .blog-rich-content .cta-button:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
 </style>
 
 @code {
@@ -499,6 +695,7 @@ else
             try
             {
                 await JS.InvokeVoidAsync("initHeliumAnimations");
+                await JS.InvokeVoidAsync("eval", "document.querySelectorAll('.faq-item').forEach(el => el.removeAttribute('open'))");
             }
             catch { }
         }
