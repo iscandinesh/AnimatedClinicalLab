@@ -18,11 +18,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('images/insights-banner.png?v=2');
+    background-image: url('images/insights-banner.png?v=4');
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
-    opacity: 0.75;
+    opacity: 0.90;
+    filter: saturate(1.08) contrast(1.08) brightness(1.02);
     z-index: 1;
     pointer-events: none;
     animation: heroBackgroundZoom 12s ease-in-out infinite alternate;
