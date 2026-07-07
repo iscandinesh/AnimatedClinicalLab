@@ -1,7 +1,41 @@
 /* Insights Page - Scoped Styles */
-
 .page-header {
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     overflow: visible;
     position: relative;
+}
+
+.insights-hero {
+    position: relative;
+    background: #090c15 !important;
+    overflow: hidden;
+}
+
+.insights-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('images/insights-banner.png?v=2');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.75;
+    z-index: 1;
+    pointer-events: none;
+    animation: heroBackgroundZoom 12s ease-in-out infinite alternate;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+@keyframes heroBackgroundZoom {
+    0% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1.08);
+    }
 }

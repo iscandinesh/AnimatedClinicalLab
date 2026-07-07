@@ -64,7 +64,7 @@ function Optimize-Image {
         # Save compressed JPEG at 75% quality
         $encoder = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() | Where-Object { $_.FormatID -eq [System.Drawing.Imaging.ImageFormat]::Jpeg.Guid }
         $encoderParams = New-Object System.Drawing.Imaging.EncoderParameters(1)
-        $encoderParams.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawing.Imaging.Encoder]::Quality, 75)
+        $encoderParams.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawing.Imaging.Encoder]::Quality, 98)
         
         $bmp.Save($outPath, $encoder, $encoderParams)
         $msg = "Converted to JPG: " + $outPath + " (" + $w + "x" + $h + " -> " + $newW + "x" + $newH + ")"
@@ -90,6 +90,8 @@ $banners = @(
     "tiruppur-famous-banner",
     "tiruppur-district-heritage",
     "tiruppur-vibrant-textile",
+    "tiruppur-vibrant-textile-desktop",
+    "tiruppur-vibrant-textile-mobile",
     "tiruppur-textile-banner-dark",
     "event-camp",
     "event-offer",
@@ -105,7 +107,7 @@ $banners = @(
 
 Write-Host "--- Optimizing Photographic Banners ---" -ForegroundColor Cyan
 foreach ($banner in $banners) {
-    Optimize-Image -inPath "$baseDir\$banner.png" -outPath "$baseDir\$banner.jpg" -maxSize 2048 -format "jpg"
+    Optimize-Image -inPath "$baseDir\$banner.png" -outPath "$baseDir\$banner.jpg" -maxSize 3072 -format "jpg"
 }
 
 

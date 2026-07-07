@@ -40,14 +40,18 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: url('images/tiruppur-vibrant-textile.jpg');
-        background-position: center;
+        background-image: url('images/tiruppur-vibrant-textile-desktop.jpg?v=18');
+        background-position: 32% 48%;
         background-repeat: no-repeat;
         background-size: cover;
-        opacity: 0.7;
+        opacity: 0.85;
         z-index: 1;
         pointer-events: none;
-        animation: heroBackgroundZoom 10s ease-in-out infinite alternate;
+        animation: heroBackgroundZoom 12s ease-in-out infinite alternate;
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        filter: saturate(0.78) contrast(1.02) brightness(0.95);
     }
     @@media (max-width: 992px) {
         .tiruppur-hero {
@@ -63,6 +67,8 @@
             padding-bottom: 70px !important;
         }
         .tiruppur-hero::before {
+            background-image: url('images/tiruppur-vibrant-textile-mobile.jpg?v=18') !important;
+            background-position: center 48% !important;
             opacity: 0.85;
         }
     }
@@ -535,8 +541,8 @@
             <div class="badge-pill-premium mb-4 d-inline-block text-white" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">
                 <i class="bi bi-geo-alt-fill me-2" style="color: var(--primary-blue);"></i> Tiruppur Branch Lab • Now Open
             </div>
-            <h1 class="hero-title mb-4 text-center text-white display-3 fw-bold" style="font-family: 'Inter', sans-serif; text-shadow: 0 4px 15px rgba(0,0,0,0.6); line-height: 1.25; font-size: clamp(2.5rem, 5vw, 4rem);">
-                Diagnostics & Health Checkups <br />in <span style="background: linear-gradient(135deg, #60a5fa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tiruppur</span>
+            <h1 class="hero-title mb-4 text-center text-white display-3 fw-bold" style="font-family: 'Inter', sans-serif; text-shadow: 0 4px 25px rgba(0,0,0,0.95), 0 2px 10px rgba(0,0,0,0.95); line-height: 1.25; font-size: clamp(2.5rem, 5vw, 4rem);">
+                Diagnostics & Health Checkups <br />in <span style="color: #38bdf8; text-shadow: 0 4px 15px rgba(0,0,0,0.95), 0 2px 5px rgba(0,0,0,0.95); font-weight: 800;">Tiruppur</span>
             </h1>
             <p class="lead mb-5 text-white text-center mx-auto" style="max-width: 750px; font-size: 1.35rem; font-weight: 500; text-shadow: 0 4px 15px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9);">
                 Alpha Diagnostics Centre brings pathology, automated microbiology, and high-precision clinical screening to the heart of the Textile Capital.
