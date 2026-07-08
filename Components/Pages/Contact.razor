@@ -87,6 +87,24 @@
                                     </select>
                                 </div>
                             </div>
+
+                            @if (subject == "Home Sample Collection")
+                            {
+                                <div class="row g-3 animate-slide-down">
+                                    <div class="col-md-6">
+                                        <label class="form-label-custom text-nowrap">Preferred date of appointment <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-input-custom" @bind="collectionDate" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-custom text-nowrap">Preferred time of appointment <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-input-custom" @bind="collectionTime" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label-custom text-nowrap">Preferred Home Collection Address <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-input-custom" placeholder="Collection Address" @bind="collectionAddress" required />
+                                    </div>
+                                </div>
+                            }
                             
                             <div>
                                 <label class="form-label-custom">Your Message</label>
@@ -209,6 +227,10 @@
     private string emailAddress = "";
     private string subject = "Home Sample Collection";
     private string message = "";
+    
+    private string collectionAddress = "";
+    private DateOnly? collectionDate = null;
+    private TimeOnly? collectionTime = null;
 
     private bool isSubmitted = false;
     private bool isSending = false;
@@ -220,7 +242,23 @@
         isSending = true;
         try
         {
-            await EmailService.SendContactFormEmailAsync(fullName, phoneNumber, emailAddress, subject, message);
+            if (subject == "Home Sample Collection")
+            {
+                await EmailService.SendContactFormEmailAsync(
+                    fullName, 
+                    phoneNumber, 
+                    emailAddress, 
+                    subject, 
+                    message, 
+                    collectionAddress, 
+                    collectionDate?.ToString("yyyy-MM-dd"), 
+                    collectionTime?.ToString("hh:mm tt")
+                );
+            }
+            else
+            {
+                await EmailService.SendContactFormEmailAsync(fullName, phoneNumber, emailAddress, subject, message);
+            }
             isSubmitted = true;
         }
         catch (Exception ex)
@@ -240,6 +278,9 @@
         emailAddress = "";
         subject = "Home Sample Collection";
         message = "";
+        collectionAddress = "";
+        collectionDate = null;
+        collectionTime = null;
         isSubmitted = false;
         errorMessage = null;
     }

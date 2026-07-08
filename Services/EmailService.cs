@@ -150,7 +150,15 @@ public class EmailService
         }
     }
 
-    public async Task SendContactFormEmailAsync(string fullName, string phoneNumber, string emailAddress, string subject, string message)
+    public async Task SendContactFormEmailAsync(
+        string fullName, 
+        string phoneNumber, 
+        string emailAddress, 
+        string subject, 
+        string message,
+        string? homeAddress = null,
+        string? collectionDate = null,
+        string? collectionTime = null)
     {
         var smtpSection = _configuration.GetSection("SmtpSettings");
 
@@ -183,6 +191,33 @@ public class EmailService
 
         // Prepare combined email subject and body
         var emailSubject = $"New Inquiry: {subject}";
+        
+        var extraDetailsHtml = "";
+        if (!string.IsNullOrWhiteSpace(homeAddress))
+        {
+            extraDetailsHtml += $@"
+        <tr>
+            <td style=""padding: 8px 0; font-weight: bold; color: #475569;"">Home Address:</td>
+            <td style=""padding: 8px 0; color: #0f172a;"">{homeAddress}</td>
+        </tr>";
+        }
+        if (!string.IsNullOrWhiteSpace(collectionDate))
+        {
+            extraDetailsHtml += $@"
+        <tr>
+            <td style=""padding: 8px 0; font-weight: bold; color: #475569;"">Collection Date:</td>
+            <td style=""padding: 8px 0; color: #0f172a;"">{collectionDate}</td>
+        </tr>";
+        }
+        if (!string.IsNullOrWhiteSpace(collectionTime))
+        {
+            extraDetailsHtml += $@"
+        <tr>
+            <td style=""padding: 8px 0; font-weight: bold; color: #475569;"">Collection Time:</td>
+            <td style=""padding: 8px 0; color: #0f172a;"">{collectionTime}</td>
+        </tr>";
+        }
+
         var emailHtmlBody = $@"
 <div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;"">
     <h2 style=""color: #2563eb; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;"">Inquiry Received</h2>
@@ -206,6 +241,7 @@ public class EmailService
             <td style=""padding: 8px 0; font-weight: bold; color: #475569;"">Subject / Test:</td>
             <td style=""padding: 8px 0; color: #0f172a;"">{subject}</td>
         </tr>
+        {extraDetailsHtml}
     </table>
     
     <div style=""margin-top: 20px; padding: 15px; background-color: #f8fafc; border-left: 4px solid #2563eb; border-radius: 4px;"">
