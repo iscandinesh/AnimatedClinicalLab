@@ -6,9 +6,9 @@ dest_dir = r"d:\My project\AnimatedClinicalLab-main\AnimatedClinicalLab-main\www
 
 # Load background and source images
 bg_src = Image.open(os.path.join(artifacts_dir, "erode_base_bg_1784203523617.png")).convert("RGBA")
-temple_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_temple_1784282467277.png").convert("RGBA")
+temple_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\no_gate_temple_1784288415771.png").convert("RGBA")
 bull_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_bull_statue_1784283375369.png").convert("RGBA")
-periyar_src = Image.open(os.path.join(artifacts_dir, "media__1784197542795.jpg")).convert("RGBA")
+periyar_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_periyar_house_1784288715669.png").convert("RGBA")
 clock_src = Image.open(os.path.join(artifacts_dir, "media__1784197542006.png")).convert("RGBA")
 turmeric_src = Image.open(os.path.join(artifacts_dir, "creative_turmeric_1784197669804.png")).convert("RGBA")
 

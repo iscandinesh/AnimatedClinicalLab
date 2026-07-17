@@ -6,10 +6,10 @@ dest_dir = r"d:\My project\AnimatedClinicalLab-main\AnimatedClinicalLab-main\www
 
 # Input paths
 paths = {
-    "periyar": os.path.join(artifacts_dir, "media__1784197542795.jpg"),
+    "periyar": r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_periyar_house_1784288715669.png",
     "clock": os.path.join(artifacts_dir, "media__1784197542006.png"),
     "bull": r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_bull_statue_1784283375369.png",
-    "temple": r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_temple_1784282467277.png",
+    "temple": r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\no_gate_temple_1784288415771.png",
     "turmeric": os.path.join(artifacts_dir, "creative_turmeric_1784197669804.png")
 }
 

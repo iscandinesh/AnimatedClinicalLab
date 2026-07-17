@@ -9,9 +9,9 @@ current_brain_dir = r"C:\Users\D E L L\.gemini\antigravity-ide\brain\de37b8fb-24
 
 # Load background and source images
 bg_src = Image.open(os.path.join(artifacts_dir, "erode_base_bg_1784203523617.png")).convert("RGBA")
-temple_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_temple_1784282467277.png").convert("RGBA")
+temple_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\no_gate_temple_1784288415771.png").convert("RGBA")
 bull_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_bull_statue_1784283375369.png").convert("RGBA")
-periyar_src = Image.open(os.path.join(artifacts_dir, "media__1784197542795.jpg")).convert("RGBA")
+periyar_src = Image.open(r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_periyar_house_1784288715669.png").convert("RGBA")
 clock_src = Image.open(os.path.join(artifacts_dir, "media__1784197542006.png")).convert("RGBA")
 turmeric_src = Image.open(os.path.join(artifacts_dir, "creative_turmeric_1784197669804.png")).convert("RGBA")
 
@@ -91,11 +91,11 @@ kaveri_p_crop = kaveri_src.resize((kaveri_p_w, kaveri_p_h), Image.Resampling.LAN
 kaveri_p_mask = create_feathered_mask(kaveri_p_w, kaveri_p_h, fade_left=180, fade_right=180, fade_top=160, fade_bottom=160)
 desktop.paste(kaveri_p_crop, (640, 200), kaveri_p_mask)
 
-# 4. Add Bull Statue in the middle (w: 840, h: 960, x: 1320, y: 240)
+# 4. Add Bull Statue in the middle (w: 840, h: 960, x: 1150, y: 240)
 bull_w, bull_h = 840, 960
 bull_crop = bull_src.resize((bull_w, bull_h), Image.Resampling.LANCZOS)
 bull_mask = create_feathered_mask(bull_w, bull_h, fade_left=180, fade_right=180, fade_top=160, fade_bottom=160)
-desktop.paste(bull_crop, (1320, 240), bull_mask)
+desktop.paste(bull_crop, (1150, 240), bull_mask)
 
 # 5. Add Temple in the middle-right (w: 1100, h: 1200, x: 1750, y: 0)
 # Zoom by cropping the 1024x1024 image to a smaller central region
@@ -123,18 +123,20 @@ desktop.paste(turmeric_crop, (3040, 240), turmeric_mask)
 converter = ImageEnhance.Color(desktop)
 desktop = converter.enhance(1.00)
 
-# Brightness: 0.72 (dark enough for white text readability)
+# Brightness: 0.92 (Make the whole image brighter)
 brightness_enhancer = ImageEnhance.Brightness(desktop)
-desktop = brightness_enhancer.enhance(0.72)
+desktop = brightness_enhancer.enhance(0.92)
 
-# Apply dark blue gradient overlay vignette to ensure readability in the center and edges
+# Apply dark blue gradient overlay vignette to ensure readability in the center
+# and high visibility for the statues on the sides
 overlay = Image.new("RGBA", (canvas_w, canvas_h), (9, 12, 21, 0))
 draw = ImageDraw.Draw(overlay)
 
 for x in range(canvas_w):
     dist_from_center = abs(x - canvas_w // 2) / (canvas_w // 2)
-    # 95 opacity in center to 160 opacity at the edges
-    alpha = int(95 + 65 * dist_from_center) 
+    # 130 opacity in the center (for high text readability)
+    # and 30 opacity at the edges (to make the side statues clear and visible)
+    alpha = int(130 - 100 * dist_from_center) 
     draw.line([(x, 0), (x, canvas_h)], fill=(9, 15, 27, alpha))
 
 final_desktop = Image.alpha_composite(desktop, overlay).convert("RGB")
@@ -197,7 +199,7 @@ converter_m = ImageEnhance.Color(mobile)
 mobile = converter_m.enhance(1.00)
 
 brightness_m = ImageEnhance.Brightness(mobile)
-mobile = brightness_m.enhance(0.72)
+mobile = brightness_m.enhance(0.92)
 
 # Mobile overlay (vertical gradient vignette) to improve contrast
 m_overlay = Image.new("RGBA", (m_w, m_h), (9, 12, 21, 0))
@@ -205,7 +207,7 @@ draw_m_overlay = ImageDraw.Draw(m_overlay)
 
 for y in range(m_h):
     dist_from_center = abs(y - m_h // 2) / (m_h // 2)
-    alpha = int(105 + 55 * dist_from_center)
+    alpha = int(130 - 100 * dist_from_center)
     draw_m_overlay.line([(0, y), (m_w, y)], fill=(9, 15, 27, alpha))
 
 final_mobile = Image.alpha_composite(mobile, m_overlay).convert("RGB")
