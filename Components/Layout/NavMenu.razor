@@ -31,6 +31,7 @@
                     Locations <i class="bi bi-chevron-down nav-arrow"></i>
                 </a>
                 <div class="nav-dropdown-menu">
+                    <a class="nav-dropdown-item" href="erode">Erode (Main Lab)</a>
                     <a class="nav-dropdown-item" href="tiruppur">Tiruppur</a>
                 </div>
             </div>
@@ -64,6 +65,7 @@
                 <a class="nav-link fs-4" href="about" @onclick="ToggleNavMenu">About Us</a>
                 <div class="d-flex flex-column align-items-center w-100">
                     <a class="nav-link fs-4" href="locations" @onclick="ToggleNavMenu">Locations</a>
+                    <a class="nav-link fs-5 text-secondary mt-2" href="erode" @onclick="ToggleNavMenu" style="font-size: 1.1rem; border-left: 2px solid var(--border-subtle); padding-left: 10px;">Erode (Main Lab)</a>
                     <a class="nav-link fs-5 text-secondary mt-2" href="tiruppur" @onclick="ToggleNavMenu" style="font-size: 1.1rem; border-left: 2px solid var(--border-subtle); padding-left: 10px;">Tiruppur</a>
                 </div>
                 <a class="nav-link fs-4" href="insights" @onclick="ToggleNavMenu">Insights</a>
@@ -90,7 +92,9 @@
             var relativePath = Navigation.ToBaseRelativePath(Navigation.Uri);
             return relativePath.Equals("contact", StringComparison.OrdinalIgnoreCase)
                 || relativePath.Equals("tiruppur", StringComparison.OrdinalIgnoreCase)
-                || relativePath.Equals("locations/tiruppur", StringComparison.OrdinalIgnoreCase);
+                || relativePath.Equals("locations/tiruppur", StringComparison.OrdinalIgnoreCase)
+                || relativePath.Equals("erode", StringComparison.OrdinalIgnoreCase)
+                || relativePath.Equals("locations/erode", StringComparison.OrdinalIgnoreCase);
         }
     }
 

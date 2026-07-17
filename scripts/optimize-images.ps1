@@ -93,6 +93,8 @@ $banners = @(
     "tiruppur-vibrant-textile-desktop",
     "tiruppur-vibrant-textile-mobile",
     "tiruppur-textile-banner-dark",
+    "erode-famous-banner-desktop",
+    "erode-famous-banner-mobile",
     "event-camp",
     "event-offer",
     "home-visit",

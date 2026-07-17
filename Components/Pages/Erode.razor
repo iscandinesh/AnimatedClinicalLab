@@ -1,0 +1,1300 @@
+@page "/locations/erode"
+@page "/erode"
+@implements IDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Best Diagnostic Lab & Blood Test Centre in Erode | Alpha Diagnostics</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Alpha Diagnostics is the best NABL diagnostic centre in Erode. Offering 24/7 automated blood tests, master health checkup packages, and home sample collection at Patel Street with 4-hour results." />
+    <meta name="keywords" content="24/7 diagnostic centre in Erode, blood test in Erode, health checkup packages in Erode, best lab in Erode, home sample collection Erode, NABL lab Erode, laboratory in Erode, pathology lab Erode, Patel Street" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.alphadiagnosticscentre.com/erode" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best NABL Diagnostic Lab & Blood Test Centre in Erode | Alpha Diagnostics" />
+    <meta property="og:description" content="NABL accredited diagnostic lab in Erode offering blood tests, health checkup packages, and home sample collection." />
+    <meta property="og:url" content="https://www.alphadiagnosticscentre.com/erode" />
+</HeadContent>
+
+<style>
+    .erode-hero {
+        position: relative;
+        background: #090c15 !important;
+        min-height: 520px;
+        padding-top: 165px !important;
+        padding-bottom: 115px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+    }
+    .erode-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('images/erode-famous-banner-desktop.jpg?v=20');
+        background-position: 32% 48%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        opacity: 0.85;
+        z-index: 1;
+        pointer-events: none;
+        animation: heroBackgroundZoom 12s ease-in-out infinite alternate;
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        filter: saturate(0.85) contrast(1.02) brightness(0.95);
+    }
+    @@media (max-width: 992px) {
+        .erode-hero {
+            min-height: 440px;
+            padding-top: 130px !important;
+            padding-bottom: 90px !important;
+        }
+    }
+    @@media (max-width: 768px) {
+        .erode-hero {
+            min-height: 360px;
+            padding-top: 110px !important;
+            padding-bottom: 70px !important;
+        }
+        .erode-hero::before {
+            background-image: url('images/erode-famous-banner-mobile.jpg?v=20') !important;
+            background-position: center 48% !important;
+            opacity: 0.85;
+        }
+    }
+    
+    @@keyframes heroBackgroundZoom {
+        0% {
+            transform: scale(1.02);
+        }
+        100% {
+            transform: scale(1.08);
+        }
+    }
+
+    /* Event Slider Styles */
+    .carousel-control-btn:hover {
+        background: rgba(59, 130, 246, 0.3) !important;
+        border-color: rgba(59, 130, 246, 0.5) !important;
+        transform: translateY(-50%) scale(1.05);
+    }
+    .dot-indicator:hover {
+        background: var(--primary-blue) !important;
+        opacity: 0.8;
+    }
+    .animate-fade-in {
+        animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @@keyframes slideFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* --- Machines Showcase Styles --- */
+    .machines-section {
+        padding: 80px 0;
+        background: transparent;
+        position: relative;
+        overflow: hidden;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .machines-section .section-title {
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        color: var(--text-primary);
+    }
+
+    .machines-section .section-subtitle {
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        color: var(--text-secondary);
+        max-width: 650px;
+        margin: 0 auto;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    .machine-showcase-card {
+        border-radius: 28px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        height: 640px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .machine-image-zone {
+        height: 100%;
+        background: var(--machine-bg-bottom, #faf9f6);
+        transition: background 0.6s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .machine-image-zone::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 42%;
+        background: var(--machine-theme-gradient, var(--machine-theme-color));
+        transition: background 0.6s ease;
+        z-index: 1;
+    }
+
+    .machine-details-zone {
+        height: 100%;
+    }
+
+    .details-top-split {
+        height: 42%;
+        background: var(--machine-theme-gradient, var(--machine-theme-color));
+        transition: background 0.6s ease;
+        color: #ffffff;
+        padding: 32px 40px !important;
+        position: relative;
+        z-index: 2;
+    }
+
+    .details-top-split > div > * {
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+    }
+    .details-top-split > div > *:nth-child(1) { animation-delay: 0.05s; }
+    .details-top-split > div > *:nth-child(2) { animation-delay: 0.12s; }
+    .details-top-split > div > *:nth-child(3) { animation-delay: 0.18s; }
+
+    .machine-logo-wrapper {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        border-radius: 18px;
+        background: #091527;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.05);
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation-delay: 0.22s;
+        opacity: 0;
+    }
+
+    .machine-logo-wrapper svg {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    }
+
+    .details-bottom-split {
+        height: 58%;
+        background: var(--machine-bg-bottom, #faf9f6);
+        color: var(--text-primary);
+        transition: background 0.6s ease;
+        padding: 32px 40px !important;
+    }
+
+    .details-bottom-split > div > * {
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+    }
+    .details-bottom-split > div > *:nth-child(1) { animation-delay: 0.2s; }
+    .details-bottom-split > div > *:nth-child(2) { animation-delay: 0.3s; }
+
+    .details-footer {
+        animation: machineDetailsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation-delay: 0.38s;
+        opacity: 0;
+    }
+
+    @@keyframes machineDetailsFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .machine-image-zone .machine-image-wrapper {
+        position: absolute;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 550px;
+        height: 480px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: machineImageEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .main-machine-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        scale: 1.25;
+        filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
+        animation: floatMachine 6s ease-in-out infinite;
+    }
+
+    @@keyframes floatMachine {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-12px) rotate(1deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @@keyframes machineImageEntry {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -35%) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    .machine-thumbnails-container {
+        position: absolute;
+        bottom: 24px;
+        left: 24px;
+        right: 24px;
+        display: flex;
+        gap: 8px;
+        z-index: 20;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 5px;
+    }
+
+    .machine-thumbnails-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .machine-thumb-btn {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid transparent;
+        padding: 3px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .machine-thumb-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .machine-thumb-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .machine-thumb-btn.active {
+        border-color: var(--primary-blue);
+        transform: translateY(-4px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    .machine-top-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 2px;
+    }
+
+    .machine-name-title {
+        font-size: clamp(1.5rem, 3vw, 2.3rem);
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+        text-transform: uppercase;
+    }
+
+    .machine-subtitle {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .machine-desc-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .specs-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .spec-item-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .text-success-icon {
+        color: #10b981;
+    }
+
+    .border-top-subtle {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        position: relative;
+    }
+
+    .pulse-dot::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 2px solid #10b981;
+        animation: statusPulse 1.8s infinite ease-out;
+    }
+
+    @@keyframes statusPulse {
+        0% { transform: scale(0.8); opacity: 0.8; }
+        100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .status-text {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .btn-machine-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-machine-action:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+        filter: brightness(1.15);
+    }
+
+    .btn-machine-action:active {
+        transform: translateY(-1px) scale(1.02);
+    }
+
+    .showcase-nav-arrows {
+        display: flex;
+        gap: 8px;
+    }
+
+    .showcase-arrow-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .showcase-arrow-btn:hover {
+        background: var(--primary-blue);
+        color: #ffffff;
+        border-color: var(--primary-blue);
+        transform: scale(1.08);
+    }
+
+    @@media (max-width: 991px) {
+        .machine-showcase-card {
+            height: auto;
+        }
+        .machine-image-zone {
+            height: 320px;
+            background: linear-gradient(to bottom, var(--machine-theme-color) 60%, var(--machine-bg-bottom) 60%);
+        }
+        .machine-image-zone .machine-image-wrapper {
+            top: 60%;
+            height: 200px;
+        }
+        .machine-thumbnails-container {
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .details-top-split {
+            height: auto;
+            padding: 40px 24px !important;
+        }
+        .details-bottom-split {
+            height: auto;
+            padding: 40px 24px !important;
+        }
+    }
+
+    /* Fleet of Machines Autoplay Progress Bar */
+    .machine-progress-bar-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 30;
+    }
+
+    .machine-progress-bar {
+        height: 100%;
+        background: var(--machine-theme-color);
+        width: 0%;
+        animation: machineProgress 6s linear forwards;
+    }
+
+    .machine-showcase-card:hover .machine-progress-bar {
+        animation-play-state: paused;
+    }
+
+    @@keyframes machineProgress {
+        from {
+            width: 0%;
+        }
+        to {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="page-header erode-hero py-5 position-relative">
+    <!-- Aesthetic Background Layers -->
+    <div class="mesh-bg"></div>
+    <div class="hero-grid-bg"></div>
+
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; left: 15%; opacity: 0.25;"></div>
+    <div class="glow-orb" style="bottom: 15%; right: 15%; background: var(--primary-purple); opacity: 0.25;"></div>
+    
+    <div class="container position-relative z-2 reveal-up">
+        <div class="mx-auto" style="max-width: 900px;">
+            <div class="badge-pill-premium mb-4 d-inline-block text-white" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">
+                <i class="bi bi-geo-alt-fill me-2" style="color: #fbbf24;"></i> Erode Main Lab • Headquarters
+            </div>
+            <h1 class="hero-title mb-4 text-center text-white display-3 fw-bold" style="font-family: 'Inter', sans-serif; text-shadow: 0 4px 25px rgba(0,0,0,0.95), 0 2px 10px rgba(0,0,0,0.95); line-height: 1.25; font-size: clamp(2.5rem, 5vw, 3.8rem);">
+                Best NABL Diagnostic Centre & <br />Blood Test Lab in <span style="color: #fbbf24; text-shadow: 0 4px 15px rgba(0,0,0,0.95), 0 2px 5px rgba(0,0,0,0.95); font-weight: 800;">Erode</span>
+            </h1>
+            <p class="lead mb-5 text-white text-center mx-auto" style="max-width: 800px; font-size: 1.25rem; font-weight: 500; text-shadow: 0 4px 15px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9); line-height: 1.6;">
+                Alpha Diagnostics serves the Turmeric City with 24/7 NABL-standard pathology. Visit our Patel Street lab or book home collection to get your blood test reports delivered to your mobile and email in just 4 hours.
+            </p>
+            
+            <!-- CTA Button: View Health Packages -->
+            <div class="text-center">
+                <a href="services#health-packages" class="btn-helium btn-helium-primary px-5 py-3 rounded-pill shadow-lg d-inline-flex align-items-center gap-2" style="font-size: 1.1rem; font-weight: 600; text-decoration: none;">
+                    <i class="bi bi-heart-pulse-fill"></i> View Health Packages
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- High-Contrast Services Strengths Section -->
+<section class="py-5" style="background: transparent; border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <span class="text-primary"><i class="bi bi-shield-check me-2"></i> Clinical Excellence</span>
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Erode's Trusted Diagnostic Partner</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Alpha Diagnostics combines advanced NABL-standard infrastructure with highly accurate, timely test results for residents across Erode.</p>
+        </div>
+        
+        <div class="row g-4 reveal-up">
+            <!-- Strength 1 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-blue mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                        <i class="bi bi-cpu fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Fully Automated Setup</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Computerized, barcoded, and interfaced central laboratory to eliminate manual error.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 2 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-purple mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(124,58,237,0.1); color: var(--primary-purple);">
+                        <i class="bi bi-lightning-charge fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Fast 4-Hour Delivery</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">High-speed diagnostic workflows enable 4-hour routine blood test turnaround times.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 3 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-cyan mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(6,182,212,0.1); color: var(--primary-cyan);">
+                        <i class="bi bi-geo-alt fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Home Sample Collection</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Certified, professional phlebotomists collect blood samples at your home or workplace.</p>
+                </div>
+            </div>
+            
+            <!-- Strength 4 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-card h-100 p-4 hover-glow d-flex flex-column text-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 20px; min-height: 200px;">
+                    <div class="orb-blue mx-auto mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                        <i class="bi bi-patch-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);">Quality Assured (EQAS)</h5>
+                    <p class="text-secondary small mt-2 mb-0" style="line-height: 1.5;">Affiliated with Bio-Rad, CMC Vellore, and AIIMS standard quality control panels.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Erode Main Lab Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <!-- Left: Intro Content Card -->
+            <div class="col-lg-6 reveal-up">
+                <div class="glass-card h-100 p-4 p-md-5 position-relative" style="border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="position-absolute top-0 end-0 p-4 opacity-10">
+                        <i class="bi bi-hospital display-3 text-primary"></i>
+                    </div>
+                    <h2 class="h3 fw-bold mb-4">NABL Laboratory in Erode</h2>
+                    <p class="text-secondary mb-3" style="line-height: 1.7; font-size: 0.95rem;">
+                        Alpha Diagnostics Centre’s Main Laboratory at Patel Street is Erode’s premier facility for 24/7 medical testing. We provide high-precision diagnostics to clinics, hospitals, and individuals.
+                    </p>
+                    <p class="text-secondary mb-0" style="line-height: 1.7; font-size: 0.95rem;">
+                        By processing biochemistry, molecular biology, and microbiology tests locally at our centralized hub in Erode, we guarantee doctor-verified results for blood sugar, cholesterol, thyroid, and health checkup packages within 4 hours.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Stats & trust signals -->
+            <div class="col-lg-6 reveal-up" style="transition-delay: 0.15s;">
+                <div class="d-flex flex-column gap-4">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="orb-blue flex-shrink-0" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(59,130,246,0.1); color: var(--primary-blue);">
+                            <i class="bi bi-gear-wide-connected fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1" style="font-size: 1.05rem;">Central Processing Hub</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.6;">Advanced workflows centralizing biochemistry, immunology, and molecular PCR diagnostics in Erode.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="orb-cyan flex-shrink-0" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(6,182,212,0.1); color: var(--primary-cyan);">
+                            <i class="bi bi-patch-check-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1" style="font-size: 1.05rem;">Rigorous Quality Assurance</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.6;">Following national guidelines and EQAS protocols (Bio-Rad, CMC Vellore, AIIMS) for reports verification.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="orb-purple flex-shrink-0" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(124,58,237,0.1); color: var(--primary-purple);">
+                            <i class="bi bi-lightning-charge-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1" style="font-size: 1.05rem;">Rapid 4-Hour Turnaround</h5>
+                            <p class="text-secondary small mb-0" style="line-height: 1.6;">Immediate testing processing upon sample arrival ensures your blood results are delivered in just 4 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Available Services & Departments -->
+<section class="py-5" style="background: rgba(255,255,255,0.01);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-microscope me-2"></i> Departments
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Testing Capabilities at Erode</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Comprehensive pathology tests processed directly at our centralized Patel Street facility.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Biochemistry -->
+            <div class="col-md-4 reveal-up">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-droplet-half fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Biochemistry</h5>
+                    <p class="text-secondary small mb-0">Liver panel (LFT), Kidney panel (RFT/Creatinine), Lipid profile, Blood Sugar, and Electrolytes.</p>
+                </div>
+            </div>
+            <!-- Hematology -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-water fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Hematology</h5>
+                    <p class="text-secondary small mb-0">Complete Blood Count (CBC), ESR, peripheral blood smears, and coagulation metrics.</p>
+                </div>
+            </div>
+            <!-- Immunology -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Immunology & Hormones</h5>
+                    <p class="text-secondary small mb-0">Thyroid profile (T3, T4, TSH), Vitamin D, Vitamin B12, HbA1c, and hormone testing.</p>
+                </div>
+            </div>
+            <!-- Microbiology -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.3s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-blue mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-virus fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Microbiology</h5>
+                    <p class="text-secondary small mb-0">Automated blood and urine culture and antimicrobial susceptibility testing (AST).</p>
+                </div>
+            </div>
+            <!-- Molecular / PCR -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.4s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-cyan mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-fingerprint fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">PCR & Molecular</h5>
+                    <p class="text-secondary small mb-0">TB molecular assays, viral load screenings, and high-sensitivity DNA/RNA diagnostics.</p>
+                </div>
+            </div>
+            <!-- Digital Reporting -->
+            <div class="col-md-4 reveal-up" style="transition-delay: 0.5s;">
+                <div class="glass-card h-100 p-4">
+                    <div class="orb-purple mb-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                        <i class="bi bi-lightning fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Instant Digital Reports</h5>
+                    <p class="text-secondary small mb-0">Secure PDF diagnostic results sent directly via WhatsApp and Email in just 4 hours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Medical Team Section -->
+<section class="py-5 bg-midnight-soft" style="background: rgba(255,255,255,0.015); border-top: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-people-fill me-2" style="color: var(--primary-blue);"></i> Our Experts
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">Meet Our Erode Pathologists</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">
+                Our Erode Main Lab is led by highly qualified and experienced pathologists, biochemists, and microbiologists, ensuring clinical accuracy, doctor-to-doctor consultations, and precise diagnostic verification.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Pathologist 1: Dr. L.E. Vishnu Karthikeyan M.D -->
+            <div class="col-lg-4 col-md-6 reveal-up">
+                <div class="glass-card hover-glow h-100 p-4 d-flex flex-column" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 24px;">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-5 text-center">
+                            <div class="position-relative d-inline-block rounded-circle overflow-hidden shadow-lg" style="width: 110px; height: 110px; border: 3px solid rgba(6, 182, 212, 0.4); padding: 3px; background: #ffffff;">
+                                <img src="images/vishnu_karthikeyan.png?v=20" alt="L.E. Vishnu Karthikeyan M.D" class="w-100 h-100 object-fit-cover rounded-circle" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="h6 fw-bold mb-0">Dr. L.E. Vishnu</h4>
+                                <span class="badge bg-cyan bg-opacity-10 text-cyan border border-cyan border-opacity-25 px-2 py-1 rounded small" style="color: var(--primary-cyan) !important; border-color: rgba(6, 182, 212, 0.25) !important; font-size: 0.65rem;">M.D</span>
+                            </div>
+                            <p class="text-cyan small fw-semibold mb-2" style="color: var(--primary-cyan); font-size: 0.8rem; letter-spacing: 0.5px;">Managing Director & Pathologist</p>
+                            <p class="text-muted small mb-0" style="font-size: 0.72rem;"><i class="bi bi-patch-check-fill me-1 opacity-70"></i> QC & Lab Management</p>
+                            <p class="text-muted small mb-0" style="font-size: 0.72rem;"><i class="bi bi-geo-alt me-1 opacity-70"></i> Erode Main Lab</p>
+                        </div>
+                    </div>
+                    <hr class="border-white border-opacity-10 my-3" />
+                    <p class="text-secondary small mb-0 flex-grow-1" style="line-height: 1.6; font-size: 0.82rem;">
+                        Dr. L.E. Vishnu Karthikeyan M.D. oversees central pathology division quality controls, adhering to strict NABL compliance and blood safety standards.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pathologist 2: Dr. Arun Kumar M.D -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.1s;">
+                <div class="glass-card hover-glow h-100 p-4 d-flex flex-column" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 24px;">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-5 text-center">
+                            <div class="position-relative d-inline-block rounded-circle overflow-hidden shadow-lg" style="width: 110px; height: 110px; border: 3px solid rgba(59, 130, 246, 0.4); padding: 3px; background: #ffffff;">
+                                <img src="images/dr_arun_kumar.png?v=20" alt="Dr. Arun Kumar M.D" class="w-100 h-100 object-fit-cover rounded-circle" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="h6 fw-bold mb-0">Dr. Arun Kumar</h4>
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded small" style="font-size: 0.65rem;">M.D</span>
+                            </div>
+                            <p class="text-primary small fw-semibold mb-2" style="font-size: 0.8rem; letter-spacing: 0.5px;">Lab Director & Pathologist</p>
+                            <p class="text-muted small mb-0" style="font-size: 0.72rem;"><i class="bi bi-patch-check-fill me-1 opacity-70"></i> Histopathology Specialist</p>
+                            <p class="text-muted small mb-0" style="font-size: 0.72rem;"><i class="bi bi-geo-alt me-1 opacity-70"></i> Erode Main Lab</p>
+                        </div>
+                    </div>
+                    <hr class="border-white border-opacity-10 my-3" />
+                    <p class="text-secondary small mb-0 flex-grow-1" style="line-height: 1.6; font-size: 0.82rem;">
+                        Dr. Arun Kumar M.D. directs validation protocols for histopathology and clinical testing, ensuring clinical reports precision.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pathologist 3: Dr. Kavitha Rajan M.D -->
+            <div class="col-lg-4 col-md-6 reveal-up" style="transition-delay: 0.2s;">
+                <div class="glass-card hover-glow h-100 p-4 d-flex flex-column" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); border-radius: 24px;">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-5 text-center">
+                            <div class="position-relative d-inline-block rounded-circle overflow-hidden shadow-lg" style="width: 110px; height: 110px; border: 3px solid rgba(139, 92, 246, 0.4); padding: 3px; background: #ffffff;">
+                                <img src="images/dr_kavitha_rajan.png?v=20" alt="Dr. Kavitha Rajan M.D" class="w-100 h-100 object-fit-cover rounded-circle" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h4 class="h6 fw-bold mb-0">Dr. Kavitha Rajan</h4>
+                                <span class="badge bg-purple bg-opacity-10 text-purple border border-purple border-opacity-25 px-2 py-1 rounded small" style="font-size: 0.65rem;">M.D</span>
+                            </div>
+                            <p class="text-purple small fw-semibold mb-2" style="color: var(--primary-purple); font-size: 0.8rem; letter-spacing: 0.5px;">Consultant Microbiologist</p>
+                            <p class="text-muted small mb-0" style="font-size: 0.72rem;"><i class="bi bi-patch-check-fill me-1 opacity-70"></i> Infectious Disease & PCR Expert</p>
+                            <p class="text-muted small mb-0" style="font-size: 0.72rem;"><i class="bi bi-geo-alt me-1 opacity-70"></i> Erode Main Lab</p>
+                        </div>
+                    </div>
+                    <hr class="border-white border-opacity-10 my-3" />
+                    <p class="text-secondary small mb-0 flex-grow-1" style="line-height: 1.6; font-size: 0.82rem;">
+                        Dr. Kavitha Rajan M.D. leads clinical microbiology and molecular PCR testing, ensuring highly sensitive pathogens profiling.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-5 position-relative overflow-hidden" style="background: rgba(255,255,255,0.005); border-top: 1px solid rgba(255,255,255,0.01);">
+    <div class="container py-4 position-relative" style="z-index: 1;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-gear-wide-connected me-2"></i> The Process
+            </div>
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4.5vw, 3rem);">How It Works</h2>
+            <h3 class="fw-700 mb-3" style="font-size: clamp(1.3rem, 2.5vw, 1.7rem); color: var(--text-primary); opacity: 0.9;">
+                3 Simple Steps to Your Health Reports
+            </h3>
+        </div>
+
+        <div class="process-timeline-container">
+            <!-- Continuous horizontal line for 3 steps -->
+            <div class="process-connecting-line d-none d-lg-block" style="left: 16.67%; right: 16.67%;"></div>
+
+            <!-- Visual breakpoint nodes on the connecting line -->
+            <div class="process-breakpoint-node d-none d-lg-flex" style="left: 33.33%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+            <div class="process-breakpoint-node d-none d-lg-flex" style="left: 66.67%;">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+
+            <div class="row g-4 position-relative" style="z-index: 1;">
+                <!-- Step 1 -->
+                <div class="col-lg-4 col-md-6 text-center process-step reveal-up">
+                    <div class="process-icon-wrapper bg-blue mx-auto mb-4">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 01</div>
+                    <h4 class="process-step-title mb-2">Book Your Test</h4>
+                    <span class="d-block text-primary small mb-3" style="font-style: italic; font-size: 0.85rem; font-weight: 500;">Takes less than 2 mins</span>
+                    <p class="process-step-desc text-secondary small px-3">
+                        Select your required tests or health packages online, or call our Erode main lab directly to schedule your appointment.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="col-lg-4 col-md-6 text-center process-step reveal-up" style="transition-delay: 0.1s;">
+                    <div class="process-icon-wrapper bg-emerald mx-auto mb-4">
+                        <i class="bi bi-droplet-half"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 02</div>
+                    <h4 class="process-step-title mb-2">Sample Collection</h4>
+                    <span class="d-block text-success small mb-3" style="font-style: italic; font-size: 0.85rem; font-weight: 500; color: #10b981 !important;">At our center or your home</span>
+                    <p class="process-step-desc text-secondary small px-3">
+                        Visit our central Erode laboratory, or relax at home while our certified professional phlebotomist visits you for a quick sample collection.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="col-lg-4 col-md-12 text-center process-step reveal-up" style="transition-delay: 0.2s;">
+                    <div class="process-icon-wrapper bg-logo-purple mx-auto mb-4">
+                        <i class="bi bi-file-text-fill"></i>
+                    </div>
+                    <div class="process-step-num mb-2 text-uppercase">Step 03</div>
+                    <h4 class="process-step-title mb-2">Get Digital Reports</h4>
+                    <span class="d-block text-purple small mb-3" style="font-style: italic; font-size: 0.85rem; font-weight: 500; color: #8b5cf6 !important;">Fast turnaround</span>
+                    <p class="process-step-desc text-secondary small px-3">
+                        Your samples are processed in our high-end central laboratory. Secure, verified digital reports are sent directly to your phone via WhatsApp and Email.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fleet of Machines Section (Interactive Showcase) -->
+<section class="machines-section py-5 position-relative overflow-hidden">
+    <!-- Ambient Glow Orbs -->
+    <div class="glow-orb" style="top: 15%; right: 10%; opacity: 0.15; background: var(--primary-cyan); width: 350px; height: 350px;"></div>
+    <div class="glow-orb" style="bottom: 15%; left: 10%; opacity: 0.15; background: var(--primary-blue); width: 350px; height: 350px;"></div>
+
+    <div class="container mx-auto px-4 position-relative" style="max-width: 1280px; z-index: 2;">
+        <div class="text-center mb-5 reveal-up">
+            <div class="badge-pill-premium mb-3 d-inline-block">
+                <i class="bi bi-cpu me-2" style="color: var(--primary-cyan);"></i> Automated Technology
+            </div>
+            <h2 class="section-title fw-800 mb-3">Our Machinery Infrastructure <span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">at Erode Main Lab</span></h2>
+            <p class="text-secondary mx-auto" style="max-width: 800px; font-size: 1.05rem; line-height: 1.8;">
+                Our Erode central processing laboratory is powered by top-tier global analyzers to deliver high precision and a 4-hour turnaround time. Explore the machinery driving our daily diagnostics.
+            </p>
+        </div>
+
+        <!-- Showcase card -->
+        <div class="machine-showcase-card mt-5 shadow-2xl overflow-hidden" 
+             style="--machine-theme-color: @machines[activeMachineIndex].ThemeColor; --machine-theme-gradient: @machines[activeMachineIndex].ThemeGradient;"
+             @onmouseenter="OnMachinesMouseEnter" @onmouseleave="OnMachinesMouseLeave">
+            <!-- Sleek Autoplay Progress Bar -->
+            <div class="machine-progress-bar-wrapper">
+                <div class="machine-progress-bar" @key="_progressBarKey"></div>
+            </div>
+            <div class="row g-0 h-100">
+                <!-- Left: Image Zone (with dynamic split background) -->
+                <div class="col-lg-6 position-relative machine-image-zone d-flex align-items-center justify-content-center">
+                    <div class="machine-image-wrapper" @key="activeMachineIndex">
+                        <img src="@machines[activeMachineIndex].ImagePath" alt="@machines[activeMachineIndex].Name" class="main-machine-img" />
+                    </div>
+
+                    <!-- Thumbnails overlayed at the bottom left -->
+                    <div class="machine-thumbnails-container">
+                        @for (int i = 0; i < machines.Count; i++)
+                        {
+                            var index = i;
+                            <button class="machine-thumb-btn @(activeMachineIndex == index ? "active" : "")" @onclick="() => SetMachine(index)" aria-label="Select @machines[index].Name">
+                                <img src="@machines[index].ImagePath" alt="@machines[index].Name" />
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Right: Details Zone -->
+                <div class="col-lg-6 machine-details-zone d-flex flex-column justify-content-between" @key="activeMachineIndex">
+                    <!-- Top Details (in colored split) -->
+                    <div class="details-top-split p-5 d-flex align-items-center justify-content-between gap-4">
+                        <div class="d-flex flex-column justify-content-center">
+                            <span class="machine-top-tag mb-2">ADVANCED DIAGNOSTICS</span>
+                            <h4 class="machine-name-title mb-1">
+                                @machines[activeMachineIndex].Name
+                            </h4>
+                            <span class="machine-subtitle">@machines[activeMachineIndex].Subtitle</span>
+                        </div>
+                        <div class="machine-logo-wrapper d-flex align-items-center justify-content-center">
+                            @((MarkupString)machines[activeMachineIndex].LogoSvg)
+                        </div>
+                    </div>
+
+                    <!-- Bottom Details (in white/dark split) -->
+                    <div class="details-bottom-split p-5 d-flex flex-column justify-content-between flex-grow-1">
+                        <div>
+                            <p class="machine-desc-text">@machines[activeMachineIndex].Description</p>
+                            
+                            <!-- Specs list -->
+                            <div class="specs-grid mt-4">
+                                @foreach (var spec in machines[activeMachineIndex].Specs)
+                                {
+                                    <div class="spec-item-badge">
+                                        <i class="bi bi-patch-check-fill text-success-icon me-2"></i>
+                                        <span>@spec</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Footer actions inside the details -->
+                        <div class="details-footer mt-4 pt-4 border-top-subtle d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div class="status-indicator">
+                                <span class="pulse-dot"></span>
+                                <span class="status-text font-bold">@machines[activeMachineIndex].Status</span>
+                            </div>
+
+                            <a href="https://wa.me/918110899999" target="_blank" class="btn-helium btn-helium-primary px-4 py-2 rounded-pill text-white fw-700 text-decoration-none" style="background-color: var(--machine-theme-color); font-size: 0.82rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;">
+                                Inquire about tests! ↗
+                            </a>
+                            
+                            <!-- Arrows navigation -->
+                            <div class="showcase-nav-arrows">
+                                <button class="showcase-arrow-btn" @onclick="PrevMachine" aria-label="Previous Machine">
+                                    <i class="bi bi-arrow-left"></i>
+                                </button>
+                                <button class="showcase-arrow-btn" @onclick="NextMachine" aria-label="Next Machine">
+                                    <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Location & Map Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal-up">
+            <h2 class="section-title fw-800 mb-3" style="font-size: clamp(2rem, 4vw, 3rem);">NABL Diagnostic Lab on Patel Street, Erode</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Visit our 24/7 central laboratory on Patel Street, Erode or schedule a certified home sample collection service at your convenience.</p>
+        </div>
+
+        <div class="location-split-container reveal-up">
+            <div class="row g-0">
+                <!-- Map Side -->
+                <div class="col-lg-7">
+                    <div class="map-container-split h-100" style="min-height: 400px;">
+                        <iframe 
+                            class="google-map-iframe"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.0215!2d77.7166!3d11.3362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba96f3e4a00df11%3A0x6b777c420833834!2sAlpha%20Diagnostics%20Centre%20(Main%20Lab%20Branch%20-%20Erode)!5e0!3m2!1sen!2sin!4v1715070000000!5m2!1sen!2sin" 
+                            width="100%" height="100%" style="border:0; min-height: 400px;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <!-- Info Side -->
+                <div class="col-lg-5">
+                    <div class="location-details-card h-100" style="border: none; border-radius: 0;">
+                        <!-- Header -->
+                        <div class="location-details-header">
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="bg-white bg-opacity-20 p-3 rounded-4 shadow-sm">
+                                    <i class="bi bi-hospital fs-2"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Erode Main Lab</h3>
+                                    <span class="badge bg-white bg-opacity-20 border border-white border-opacity-30 px-3 py-1 rounded-pill small fw-bold">Central Headquarters</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Details -->
+                        <div class="location-details-body">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Address</div>
+                                            <div class="text-secondary small">31, Patel Street, Erode – 638 001.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-telephone-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Phone Numbers</div>
+                                            <div class="text-secondary small">
+                                                <a href="tel:+918110899999" class="text-decoration-none text-secondary hover-primary">81108 99999</a> • 
+                                                <a href="tel:+917094490917" class="text-decoration-none text-secondary hover-primary">70944 90917</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-envelope-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Email</div>
+                                            <div class="text-secondary small">
+                                                <a href="mailto:erode@alphadiagnosticscentre.com" class="text-decoration-none text-secondary hover-primary">erode@alphadiagnosticscentre.com</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="location-grid-item">
+                                        <div class="location-grid-icon"><i class="bi bi-clock-fill"></i></div>
+                                        <div>
+                                            <div class="fw-bold mb-1">Hours of Operation</div>
+                                            <div class="small mt-1">
+                                                <span class="badge rounded-pill me-2" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.72rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;"><i class="bi bi-clock"></i> 24 Hours Open</span>
+                                                <span class="badge rounded-pill" style="background: rgba(37, 99, 235, 0.15); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.3); font-size: 0.72rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;"><i class="bi bi-calendar-check"></i> Sunday Available</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Categories -->
+                                <div class="col-12 mt-2">
+                                    <div class="fw-bold mb-3" style="font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; color:var(--text-secondary);">Department Contacts</div>
+
+                                    <!-- Sample Collection -->
+                                    <div class="p-3 mb-2 rounded-3" style="background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.15);">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <i class="bi bi-droplet-half text-primary" style="font-size:0.85rem;"></i>
+                                            <span class="fw-bold small" style="font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--primary-blue);">For Sample Collection</span>
+                                        </div>
+                                        <div class="d-flex gap-3 mt-1">
+                                            <a href="tel:+918110899999" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">81108 99999</a>
+                                            <a href="tel:+917094490917" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">70944 90917</a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Heartbeat divider -->
+                                    <div class="text-center my-2 opacity-30" style="font-size:0.75rem; letter-spacing:2px; color:var(--primary-blue);">— ♥ —</div>
+
+                                    <!-- Report Enquiry -->
+                                    <div class="p-3 mb-2 rounded-3" style="background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.15);">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-file-earmark-medical" style="font-size:0.85rem; color:var(--primary-cyan);"></i>
+                                            <span class="fw-bold small" style="font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--primary-cyan);">Report Enquiry</span>
+                                        </div>
+                                        <div class="mb-1">
+                                            <span class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px;">Central Chemistry · Hematology · Immunology</span><br/>
+                                            <a href="tel:+918110899999" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">81108 99999</a>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px;">Central Microbiology · Pathology</span><br/>
+                                            <a href="tel:+917094490917" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">70944 90917</a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Heartbeat divider -->
+                                    <div class="text-center my-2 opacity-30" style="font-size:0.75rem; letter-spacing:2px; color:var(--primary-blue);">— ♥ —</div>
+
+                                    <!-- Complaints -->
+                                    <div class="p-3 rounded-3" style="background:rgba(244,63,94,0.06); border:1px solid rgba(244,63,94,0.15);">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <i class="bi bi-exclamation-circle" style="font-size:0.85rem; color:#f43f5e;"></i>
+                                            <span class="fw-bold small" style="font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:#f43f5e;">For Complaints</span>
+                                        </div>
+                                        <div class="d-flex gap-3 mt-1">
+                                            <a href="tel:+917094490913" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">70944 90913</a>
+                                            <a href="tel:+917094490907" class="fw-bold text-decoration-none" style="color:var(--text-primary); font-size:1rem;">70944 90907</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private bool disposed = false;
+    private int activeMachineIndex = 0;
+    private int _progressBarKey = 0;
+    private System.Threading.CancellationTokenSource? _machinesCts;
+
+    private class MachineItem
+    {
+        public string Name { get; set; } = "";
+        public string Subtitle { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ImagePath { get; set; } = "";
+        public string ThemeColor { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string[] Specs { get; set; } = Array.Empty<string>();
+        public string LogoSvg { get; set; } = "";
+        public string ThemeGradient { get; set; } = "";
+    }
+
+    private List<MachineItem> machines = new()
+    {
+        new MachineItem
+        {
+            Name = "Roche Cobas c311",
+            Subtitle = "Clinical Chemistry Analyzer",
+            Description = "High-throughput clinical chemistry analyzer designed for serum, plasma, urine, and cerebrospinal fluid (CSF) analysis, delivering rapid and precise central assays.",
+            ImagePath = "images/machines/roche_c311.png",
+            ThemeColor = "#0ea5e9",
+            ThemeGradient = "linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "Clinical Chemistry", "High-Throughput Assays", "Photometric Testing", "Precise Quality Control" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><circle cx=\"20\" cy=\"20\" r=\"16\" stroke=\"#38bdf8\" stroke-width=\"4\" fill=\"none\"/><path d=\"M20 4A16 16 0 0 1 36 20\" stroke=\"#ff8200\" stroke-width=\"4\" fill=\"none\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Roche Cobas e411",
+            Subtitle = "Automated Immunoassay System",
+            Description = "Benchtop analyzer for immunology and hormone assays. Powered by ElectroChemiLuminescence (ECL) technology, offering high sensitivity and rapid results for thyroid, cardiac, and fertility panels.",
+            ImagePath = "images/machines/roche_cobas_e411.png",
+            ThemeColor = "#8b5cf6",
+            ThemeGradient = "linear-gradient(135deg, #8b5cf6 0%, #4c1d95 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "ECL Technology", "Automated Immunoassays", "High Sensitivity Panel", "Fast Turnaround" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><polygon points=\"20,5 36,14 36,29 20,37 4,29 4,14\" fill=\"none\" stroke=\"#38bdf8\" stroke-width=\"4.5\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "Sysmex - XN 350",
+            Subtitle = "Automated 5-Part Hematology Analyzer",
+            Description = "Fully automated 5-part differential hematology system providing complete blood counts (CBC). FDA approved for fully automated body fluid analysis including cerebrospinal (CSF), pleural, ascitic, and synovial fluids.",
+            ImagePath = "images/machines/sysmex_xn350.png",
+            ThemeColor = "#e11d48",
+            ThemeGradient = "linear-gradient(135deg, #e11d48 0%, #881337 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "5-Part Differential CBC", "Body Fluid Analyser", "FDA Approved", "Flow Cytometry Tech" },
+            LogoSvg = "<svg viewBox=\"0 0 500 500\"><path fill=\"#38bdf8\" d=\"M207.285 166.602c-40.535 0-73.5 32.964-73.5 73.5 0 40.535 32.965 73.5 73.5 73.5 30.875 0 57.156-19.05 68-46.168 10.844 27.117 37.125 46.168 68 46.168 40.535 0 73.5-32.965 73.5-73.5 0-40.536-32.965-73.5-73.5-73.5-30.875 0-57.156 19.05-68 46.168-10.844-27.118-37.125-46.168-68-46.168zm0 30c12.84 0 23.97 8 28.61 19.602-12.18 15.37-12.18 32.426 0 47.797-4.64 11.602-15.77 19.602-28.61 19.602-24.008 0-43.5-19.492-43.5-43.5 0-24.008 19.492-43.5 43.5-43.5zm136 0c24.008 0 43.5 19.492 43.5 43.5 0 24.008-19.492 43.5-43.5 43.5-12.84 0-23.97-8-28.61-19.602 12.18-15.37 12.18-32.426 0-47.797 4.64-11.602 15.77-19.602 28.61-19.602z\"/></svg>"
+        },
+        new MachineItem
+        {
+            Name = "BioRad - D10",
+            Subtitle = "HPLC Hemoglobin Analyzer",
+            Description = "Internationally standardized High-Performance Liquid Chromatography (HPLC) system. Delivers highly precise and automated HbA1c testing for diabetes screening and monitoring.",
+            ImagePath = "images/machines/biorad_d10.png",
+            ThemeColor = "#1e293b",
+            ThemeGradient = "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+            Status = "Operational Live",
+            Specs = new[] { "HPLC Chromatography", "Gold Standard HbA1c", "Highly Precise Assay", "Internationally Standardized" },
+            LogoSvg = "<svg viewBox=\"0 0 40 40\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#ef4444\"/><rect x=\"22\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#38bdf8\"/><rect x=\"6\" y=\"22\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#38bdf8\"/><rect x=\"22\" y=\"22\" width=\"12\" height=\"12\" rx=\"2.5\" fill=\"#ef4444\"/></svg>"
+        }
+    };
+
+    private void StartMachinesAutoplay()
+    {
+        _progressBarKey++;
+        _machinesCts?.Cancel();
+        _machinesCts = new System.Threading.CancellationTokenSource();
+        var token = _machinesCts.Token;
+        _ = Task.Run(async () =>
+        {
+            while (!token.IsCancellationRequested && !disposed)
+            {
+                await Task.Delay(6000, token);
+                if (token.IsCancellationRequested || disposed) break;
+                
+                await InvokeAsync(() =>
+                {
+                    activeMachineIndex = (activeMachineIndex + 1) % machines.Count;
+                    _progressBarKey++;
+                    StateHasChanged();
+                });
+            }
+        }, token);
+    }
+
+    private void PrevMachine()
+    {
+        activeMachineIndex = (activeMachineIndex - 1 + machines.Count) % machines.Count;
+        StartMachinesAutoplay();
+    }
+
+    private void NextMachine()
+    {
+        activeMachineIndex = (activeMachineIndex + 1) % machines.Count;
+        StartMachinesAutoplay();
+    }
+
+    private void SetMachine(int index)
+    {
+        activeMachineIndex = index;
+        StartMachinesAutoplay();
+    }
+
+    private void OnMachinesMouseEnter()
+    {
+        _machinesCts?.Cancel();
+    }
+
+    private void OnMachinesMouseLeave()
+    {
+        StartMachinesAutoplay();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initHeliumAnimations");
+            StartMachinesAutoplay();
+        }
+    }
+
+    public void Dispose()
+    {
+        disposed = true;
+        _machinesCts?.Cancel();
+        _machinesCts?.Dispose();
+    }
+}
