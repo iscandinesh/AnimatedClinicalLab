@@ -8,8 +8,8 @@ dest_dir = r"d:\My project\AnimatedClinicalLab-main\AnimatedClinicalLab-main\www
 paths = {
     "periyar": os.path.join(artifacts_dir, "media__1784197542795.jpg"),
     "clock": os.path.join(artifacts_dir, "media__1784197542006.png"),
-    "bull": os.path.join(artifacts_dir, "media__1784197542037.jpg"),
-    "temple": os.path.join(artifacts_dir, "media__1784197542737.jpg"),
+    "bull": r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_bull_statue_1784283375369.png",
+    "temple": r"C:\Users\D E L L\.gemini\antigravity-ide\brain\89c085ef-d0b9-4591-bbb7-f9d891933478\clean_temple_1784282467277.png",
     "turmeric": os.path.join(artifacts_dir, "creative_turmeric_1784197669804.png")
 }
 
