@@ -252,7 +252,7 @@ public class EmailService
     <hr style=""margin-top: 25px; border: 0; border-top: 1px solid #e2e8f0;"" />
     <p style=""font-size: 0.85em; color: #64748b; margin-top: 15px;"">
         <strong>Alpha Diagnostics Centre</strong><br/>
-        Office: 31, Patel Street, Erode – 638 001.<br/>
+        Office: 16, Patel Street, Erode – 638 001.<br/>
         Phone: 70944 90917 | 81108 99999<br/>
         Email: info@alphadiagnosticscentre.com
     </p>
