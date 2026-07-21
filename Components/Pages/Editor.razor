@@ -7,7 +7,7 @@
 @inject IWebHostEnvironment Env
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Blog Composer & Marketing Portal</PageTitle>
+<PageTitle>Content Management System</PageTitle>
 
 <div class="portal-root">
     @if (!_isLoggedIn)
@@ -189,7 +189,7 @@
                     <div class="editor-header">
                         <div class="title-section">
                             <h2>@(_activePost.Id == 0 ? "Create New Blog Post" : "Edit Blog Post")</h2>
-                            <p>Customize metadata and write rich article contents</p>
+                            <p><span class="post-status @(_activePost.IsPublished ? "published" : "draft")">@(_activePost.IsPublished ? "Published" : "Draft")</span> @(_activePost.IsPublished ? "Visible on the public website" : "Private until published")</p>
                         </div>
                         <div class="actions-section">
                             <button class="btn-delete" @onclick="ConfirmDelete" disabled="@(_activePost.Id == 0)">
@@ -207,6 +207,10 @@
                                     <i class="bi bi-cloud-arrow-up"></i>
                                     <span>Save Changes</span>
                                 }
+                            </button>
+                            <button class="btn-publish" @onclick="PublishChanges" disabled="@_isSaving">
+                                <i class="bi bi-send-check"></i>
+                                <span>@(_activePost.IsPublished ? "Update Published" : "Publish")</span>
                             </button>
                         </div>
                     </div>
@@ -294,8 +298,26 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group-db">
-                                                <label>Author Initials / Avatar</label>
-                                                <input type="text" @bind="_activePost.AuthorAvatar" placeholder="e.g. DR" />
+                                                <label>Author Profile Photo</label>
+                                                <div class="image-upload-wrapper" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                                                    <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
+                                                        <input type="text" @bind="_activePost.AuthorAvatar" placeholder="/avatars/dr.jpg, URL, or upload" style="flex: 1;" />
+                                                        <label class="btn-upload" title="Upload Author Photo" style="flex-shrink: 0;">
+                                                            <i class="bi bi-person-circle"></i>
+                                                            <InputFile OnChange="UploadAvatarImage" accept="image/*" style="display:none;" />
+                                                        </label>
+                                                        @if (!string.IsNullOrEmpty(_activePost.AuthorAvatar))
+                                                        {
+                                                            <button type="button" title="Clear Avatar" @onclick="() => _activePost.AuthorAvatar = string.Empty" style="border: none; background: #fef2f2; color: #ef4444; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; flex-shrink: 0; font-size: 0.9rem;">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(_activePost.AuthorAvatar) && (_activePost.AuthorAvatar.StartsWith("data:") || _activePost.AuthorAvatar.StartsWith("http") || _activePost.AuthorAvatar.StartsWith("/")))
+                                                    {
+                                                        <img src="@_activePost.AuthorAvatar" alt="Author Avatar Preview" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(59,130,246,0.5);" />
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -1281,6 +1303,26 @@
         cursor: not-allowed;
     }
 
+    .btn-publish {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        color: #fff;
+        padding: 0.55rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .btn-publish:hover:not(:disabled) { background: linear-gradient(135deg, #059669, #047857); }
+    .btn-publish:disabled { opacity: .7; cursor: not-allowed; }
+    .post-status { display: inline-block; padding: .15rem .5rem; margin-right: .35rem; border-radius: 999px; font-size: .7rem; font-weight: 700; letter-spacing: .03em; }
+    .post-status.draft { color: #fbbf24; background: rgba(245, 158, 11, .14); }
+    .post-status.published { color: #6ee7b7; background: rgba(16, 185, 129, .14); }
+
     .editor-scroll-container {
         flex: 1;
         overflow-y: auto;
@@ -2133,7 +2175,7 @@
         _errorMessage = "";
         _successMessage = "";
         
-        // Deep clone post
+        // Deep clone post (preserve ImageData so it isn't zeroed on re-save)
         _activePost = new BlogPost
         {
             Id = blog.Id,
@@ -2148,11 +2190,13 @@
             Date = blog.Date,
             ReadTime = blog.ReadTime,
             ImagePath = blog.ImagePath,
+            ImageData = blog.ImageData,
             IconClass = blog.IconClass,
             IconColor = blog.IconColor,
             GradientStart = blog.GradientStart,
             GradientEnd = blog.GradientEnd,
-            IsFeatured = blog.IsFeatured
+            IsFeatured = blog.IsFeatured,
+            IsPublished = blog.IsPublished
         };
 
         var details = await BlogService.GetBlogDetailsAsync(blog.Id);
@@ -2217,11 +2261,44 @@
         }
         catch (Exception ex)
         {
-            _errorMessage = $"Image upload failed: {ex.Message}";
+            _errorMessage = $"Banner image upload failed: {ex.Message}";
+        }
+    }
+
+    private async Task UploadAvatarImage(InputFileChangeEventArgs e)
+    {
+        _errorMessage = "";
+        try
+        {
+            var file = e.File;
+            if (file != null && _activePost != null)
+            {
+                // Limit avatar to 2MB
+                using var stream = file.OpenReadStream(maxAllowedSize: 2 * 1024 * 1024);
+                using var memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                var base64 = Convert.ToBase64String(memoryStream.ToArray());
+                _activePost.AuthorAvatar = $"data:{file.ContentType};base64,{base64}";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Avatar upload failed: {ex.Message}";
         }
     }
 
     private async Task SaveChanges()
+    {
+        await SavePostAsync(publish: false);
+    }
+
+    private async Task PublishChanges()
+    {
+        await SavePostAsync(publish: true);
+    }
+
+    private async Task SavePostAsync(bool publish)
     {
         if (_activePost == null) return;
         
@@ -2231,6 +2308,10 @@
             return;
         }
 
+        if (publish)
+        {
+            _activePost.IsPublished = true;
+        }
         _isSaving = true;
         _errorMessage = "";
         _successMessage = "";
@@ -2241,7 +2322,7 @@
             // Read rich HTML content from editor
             if (_editorRef != null)
             {
-                _activeDetails.ContentHtml = _editorRef.GetHtmlContent();
+                _activeDetails.ContentHtml = await _editorRef.GetHtmlContentAsync();
             }
 
             bool success;
@@ -2262,7 +2343,7 @@
 
             if (success)
             {
-                _successMessage = "Blog post saved successfully in database and synchronized!";
+                _successMessage = publish ? "Blog post published and is now visible on the website." : (_activePost.IsPublished ? "Published post changes saved." : "Draft saved. It remains private until you publish it.");
                 await LoadBlogsListAsync();
             }
             else

@@ -30,6 +30,7 @@ public class BlogPost
     public string GradientStart { get; set; } = "";
     public string GradientEnd { get; set; } = "";
     public bool IsFeatured { get; set; }
+    public bool IsPublished { get; set; }
     public int SortOrder { get; set; } = 0;
 }
 
@@ -93,7 +94,8 @@ public class BlogDbService
                     icon_color TEXT,
                     gradient_start TEXT,
                     gradient_end TEXT,
-                    is_featured BOOLEAN DEFAULT FALSE
+                    is_featured BOOLEAN DEFAULT FALSE,
+                    is_published BOOLEAN DEFAULT TRUE
                 );";
             using (var cmd = new NpgsqlCommand(createPostsSql, conn))
             {
@@ -103,6 +105,19 @@ public class BlogDbService
             // Alter table to add image_data if it doesn't exist
             string alterSql = "ALTER TABLE blogs_posts ADD COLUMN IF NOT EXISTS image_data BYTEA;";
             using (var cmd = new NpgsqlCommand(alterSql, conn))
+            {
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // Alter table to add sub_title if it doesn't exist
+            string alterSubTitle = "ALTER TABLE blogs_posts ADD COLUMN IF NOT EXISTS sub_title TEXT;";
+            using (var cmd = new NpgsqlCommand(alterSubTitle, conn))
+            {
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            string alterPublished = "ALTER TABLE blogs_posts ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT TRUE;";
+            using (var cmd = new NpgsqlCommand(alterPublished, conn))
             {
                 await cmd.ExecuteNonQueryAsync();
             }
@@ -324,7 +339,7 @@ public class BlogDbService
         }
     }
 
-    public async Task<List<BlogPost>> GetBlogsAsync()
+    public async Task<List<BlogPost>> GetBlogsAsync(bool publishedOnly = false)
     {
         var blogs = new List<BlogPost>();
         try
@@ -345,7 +360,7 @@ public class BlogDbService
                 await initCmd.ExecuteNonQueryAsync();
             }
 
-            string query = "SELECT id, title, sub_title, category, category_badge, tags, author_name, author_title, author_avatar, date, read_time, image_path, icon_class, icon_color, gradient_start, gradient_end, is_featured, image_data, COALESCE(sort_order, id) as sort_order FROM blogs_posts ORDER BY COALESCE(sort_order, id) ASC;";
+            string query = "SELECT id, title, sub_title, category, category_badge, tags, author_name, author_title, author_avatar, date, read_time, image_path, icon_class, icon_color, gradient_start, gradient_end, is_featured, image_data, COALESCE(sort_order, id) as sort_order, COALESCE(is_published, TRUE) FROM blogs_posts" + (publishedOnly ? " WHERE COALESCE(is_published, TRUE) = TRUE" : "") + " ORDER BY COALESCE(sort_order, id) ASC;";
             using var cmd = new NpgsqlCommand(query, conn);
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -368,7 +383,8 @@ public class BlogDbService
                     IconColor = reader.IsDBNull(13) ? "" : reader.GetString(13),
                     GradientStart = reader.IsDBNull(14) ? "" : reader.GetString(14),
                     GradientEnd = reader.IsDBNull(15) ? "" : reader.GetString(15),
-                    IsFeatured = reader.GetBoolean(16)
+                    IsFeatured = reader.GetBoolean(16),
+                    IsPublished = reader.GetBoolean(19)
                 };
 
                 byte[]? imgData = reader.IsDBNull(17) ? null : (byte[])reader[17];
@@ -376,7 +392,7 @@ public class BlogDbService
                 blog.SortOrder = reader.IsDBNull(18) ? blog.Id : reader.GetInt32(18);
                 if (imgData != null && imgData.Length > 0)
                 {
-                    blog.ImagePath = $"data:image/jpeg;base64,{Convert.ToBase64String(imgData)}";
+                    blog.ImagePath = $"data:{DetectImageMimeType(imgData)};base64,{Convert.ToBase64String(imgData)}";
                 }
 
                 blogs.Add(blog);
@@ -389,14 +405,14 @@ public class BlogDbService
         return blogs;
     }
 
-    public async Task<BlogPost?> GetBlogByIdAsync(int id)
+    public async Task<BlogPost?> GetBlogByIdAsync(int id, bool publishedOnly = false)
     {
         try
         {
             using var conn = new NpgsqlConnection(GetConnectionString());
             await conn.OpenAsync();
 
-            string query = "SELECT id, title, sub_title, category, category_badge, tags, author_name, author_title, author_avatar, date, read_time, image_path, icon_class, icon_color, gradient_start, gradient_end, is_featured, image_data, COALESCE(sort_order, id) as sort_order FROM blogs_posts WHERE id = @id;";
+            string query = "SELECT id, title, sub_title, category, category_badge, tags, author_name, author_title, author_avatar, date, read_time, image_path, icon_class, icon_color, gradient_start, gradient_end, is_featured, image_data, COALESCE(sort_order, id) as sort_order, COALESCE(is_published, TRUE) FROM blogs_posts WHERE id = @id" + (publishedOnly ? " AND COALESCE(is_published, TRUE) = TRUE" : "") + ";";
             using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("id", id);
 
@@ -421,7 +437,8 @@ public class BlogDbService
                     IconColor = reader.IsDBNull(13) ? "" : reader.GetString(13),
                     GradientStart = reader.IsDBNull(14) ? "" : reader.GetString(14),
                     GradientEnd = reader.IsDBNull(15) ? "" : reader.GetString(15),
-                    IsFeatured = reader.GetBoolean(16)
+                    IsFeatured = reader.GetBoolean(16),
+                    IsPublished = reader.GetBoolean(19)
                 };
 
                 byte[]? imgData = reader.IsDBNull(17) ? null : (byte[])reader[17];
@@ -429,7 +446,7 @@ public class BlogDbService
                 blog.SortOrder = reader.IsDBNull(18) ? blog.Id : reader.GetInt32(18);
                 if (imgData != null && imgData.Length > 0)
                 {
-                    blog.ImagePath = $"data:image/jpeg;base64,{Convert.ToBase64String(imgData)}";
+                    blog.ImagePath = $"data:{DetectImageMimeType(imgData)};base64,{Convert.ToBase64String(imgData)}";
                 }
 
                 return blog;
@@ -473,10 +490,26 @@ public class BlogDbService
         return null;
     }
 
+    public static string DetectImageMimeType(byte[] data)
+    {
+        if (data.Length >= 4)
+        {
+            // PNG: 89 50 4E 47
+            if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47) return "image/png";
+            // JPEG: FF D8
+            if (data[0] == 0xFF && data[1] == 0xD8) return "image/jpeg";
+            // GIF: 47 49 46
+            if (data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46) return "image/gif";
+            // WebP: 52 49 46 46 ... 57 45 42 50
+            if (data.Length >= 12 && data[0] == 0x52 && data[1] == 0x49 && data[8] == 0x57 && data[9] == 0x45) return "image/webp";
+        }
+        return "image/jpeg"; // default fallback
+    }
+
     public static string MapImagePath(string path)
     {
         if (string.IsNullOrEmpty(path))
-            return "images/services-banner.jpg";
+            return string.Empty;
 
         if (path.StartsWith("/BlogImages/"))
         {
@@ -487,7 +520,7 @@ public class BlogDbService
                 "3.jpg" => "images/tamil-family-checkup.jpg",
                 "4.jpg" => "images/tamil-well-women.png",
                 "vitamin-d.jpg" => "images/services-banner.jpg",
-                _ => "images/services-banner.jpg"
+                _ => path
             };
         }
         return path;
@@ -501,29 +534,32 @@ public class BlogDbService
             await conn.OpenAsync();
 
             string insertPostSql = @"
-                INSERT INTO blogs_posts (title, sub_title, category, category_badge, tags, author_name, author_title, author_avatar, date, read_time, image_path, icon_class, icon_color, gradient_start, gradient_end, is_featured, image_data)
-                VALUES (@title, @sub_title, @category, @category_badge, @tags, @author_name, @author_title, @author_avatar, @date, @read_time, @image_path, @icon_class, @icon_color, @gradient_start, @gradient_end, @is_featured, @image_data)
+                INSERT INTO blogs_posts (title, sub_title, category, category_badge, tags, author_name, author_title, author_avatar, date, read_time, image_path, icon_class, icon_color, gradient_start, gradient_end, is_featured, is_published, image_data)
+                VALUES (@title, @sub_title, @category, @category_badge, @tags, @author_name, @author_title, @author_avatar, @date, @read_time, @image_path, @icon_class, @icon_color, @gradient_start, @gradient_end, @is_featured, @is_published, @image_data)
                 RETURNING id;";
             
             int newId = 0;
             using (var cmd = new NpgsqlCommand(insertPostSql, conn))
             {
-                cmd.Parameters.AddWithValue("title", post.Title);
-                cmd.Parameters.AddWithValue("sub_title", post.SubTitle);
-                cmd.Parameters.AddWithValue("category", post.Category);
-                cmd.Parameters.AddWithValue("category_badge", post.CategoryBadge);
-                cmd.Parameters.AddWithValue("tags", post.Tags);
-                cmd.Parameters.AddWithValue("author_name", post.AuthorName);
-                cmd.Parameters.AddWithValue("author_title", post.AuthorTitle);
-                cmd.Parameters.AddWithValue("author_avatar", post.AuthorAvatar);
-                cmd.Parameters.AddWithValue("date", post.Date);
-                cmd.Parameters.AddWithValue("read_time", post.ReadTime);
-                cmd.Parameters.AddWithValue("image_path", post.ImagePath);
-                cmd.Parameters.AddWithValue("icon_class", post.IconClass);
-                cmd.Parameters.AddWithValue("icon_color", post.IconColor);
-                cmd.Parameters.AddWithValue("gradient_start", post.GradientStart);
-                cmd.Parameters.AddWithValue("gradient_end", post.GradientEnd);
+                cmd.Parameters.AddWithValue("title", post.Title ?? "");
+                cmd.Parameters.AddWithValue("sub_title", (object?)(post.SubTitle) ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("category", post.Category ?? "");
+                cmd.Parameters.AddWithValue("category_badge", post.CategoryBadge ?? "");
+                cmd.Parameters.AddWithValue("tags", post.Tags ?? "");
+                cmd.Parameters.AddWithValue("author_name", post.AuthorName ?? "");
+                cmd.Parameters.AddWithValue("author_title", post.AuthorTitle ?? "");
+                cmd.Parameters.AddWithValue("author_avatar", post.AuthorAvatar ?? "");
+                cmd.Parameters.AddWithValue("date", post.Date ?? "");
+                cmd.Parameters.AddWithValue("read_time", post.ReadTime ?? "");
+                // Don't store redundant data-URL in image_path if binary data is stored separately
+                var imagePath = (post.ImageData != null && post.ImageData.Length > 0) ? "" : (post.ImagePath ?? "");
+                cmd.Parameters.AddWithValue("image_path", imagePath);
+                cmd.Parameters.AddWithValue("icon_class", post.IconClass ?? "");
+                cmd.Parameters.AddWithValue("icon_color", post.IconColor ?? "");
+                cmd.Parameters.AddWithValue("gradient_start", post.GradientStart ?? "");
+                cmd.Parameters.AddWithValue("gradient_end", post.GradientEnd ?? "");
                 cmd.Parameters.AddWithValue("is_featured", post.IsFeatured);
+                cmd.Parameters.AddWithValue("is_published", post.IsPublished);
                 cmd.Parameters.AddWithValue("image_data", (object?)post.ImageData ?? DBNull.Value);
                 
                 newId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
@@ -577,27 +613,31 @@ public class BlogDbService
                     gradient_start = @gradient_start,
                     gradient_end = @gradient_end,
                     is_featured = @is_featured,
+                    is_published = @is_published,
                     image_data = @image_data
                 WHERE id = @id;";
             
             using (var cmd = new NpgsqlCommand(updatePostSql, conn))
             {
-                cmd.Parameters.AddWithValue("title", post.Title);
-                cmd.Parameters.AddWithValue("sub_title", post.SubTitle);
-                cmd.Parameters.AddWithValue("category", post.Category);
-                cmd.Parameters.AddWithValue("category_badge", post.CategoryBadge);
-                cmd.Parameters.AddWithValue("tags", post.Tags);
-                cmd.Parameters.AddWithValue("author_name", post.AuthorName);
-                cmd.Parameters.AddWithValue("author_title", post.AuthorTitle);
-                cmd.Parameters.AddWithValue("author_avatar", post.AuthorAvatar);
-                cmd.Parameters.AddWithValue("date", post.Date);
-                cmd.Parameters.AddWithValue("read_time", post.ReadTime);
-                cmd.Parameters.AddWithValue("image_path", post.ImagePath);
-                cmd.Parameters.AddWithValue("icon_class", post.IconClass);
-                cmd.Parameters.AddWithValue("icon_color", post.IconColor);
-                cmd.Parameters.AddWithValue("gradient_start", post.GradientStart);
-                cmd.Parameters.AddWithValue("gradient_end", post.GradientEnd);
+                cmd.Parameters.AddWithValue("title", post.Title ?? "");
+                cmd.Parameters.AddWithValue("sub_title", (object?)(post.SubTitle) ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("category", post.Category ?? "");
+                cmd.Parameters.AddWithValue("category_badge", post.CategoryBadge ?? "");
+                cmd.Parameters.AddWithValue("tags", post.Tags ?? "");
+                cmd.Parameters.AddWithValue("author_name", post.AuthorName ?? "");
+                cmd.Parameters.AddWithValue("author_title", post.AuthorTitle ?? "");
+                cmd.Parameters.AddWithValue("author_avatar", post.AuthorAvatar ?? "");
+                cmd.Parameters.AddWithValue("date", post.Date ?? "");
+                cmd.Parameters.AddWithValue("read_time", post.ReadTime ?? "");
+                // Don't store redundant data-URL in image_path if binary data is stored separately
+                var imagePath = (post.ImageData != null && post.ImageData.Length > 0) ? "" : (post.ImagePath ?? "");
+                cmd.Parameters.AddWithValue("image_path", imagePath);
+                cmd.Parameters.AddWithValue("icon_class", post.IconClass ?? "");
+                cmd.Parameters.AddWithValue("icon_color", post.IconColor ?? "");
+                cmd.Parameters.AddWithValue("gradient_start", post.GradientStart ?? "");
+                cmd.Parameters.AddWithValue("gradient_end", post.GradientEnd ?? "");
                 cmd.Parameters.AddWithValue("is_featured", post.IsFeatured);
+                cmd.Parameters.AddWithValue("is_published", post.IsPublished);
                 cmd.Parameters.AddWithValue("image_data", (object?)post.ImageData ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("id", post.Id);
                 

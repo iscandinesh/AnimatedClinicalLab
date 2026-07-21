@@ -3181,6 +3181,25 @@ if (document.readyState === 'loading') {
                 window.quillDotNet.invokeMethodAsync('OnZoomChanged', factor);
             }
         },
+        // Returns the href of the link at the current cursor position, or '' if none
+        getCurrentLinkHref: function () {
+            if (!window.tiptapInstance) return '';
+            const attrs = window.tiptapInstance.getAttributes('link');
+            return attrs && attrs.href ? attrs.href : '';
+        },
+
+        // Sets a link on the current selection (or extends it if already a link)
+        applyLink: function (url) {
+            if (!window.tiptapInstance) return;
+            window.tiptapInstance.chain().focus().setLink({ href: url, target: '_blank' }).run();
+        },
+
+        // Removes the link mark from the current selection
+        removeLink: function () {
+            if (!window.tiptapInstance) return;
+            window.tiptapInstance.chain().focus().unsetLink().run();
+        },
+
         setEditable: function (editable) {
             if (window.tiptapInstance) {
                 window.tiptapInstance.setEditable(editable);
