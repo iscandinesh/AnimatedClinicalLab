@@ -48,6 +48,8 @@ public class BlogDbService
     private readonly IConfiguration _configuration;
     private readonly ILogger<BlogDbService> _logger;
 
+    public event Func<Task>? OnBlogChanged;
+
     public BlogDbService(IConfiguration configuration, ILogger<BlogDbService> logger)
     {
         _configuration = configuration;
@@ -579,6 +581,13 @@ public class BlogDbService
                 await cmd.ExecuteNonQueryAsync();
             }
 
+            if (newId > 0 && OnBlogChanged != null)
+            {
+                _ = Task.Run(async () => {
+                    try { await OnBlogChanged.Invoke(); } catch { }
+                });
+            }
+
             return newId;
         }
         catch (Exception ex)
@@ -664,6 +673,13 @@ public class BlogDbService
                 await cmd.ExecuteNonQueryAsync();
             }
 
+            if (OnBlogChanged != null)
+            {
+                _ = Task.Run(async () => {
+                    try { await OnBlogChanged.Invoke(); } catch { }
+                });
+            }
+
             return true;
         }
         catch (Exception ex)
@@ -685,6 +701,12 @@ public class BlogDbService
             cmd.Parameters.AddWithValue("id", id);
 
             int rows = await cmd.ExecuteNonQueryAsync();
+            if (rows > 0 && OnBlogChanged != null)
+            {
+                _ = Task.Run(async () => {
+                    try { await OnBlogChanged.Invoke(); } catch { }
+                });
+            }
             return rows > 0;
         }
         catch (Exception ex)
@@ -708,6 +730,12 @@ public class BlogDbService
                 cmd.Parameters.AddWithValue("sort_order", i + 1);
                 cmd.Parameters.AddWithValue("id", orderedIds[i]);
                 await cmd.ExecuteNonQueryAsync();
+            }
+            if (OnBlogChanged != null)
+            {
+                _ = Task.Run(async () => {
+                    try { await OnBlogChanged.Invoke(); } catch { }
+                });
             }
             return true;
         }

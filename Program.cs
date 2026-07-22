@@ -1,3 +1,4 @@
+using System.Text;
 using AlphaRazor.Components;
 using AlphaRazor.Services;
 
@@ -7,9 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient("SitemapPingClient");
 builder.Services.AddScoped<ThemeService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<BlogDbService>();
+builder.Services.AddSingleton<SitemapService>();
 
 var app = builder.Build();
 
@@ -18,6 +22,12 @@ using (var scope = app.Services.CreateScope())
 {
     var dbService = scope.ServiceProvider.GetRequiredService<BlogDbService>();
     await dbService.InitializeDatabaseAsync();
+
+    var sitemapService = scope.ServiceProvider.GetRequiredService<SitemapService>();
+    dbService.OnBlogChanged += async () =>
+    {
+        await sitemapService.NotifySearchEnginesAsync();
+    };
 }
 
 // Configure the HTTP request pipeline.
@@ -41,6 +51,16 @@ if (Directory.Exists(uploadsPath))
         RequestPath = "/uploads"
     });
 }
+
+// Dynamic Sitemap Routes
+app.MapGet("/sitemap.xml", async (SitemapService sitemapService) =>
+    Results.Text(await sitemapService.GetConsolidatedSitemapXmlAsync(), "application/xml", Encoding.UTF8));
+
+app.MapGet("/sitemap-index.xml", (SitemapService sitemapService) =>
+    Results.Text(sitemapService.GetSitemapIndexXml(), "application/xml", Encoding.UTF8));
+
+app.MapGet("/sitemap-{category}.xml", async (string category, SitemapService sitemapService) =>
+    Results.Text(await sitemapService.GetCategorySitemapXmlAsync(category), "application/xml", Encoding.UTF8));
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
